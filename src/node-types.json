@@ -1,0 +1,238 @@
+[
+  {
+    "type": "act_header",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "adapter_statement",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "cel_header",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "content_type_beat",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "content_type_narrative",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "content_type_treatment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "entity_block_start",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "entity_definition",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "file_header",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "import_statement",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "act_header",
+          "named": true
+        },
+        {
+          "type": "adapter_statement",
+          "named": true
+        },
+        {
+          "type": "cel_header",
+          "named": true
+        },
+        {
+          "type": "content_type_beat",
+          "named": true
+        },
+        {
+          "type": "content_type_narrative",
+          "named": true
+        },
+        {
+          "type": "content_type_treatment",
+          "named": true
+        },
+        {
+          "type": "entity_block_end",
+          "named": true
+        },
+        {
+          "type": "entity_block_start",
+          "named": true
+        },
+        {
+          "type": "entity_definition",
+          "named": true
+        },
+        {
+          "type": "file_header",
+          "named": true
+        },
+        {
+          "type": "import_statement",
+          "named": true
+        },
+        {
+          "type": "line_comment",
+          "named": true
+        },
+        {
+          "type": "metadata_line",
+          "named": true
+        },
+        {
+          "type": "prose_line",
+          "named": true
+        },
+        {
+          "type": "scene_header",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "line_comment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "metadata_line",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "scene_header",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "line",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "\"",
+    "named": false
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
+    "type": "'",
+    "named": false
+  },
+  {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
+    "type": "-",
+    "named": false
+  },
+  {
+    "type": "/",
+    "named": false
+  },
+  {
+    "type": "//",
+    "named": false
+  },
+  {
+    "type": "///",
+    "named": false
+  },
+  {
+    "type": ":",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
+    "type": "==",
+    "named": false
+  },
+  {
+    "type": "===",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "@adapter",
+    "named": false
+  },
+  {
+    "type": "@import",
+    "named": false
+  },
+  {
+    "type": "entity_block_end",
+    "named": true
+  },
+  {
+    "type": "newline",
+    "named": true
+  },
+  {
+    "type": "prose_line",
+    "named": true
+  },
+  {
+    "type": "{",
+    "named": false
+  }
+]
