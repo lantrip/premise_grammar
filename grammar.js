@@ -28,7 +28,7 @@ module.exports = grammar({
 
     line_comment: ($) => seq("#", /.*/),
 
-    file_header: ($) => seq(/[A-Z][A-Z_]*/, ":", /.*/),
+    file_header: ($) => seq(/[A-Z][A-Z_]{1,}/, ":", /.*/),
 
     act_header: ($) =>
       seq("=", /\s+/, /[^\r\n(]+/, optional(/\(\d+(?:\.\d+)?%\)/)),
