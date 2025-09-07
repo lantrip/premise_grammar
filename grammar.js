@@ -1,6 +1,6 @@
-// Tree-sitter grammar for Celtax
+// Tree-sitter grammar for Cuneiform
 module.exports = grammar({
-  name: "celtax",
+  name: "cuneiform",
 
   extras: ($) => [/[ \t]/],
 

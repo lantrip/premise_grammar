@@ -1,6 +1,6 @@
 {
   "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
-  "name": "celtax",
+  "name": "cuneiform",
   "rules": {
     "source_file": {
       "type": "REPEAT",
@@ -101,7 +101,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[A-Z][A-Z_]*"
+          "value": "[A-Z][A-Z_]{1,}"
         },
         {
           "type": "STRING",

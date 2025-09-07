@@ -1,10 +1,10 @@
 [package]
-name = "tree-sitter-celtax"
-description = "celtax grammar for the tree-sitter parsing library"
+name = "tree-sitter-cuneiform"
+description = "cuneiform grammar for the tree-sitter parsing library"
 version = "0.0.1"
-keywords = ["incremental", "parsing", "celtax"]
+keywords = ["incremental", "parsing", "cuneiform"]
 categories = ["parsing", "text-editors"]
-repository = "https://github.com/tree-sitter/tree-sitter-celtax"
+repository = "https://github.com/tree-sitter/tree-sitter-cuneiform"
 edition = "2018"
 license = "MIT"
 
