@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(npm install)",
+      "Bash(npx tree-sitter:*)",
+      "Bash(cargo test)",
+      "Read(//Users/davidlantrip/repos/proof-again/premise/cuneiform/**)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

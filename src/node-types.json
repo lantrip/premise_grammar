@@ -7,6 +7,31 @@
   {
     "type": "adapter_statement",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "open_brace",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "block_comment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "block_entity_item",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "block_property",
+    "named": true,
     "fields": {}
   },
   {
@@ -30,14 +55,131 @@
     "fields": {}
   },
   {
+    "type": "dialogue_speaker",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ref_close",
+          "named": true
+        },
+        {
+          "type": "ref_open",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "entity_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "entity_block_content",
+          "named": true
+        },
+        {
+          "type": "entity_block_end",
+          "named": true
+        },
+        {
+          "type": "entity_block_start",
+          "named": true
+        },
+        {
+          "type": "nested_block",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "entity_block_content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "block_comment",
+          "named": true
+        },
+        {
+          "type": "block_entity_item",
+          "named": true
+        },
+        {
+          "type": "block_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "entity_block_end",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "close_brace",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "entity_block_start",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "open_brace",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "entity_definition",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "entity_reference",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ref_close",
+          "named": true
+        },
+        {
+          "type": "ref_open",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "file_header",
@@ -47,7 +189,21 @@
   {
     "type": "import_statement",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "close_paren",
+          "named": true
+        },
+        {
+          "type": "open_paren",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "line",
@@ -82,14 +238,6 @@
           "named": true
         },
         {
-          "type": "entity_block_end",
-          "named": true
-        },
-        {
-          "type": "entity_block_start",
-          "named": true
-        },
-        {
           "type": "entity_definition",
           "named": true
         },
@@ -99,10 +247,6 @@
         },
         {
           "type": "import_statement",
-          "named": true
-        },
-        {
-          "type": "line_comment",
           "named": true
         },
         {
@@ -121,14 +265,91 @@
     }
   },
   {
-    "type": "line_comment",
+    "type": "metadata_line",
     "named": true,
     "fields": {}
   },
   {
-    "type": "metadata_line",
+    "type": "nested_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block_comment",
+          "named": true
+        },
+        {
+          "type": "block_property",
+          "named": true
+        },
+        {
+          "type": "close_brace",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        },
+        {
+          "type": "open_brace",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "newline",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "parenthetical",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "close_paren",
+          "named": true
+        },
+        {
+          "type": "open_paren",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "prose_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dialogue_speaker",
+          "named": true
+        },
+        {
+          "type": "entity_reference",
+          "named": true
+        },
+        {
+          "type": "parenthetical",
+          "named": true
+        },
+        {
+          "type": "prose_text",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "scene_header",
@@ -144,6 +365,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "entity_block",
+          "named": true
+        },
         {
           "type": "line",
           "named": true
@@ -165,14 +390,6 @@
   },
   {
     "type": "'",
-    "named": false
-  },
-  {
-    "type": "(",
-    "named": false
-  },
-  {
-    "type": ")",
     "named": false
   },
   {
@@ -220,19 +437,36 @@
     "named": false
   },
   {
-    "type": "entity_block_end",
+    "type": "close_brace",
     "named": true
   },
   {
-    "type": "newline",
+    "type": "close_paren",
     "named": true
   },
   {
-    "type": "prose_line",
+    "type": "line_comment",
+    "named": true,
+    "extra": true
+  },
+  {
+    "type": "open_brace",
     "named": true
   },
   {
-    "type": "{",
-    "named": false
+    "type": "open_paren",
+    "named": true
+  },
+  {
+    "type": "prose_text",
+    "named": true
+  },
+  {
+    "type": "ref_close",
+    "named": true
+  },
+  {
+    "type": "ref_open",
+    "named": true
   }
 ]

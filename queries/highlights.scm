@@ -19,7 +19,16 @@
 
 ; Entity blocks
 (entity_block_start) @keyword
-(entity_block_end) @punctuation.bracket
+(open_brace) @punctuation.bracket
+(close_brace) @punctuation.bracket
+
+; Entity block content
+(block_entity_item) @type
+(block_property) @property
+(block_comment) @comment
+
+; Nested blocks like @eras
+(nested_block) @keyword
 
 ; Import statements
 (import_statement) @keyword
@@ -30,5 +39,18 @@
 ; Metadata
 (metadata_line) @property
 
+; Entity references in prose
+(entity_reference) @variable.special
+(ref_open) @punctuation.bracket
+(ref_close) @punctuation.bracket
+
+; Dialogue speakers
+(dialogue_speaker) @character
+
+; Parentheticals
+(parenthetical) @comment.doc
+(open_paren) @punctuation.bracket
+(close_paren) @punctuation.bracket
+
 ; Prose/narrative text  
-(prose_line) @text
+(prose_text) @text
