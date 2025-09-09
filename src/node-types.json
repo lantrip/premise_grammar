@@ -27,7 +27,33 @@
   {
     "type": "block_entity_item",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "block_comment",
+          "named": true
+        },
+        {
+          "type": "close_brace",
+          "named": true
+        },
+        {
+          "type": "nested_block",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        },
+        {
+          "type": "open_brace",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "block_property",
@@ -53,6 +79,33 @@
     "type": "content_type_treatment",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "deeper_nested_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block_comment",
+          "named": true
+        },
+        {
+          "type": "close_brace",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        },
+        {
+          "type": "open_brace",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "dialogue_speaker",
@@ -145,7 +198,42 @@
   {
     "type": "entity_block_start",
     "named": true,
-    "fields": {},
+    "fields": {
+      "block_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "characters",
+            "named": false
+          },
+          {
+            "type": "creatures",
+            "named": false
+          },
+          {
+            "type": "entities",
+            "named": false
+          },
+          {
+            "type": "eras",
+            "named": false
+          },
+          {
+            "type": "items",
+            "named": false
+          },
+          {
+            "type": "locations",
+            "named": false
+          },
+          {
+            "type": "world_eras",
+            "named": false
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": false,
       "required": true,
@@ -290,6 +378,10 @@
           "named": true
         },
         {
+          "type": "deeper_nested_block",
+          "named": true
+        },
+        {
           "type": "newline",
           "named": true
         },
@@ -359,7 +451,6 @@
   {
     "type": "source_file",
     "named": true,
-    "root": true,
     "fields": {},
     "children": {
       "multiple": true,
@@ -437,6 +528,10 @@
     "named": false
   },
   {
+    "type": "characters",
+    "named": false
+  },
+  {
     "type": "close_brace",
     "named": true
   },
@@ -445,9 +540,28 @@
     "named": true
   },
   {
+    "type": "creatures",
+    "named": false
+  },
+  {
+    "type": "entities",
+    "named": false
+  },
+  {
+    "type": "eras",
+    "named": false
+  },
+  {
+    "type": "items",
+    "named": false
+  },
+  {
     "type": "line_comment",
-    "named": true,
-    "extra": true
+    "named": true
+  },
+  {
+    "type": "locations",
+    "named": false
   },
   {
     "type": "open_brace",
@@ -468,5 +582,9 @@
   {
     "type": "ref_open",
     "named": true
+  },
+  {
+    "type": "world_eras",
+    "named": false
   }
 ]

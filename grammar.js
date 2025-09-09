@@ -5,7 +5,8 @@ module.exports = grammar({
   extras: ($) => [/[ \t]/, $.line_comment],
 
   conflicts: ($) => [
-    [$.entity_block, $.entity_block_content]
+    [$.entity_block, $.entity_block_content],
+    [$.nested_block, $.deeper_nested_block]
   ],
 
   rules: {
@@ -29,31 +30,32 @@ module.exports = grammar({
 
     line_comment: ($) => token(seq("#", /.*/)),
 
-    file_header: ($) => seq(
-      field("key", /[A-Z][A-Z_]{1,}/),
+    file_header: ($) => prec(10, seq(
+      field("key", token(/[A-Z][A-Z_]*/)),
       ":",
-      field("value", /.*/)
-    ),
+      optional(/\s+/),
+      optional(field("value", /.*/))
+    )),
 
     act_header: ($) =>
-      seq(
-        "=",
+      prec(10, seq(
+        token("="),
         /\s+/,
         field("title", /[^\r\n(]+/),
         optional(field("proportion", /\(\d+(?:\.\d+)?%\)/))
-      ),
+      )),
 
     scene_header: ($) =>
-      seq(
-        "==",
+      prec(10, seq(
+        token("=="),
         /\s+/,
         field("title", /[^\r\n(]+/),
         optional(field("proportion", /\(\d+(?:\.\d+)?%\)/))
-      ),
+      )),
 
     cel_header: ($) =>
-      seq(
-        "===",
+      prec(10, seq(
+        token("==="),
         /\s+/,
         field("title", /[^\r\n-]+/),
         optional(seq(
@@ -62,37 +64,53 @@ module.exports = grammar({
           optional(seq("-", field("time", /[^\r\n()]+/)))
         )),
         optional(field("proportion", /\(\d+(?:\.\d+)?%\)/))
-      ),
+      )),
 
-    content_type_beat: ($) => seq("///", field("content", /.*/)),
-    content_type_treatment: ($) => seq("//", field("content", /.*/)),
-    content_type_narrative: ($) => seq("/", field("content", /.*/)),
+    // Enhanced content types with multi-line support and labels
+    content_type_beat: ($) => 
+      prec(9, seq(token("///"), optional(field("content", /.*/)))),
+    
+    content_type_treatment: ($) =>
+      prec(9, seq(token("//"), optional(field("content", /.*/)))),
+    
+    content_type_narrative: ($) =>
+      prec(9, seq(token("/"), optional(field("content", /.*/)))),
 
     entity_definition: ($) =>
-      seq(
+      prec(8, seq(
         "@",
         field("entity_type", /\w+/),
         /\s+/,
         field("name", /[A-Za-z0-9][A-Za-z0-9\s]*[A-Za-z0-9]|[A-Za-z0-9]/),
         optional(seq(":", field("description", /.*/)))
-      ),
+      )),
 
     // Enhanced entity block support
     entity_block: ($) =>
       seq(
         $.entity_block_start,
+        /\s*\r?\n/,
         repeat(choice(
           $.entity_block_content,
           $.nested_block,
           $.newline
         )),
+        /\s*/,
         $.entity_block_end
       ),
 
     entity_block_start: ($) =>
       seq(
         "@",
-        field("block_type", /\w+s?/),
+        field("block_type", choice(
+          "entities",
+          "characters", 
+          "locations",
+          "items",
+          "creatures",
+          "eras",
+          "world_eras"
+        )),
         /\s*/,
         alias("{", $.open_brace)
       ),
@@ -107,13 +125,35 @@ module.exports = grammar({
       ),
 
     block_entity_item: ($) =>
-      seq(
-        /\s*/,
-        "-",
-        /\s*/,
-        field("entity_name", /[^\r\n:]+/),
-        optional(seq(":", field("entity_desc", /[^\r\n]+/))),
-        /\r?\n/
+      choice(
+        // Simple list item
+        seq(
+          /\s*/,
+          "-",
+          /\s*/,
+          field("entity_name", /[^\r\n:{]+/),
+          optional(seq(":", /\s*/, field("entity_desc", /[^\r\n{]+/))),
+          /\r?\n/
+        ),
+        // List item with nested block
+        seq(
+          /\s*/,
+          "-",
+          /\s*/,
+          field("entity_name", /[^\r\n:{]+/),
+          /\s*:\s*/,
+          alias("{", $.open_brace),
+          /\s*\r?\n/,
+          repeat(choice(
+            seq(/\s+/, field("item_key", /\w+/), ":", /\s*/, field("item_value", /[^\r\n]+/), /\r?\n/),
+            $.nested_block,
+            $.block_comment,
+            $.newline
+          )),
+          /\s*/,
+          alias("}", $.close_brace),
+          /\r?\n/
+        )
       ),
 
     block_property: ($) =>
@@ -128,7 +168,7 @@ module.exports = grammar({
     block_comment: ($) => 
       seq(/\s*/, "#", /[^\r\n]*/, /\r?\n/),
 
-    // Support for nested blocks like @eras
+    // Support for nested blocks like @eras with proper indentation
     nested_block: ($) =>
       seq(
         /\s*/,
@@ -136,17 +176,37 @@ module.exports = grammar({
         field("nested_type", /\w+/),
         /\s*/,
         alias("{", $.open_brace),
+        /\s*\r?\n/,
         repeat(choice(
           $.block_property,
           $.block_comment,
+          $.deeper_nested_block,
           $.newline
         )),
         /\s*/,
         alias("}", $.close_brace)
       ),
+    
+    // Support deeply nested blocks
+    deeper_nested_block: ($) =>
+      seq(
+        /\s+/,
+        field("key", /\w+/),
+        ":",
+        /\s*/,
+        alias("{", $.open_brace),
+        /\s*\r?\n/,
+        repeat(choice(
+          seq(/\s+/, field("nested_key", /\w+/), ":", /\s*/, field("nested_value", /[^\r\n]+/), /\r?\n/),
+          $.block_comment,
+          $.newline
+        )),
+        /\s+/,
+        alias("}", $.close_brace)
+      ),
 
     import_statement: ($) =>
-      seq(
+      prec(8, seq(
         "@import",
         /\s*/,
         optional(alias("(", $.open_paren)),
@@ -157,10 +217,10 @@ module.exports = grammar({
         optional(seq(/\s+as\s+/, field("alias", /\w+/))),
         optional(alias(")", $.close_paren)),
         optional(seq(/\s*#/, field("selector", /[^\r\n]+/)))
-      ),
+      )),
 
     adapter_statement: ($) =>
-      seq(
+      prec(8, seq(
         "@adapter",
         /\s+/,
         choice(
@@ -177,18 +237,18 @@ module.exports = grammar({
             alias("{", $.open_brace)
           )
         )
-      ),
+      )),
 
-    metadata_line: ($) => seq(
+    metadata_line: ($) => prec(7, seq(
       "@",
       field("meta_key", /\w+/),
       ":",
       field("meta_value", /.*/)
-    ),
+    )),
 
     // Enhanced prose line to handle entity references
     prose_line: ($) => 
-      prec.right(seq(
+      prec.right(1, seq(
         repeat1(choice(
           $.entity_reference,
           $.dialogue_speaker,
@@ -219,7 +279,7 @@ module.exports = grammar({
         alias(")", $.close_paren)
       ),
 
-    prose_text: ($) => /[^\r\n{()}]+/,
+    prose_text: ($) => token(prec(-1, /[^\r\n{()}]+/)),
 
     newline: ($) => /\r?\n/,
   },

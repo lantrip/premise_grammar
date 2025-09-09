@@ -4,9 +4,9 @@
 ; File headers (TITLE:, WORLD:, etc.)
 (file_header) @keyword
 
-; Act, Scene, and Cel headers  
+; Act, Scene, and Cel headers
 (act_header) @markup.heading
-(scene_header) @markup.heading
+(scene_header) @markup.heading  
 (cel_header) @markup.heading
 
 ; Content types
@@ -19,13 +19,16 @@
 
 ; Entity blocks
 (entity_block_start) @keyword
-(open_brace) @punctuation.bracket
-(close_brace) @punctuation.bracket
+(entity_block_end) @punctuation.bracket
 
-; Entity block content
+; Entity block content  
 (block_entity_item) @type
 (block_property) @property
 (block_comment) @comment
+
+; Bracket highlighting
+(open_brace) @punctuation.bracket
+(close_brace) @punctuation.bracket
 
 ; Nested blocks like @eras
 (nested_block) @keyword
@@ -41,8 +44,8 @@
 
 ; Entity references in prose
 (entity_reference) @variable.special
-(ref_open) @punctuation.bracket
-(ref_close) @punctuation.bracket
+(ref_open) @punctuation.special
+(ref_close) @punctuation.special
 
 ; Dialogue speakers
 (dialogue_speaker) @character
