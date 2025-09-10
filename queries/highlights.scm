@@ -33,7 +33,6 @@
 ; Entity blocks
 (entity_block_start "@" @keyword)
 (entity_block_start block_type: (_) @type)
-(entity_block_start open_brace: (_) @punctuation.bracket)
 (entity_block_end) @punctuation.bracket
 
 ; Entity block content  
