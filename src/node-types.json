@@ -528,6 +528,18 @@
     "named": false
   },
   {
+    "type": "Beat",
+    "named": false
+  },
+  {
+    "type": "Narrative",
+    "named": false
+  },
+  {
+    "type": "Treatment",
+    "named": false
+  },
+  {
     "type": "characters",
     "named": false
   },

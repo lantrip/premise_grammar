@@ -5,14 +5,24 @@
 (file_header) @keyword
 
 ; Act, Scene, and Cel headers
-(act_header) @markup.heading
-(scene_header) @markup.heading  
-(cel_header) @markup.heading
+(act_header) @markup.heading.1
+(scene_header) @markup.heading.2  
+(cel_header) @markup.heading.3
 
-; Content types
-(content_type_beat) @markup.bold
-(content_type_treatment) @markup.italic
-(content_type_narrative) @string
+; Header markers
+(act_header "=" @punctuation.special)
+(scene_header "==" @punctuation.special)
+(cel_header "===" @punctuation.special)
+
+; Content types and their markers
+(content_type_beat) @keyword.control
+(content_type_treatment) @keyword.control  
+(content_type_narrative) @keyword.control
+
+; Content type text
+(content_type_beat content: (_) @markup.bold)
+(content_type_treatment content: (_) @markup.italic)
+(content_type_narrative content: (_) @string)
 
 ; Entity definitions
 (entity_definition) @keyword

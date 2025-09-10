@@ -31,7 +31,7 @@ module.exports = grammar({
     line_comment: ($) => token(seq("#", /.*/)),
 
     file_header: ($) => prec(10, seq(
-      field("key", token(/[A-Z][A-Z_]*/)),
+      field("key", /[A-Z][A-Z_]*/),
       ":",
       optional(/\s+/),
       optional(field("value", /.*/))
@@ -39,7 +39,7 @@ module.exports = grammar({
 
     act_header: ($) =>
       prec(10, seq(
-        token("="),
+        "=",
         /\s+/,
         field("title", /[^\r\n(]+/),
         optional(field("proportion", /\(\d+(?:\.\d+)?%\)/))
@@ -47,7 +47,7 @@ module.exports = grammar({
 
     scene_header: ($) =>
       prec(10, seq(
-        token("=="),
+        "==",
         /\s+/,
         field("title", /[^\r\n(]+/),
         optional(field("proportion", /\(\d+(?:\.\d+)?%\)/))
@@ -55,7 +55,7 @@ module.exports = grammar({
 
     cel_header: ($) =>
       prec(10, seq(
-        token("==="),
+        "===",
         /\s+/,
         field("title", /[^\r\n-]+/),
         optional(seq(
@@ -68,13 +68,28 @@ module.exports = grammar({
 
     // Enhanced content types with multi-line support and labels
     content_type_beat: ($) => 
-      prec(9, seq(token("///"), optional(field("content", /.*/)))),
+      prec(9, seq(
+        "///",
+        optional(/\s+/),
+        optional(seq("Beat", optional(/\s+/))),
+        optional(field("content", /.*/))
+      )),
     
     content_type_treatment: ($) =>
-      prec(9, seq(token("//"), optional(field("content", /.*/)))),
+      prec(9, seq(
+        "//",
+        optional(/\s+/),
+        optional(seq("Treatment", optional(/\s+/))),
+        optional(field("content", /.*/))
+      )),
     
     content_type_narrative: ($) =>
-      prec(9, seq(token("/"), optional(field("content", /.*/)))),
+      prec(9, seq(
+        "/",
+        optional(/\s+/),
+        optional(seq("Narrative", optional(/\s+/))),
+        optional(field("content", /.*/))
+      )),
 
     entity_definition: ($) =>
       prec(8, seq(
