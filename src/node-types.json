@@ -27,33 +27,7 @@
   {
     "type": "block_entity_item",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "block_comment",
-          "named": true
-        },
-        {
-          "type": "close_brace",
-          "named": true
-        },
-        {
-          "type": "nested_block",
-          "named": true
-        },
-        {
-          "type": "newline",
-          "named": true
-        },
-        {
-          "type": "open_brace",
-          "named": true
-        }
-      ]
-    }
+    "fields": {}
   },
   {
     "type": "block_property",
@@ -175,6 +149,10 @@
         },
         {
           "type": "block_property",
+          "named": true
+        },
+        {
+          "type": "nested_block",
           "named": true
         }
       ]
