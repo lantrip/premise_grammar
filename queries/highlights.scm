@@ -32,8 +32,10 @@
 (entity_block_end) @punctuation.bracket
 
 ; Entity block content  
-(block_entity_item) @type
-(block_property) @property
+(block_entity_item entity_name: (_) @type.builtin)
+(block_entity_item entity_desc: (_) @string)
+(block_property prop_key: (_) @property)
+(block_property prop_value: (_) @string)
 (block_comment) @comment
 
 ; Bracket highlighting
@@ -42,6 +44,10 @@
 
 ; Nested blocks like @eras
 (nested_block) @keyword
+(nested_block nested_type: (_) @type)
+(deeper_nested_block key: (_) @property)
+(deeper_nested_block nested_key: (_) @property)
+(deeper_nested_block nested_value: (_) @string)
 
 ; Import statements
 (import_statement) @keyword

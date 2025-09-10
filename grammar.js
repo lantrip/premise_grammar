@@ -136,39 +136,18 @@ module.exports = grammar({
       choice(
         $.block_entity_item,
         $.block_property,
-        $.block_comment
+        $.block_comment,
+        $.nested_block
       ),
 
     block_entity_item: ($) =>
-      choice(
-        // Simple list item
-        seq(
-          /\s*/,
-          "-",
-          /\s*/,
-          field("entity_name", /[^\r\n:{]+/),
-          optional(seq(":", /\s*/, field("entity_desc", /[^\r\n{]+/))),
-          /\r?\n/
-        ),
-        // List item with nested block
-        seq(
-          /\s*/,
-          "-",
-          /\s*/,
-          field("entity_name", /[^\r\n:{]+/),
-          /\s*:\s*/,
-          alias("{", $.open_brace),
-          /\s*\r?\n/,
-          repeat(choice(
-            seq(/\s+/, field("item_key", /\w+/), ":", /\s*/, field("item_value", /[^\r\n]+/), /\r?\n/),
-            $.nested_block,
-            $.block_comment,
-            $.newline
-          )),
-          /\s*/,
-          alias("}", $.close_brace),
-          /\r?\n/
-        )
+      seq(
+        /\s*/,
+        "-",
+        /\s*/,
+        field("entity_name", /[^\r\n:{]+/),
+        optional(seq(":", /\s*/, field("entity_desc", /[^\r\n]+/))),
+        /\r?\n/
       ),
 
     block_property: ($) =>
