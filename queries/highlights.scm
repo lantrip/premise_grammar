@@ -24,13 +24,15 @@
 (content_type_treatment content: (_) @markup.italic)
 (content_type_narrative content: (_) @string)
 
-; Entity definitions
+; Entity definitions - highlight all @ symbols and types
+(entity_definition) @keyword
 (entity_definition "@" @keyword)
 (entity_definition entity_type: (_) @type)
 (entity_definition name: (_) @variable.special)
 (entity_definition description: (_) @string)
 
-; Entity blocks
+; Entity blocks - highlight all @ symbols and block types
+(entity_block_start) @keyword  
 (entity_block_start "@" @keyword)
 (entity_block_start block_type: (_) @type)
 (entity_block_end) @punctuation.bracket
@@ -46,7 +48,8 @@
 (open_brace) @punctuation.bracket
 (close_brace) @punctuation.bracket
 
-; Nested blocks like @eras
+; Nested blocks like @eras - highlight all @ symbols
+(nested_block) @keyword
 (nested_block "@" @keyword)
 (nested_block nested_type: (_) @type)
 (deeper_nested_block key: (_) @property)
