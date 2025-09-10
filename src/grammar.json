@@ -827,7 +827,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "\\s*"
+          "value": "\\s+"
         },
         {
           "type": "STRING",
@@ -884,7 +884,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "\\s*"
+          "value": "\\s+"
         },
         {
           "type": "ALIAS",

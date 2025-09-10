@@ -165,7 +165,7 @@ module.exports = grammar({
     // Support for nested blocks like @eras with proper indentation
     nested_block: ($) =>
       seq(
-        /\s*/,
+        /\s+/,  // Must be indented
         "@",
         field("nested_type", /\w+/),
         /\s*/,
@@ -177,7 +177,7 @@ module.exports = grammar({
           $.deeper_nested_block,
           $.newline
         )),
-        /\s*/,
+        /\s+/,  // Closing brace should also be indented
         alias("}", $.close_brace)
       ),
     

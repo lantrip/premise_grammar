@@ -25,10 +25,15 @@
 (content_type_narrative content: (_) @string)
 
 ; Entity definitions
-(entity_definition) @keyword
+(entity_definition "@" @keyword)
+(entity_definition entity_type: (_) @type)
+(entity_definition name: (_) @variable.special)
+(entity_definition description: (_) @string)
 
 ; Entity blocks
-(entity_block_start) @keyword
+(entity_block_start "@" @keyword)
+(entity_block_start block_type: (_) @type)
+(entity_block_start open_brace: (_) @punctuation.bracket)
 (entity_block_end) @punctuation.bracket
 
 ; Entity block content  
@@ -43,7 +48,7 @@
 (close_brace) @punctuation.bracket
 
 ; Nested blocks like @eras
-(nested_block) @keyword
+(nested_block "@" @keyword)
 (nested_block nested_type: (_) @type)
 (deeper_nested_block key: (_) @property)
 (deeper_nested_block nested_key: (_) @property)
