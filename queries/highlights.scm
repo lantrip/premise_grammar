@@ -61,6 +61,12 @@
 
 ; Adapter statements
 (adapter_statement) @keyword
+(adapter_inline_block adapter_name: (_) @type.builtin)
+(adapter_property key: (_) @property)
+(adapter_property value: (_) @string)
+(adapter_nested_block block_key: (_) @property)
+(adapter_nested_block list_key: (_) @property)
+(adapter_nested_block list_value: (_) @string)
 
 ; Metadata
 (metadata_line) @property

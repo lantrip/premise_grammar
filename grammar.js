@@ -6,7 +6,6 @@ module.exports = grammar({
 
   conflicts: ($) => [
     [$.entity_block, $.entity_block_content],
-    [$.nested_block, $.deeper_nested_block]
   ],
 
   rules: {
@@ -68,26 +67,20 @@ module.exports = grammar({
 
     // Enhanced content types with multi-line support and labels
     content_type_beat: ($) => 
-      prec(9, seq(
+      prec.right(9, seq(
         "///",
-        optional(/\s+/),
-        optional(seq("Beat", optional(/\s+/))),
         optional(field("content", /.*/))
       )),
     
     content_type_treatment: ($) =>
-      prec(9, seq(
+      prec.right(9, seq(
         "//",
-        optional(/\s+/),
-        optional(seq("Treatment", optional(/\s+/))),
         optional(field("content", /.*/))
       )),
     
     content_type_narrative: ($) =>
-      prec(9, seq(
+      prec.right(9, seq(
         "/",
-        optional(/\s+/),
-        optional(seq("Narrative", optional(/\s+/))),
         optional(field("content", /.*/))
       )),
 
@@ -104,13 +97,13 @@ module.exports = grammar({
     entity_block: ($) =>
       seq(
         $.entity_block_start,
-        /\s*\r?\n/,
+        optional(/\s*\r?\n/),
         repeat(choice(
           $.entity_block_content,
           $.nested_block,
           $.newline
         )),
-        /\s*/,
+        optional(/\s*/),
         $.entity_block_end
       ),
 
@@ -146,8 +139,7 @@ module.exports = grammar({
         "-",
         /\s*/,
         field("entity_name", /[^\r\n:{]+/),
-        optional(seq(":", /\s*/, field("entity_desc", /[^\r\n]+/))),
-        /\r?\n/
+        optional(seq(":", /\s*/, field("entity_desc", /[^\r\n]+/)))
       ),
 
     block_property: ($) =>
@@ -155,8 +147,8 @@ module.exports = grammar({
         /\s+/,
         field("prop_key", /\w+/),
         ":",
-        field("prop_value", /[^\r\n]+/),
-        /\r?\n/
+        optional(/\s*/),
+        field("prop_value", /[^\r\n]+/)
       ),
 
     block_comment: ($) => 
@@ -164,22 +156,21 @@ module.exports = grammar({
 
     // Support for nested blocks like @eras with proper indentation
     nested_block: ($) =>
-      seq(
+      prec.right(seq(
         /\s+/,  // Must be indented
         "@",
         field("nested_type", /\w+/),
         /\s*/,
         alias("{", $.open_brace),
-        /\s*\r?\n/,
         repeat(choice(
           $.block_property,
           $.block_comment,
           $.deeper_nested_block,
           $.newline
         )),
-        /\s+/,  // Closing brace should also be indented
+        optional(/\s+/),  // Closing brace may or may not be indented
         alias("}", $.close_brace)
-      ),
+      )),
     
     // Support deeply nested blocks
     deeper_nested_block: ($) =>
@@ -218,6 +209,7 @@ module.exports = grammar({
         "@adapter",
         /\s+/,
         choice(
+          // External adapter reference
           seq(
             choice(
               seq('"', field("adapter_path", /[^"]+/), '"'),
@@ -225,12 +217,49 @@ module.exports = grammar({
             ),
             optional(seq(/\s+@timing:/, field("timing", /\w+/)))
           ),
-          seq(
-            field("adapter_name", /\w+/),
-            /\s*/,
-            alias("{", $.open_brace)
-          )
+          // Inline adapter definition
+          $.adapter_inline_block
         )
+      )),
+
+    adapter_inline_block: ($) =>
+      seq(
+        field("adapter_name", /\w+/),
+        /\s*/,
+        alias("{", $.open_brace),
+        optional(/\s*\r?\n/),
+        repeat(choice(
+          $.adapter_property,
+          $.adapter_nested_block,
+          $.newline
+        )),
+        optional(/\s*/),
+        alias("}", $.close_brace)
+      ),
+
+    adapter_property: ($) =>
+      seq(
+        /\s+/,
+        field("key", /\w+/),
+        ":",
+        optional(/\s*/),
+        field("value", /[^\r\n]+/)
+      ),
+
+    adapter_nested_block: ($) =>
+      prec.right(seq(
+        /\s+/,
+        field("block_key", /\w+/),
+        ":",
+        repeat(seq(
+          /\s+/,
+          "-",
+          /\s*/,
+          field("list_key", /\w+/),
+          ":",
+          optional(/\s*/),
+          field("list_value", /[^\r\n]+/)
+        ))
       )),
 
     metadata_line: ($) => prec(7, seq(
