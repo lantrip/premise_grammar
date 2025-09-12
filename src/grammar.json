@@ -18,6 +18,10 @@
           {
             "type": "SYMBOL",
             "name": "newline"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "line_comment"
           }
         ]
       }
@@ -466,18 +470,6 @@
           "name": "entity_block_start"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "\\s*\\r?\\n"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
           "type": "REPEAT",
           "content": {
             "type": "CHOICE",
@@ -493,21 +485,13 @@
               {
                 "type": "SYMBOL",
                 "name": "newline"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[^\\r\\n{}]+"
               }
             ]
           }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "\\s*"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
         },
         {
           "type": "SYMBOL",
@@ -609,7 +593,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "\\s*"
+          "value": "[ \\t]*"
         },
         {
           "type": "STRING",
@@ -617,44 +601,31 @@
         },
         {
           "type": "PATTERN",
-          "value": "\\s*"
+          "value": "[ \\t]+"
         },
         {
           "type": "FIELD",
           "name": "entity_name",
           "content": {
             "type": "PATTERN",
-            "value": "[^\\r\\n:{]+"
+            "value": "[A-Za-z][A-Za-z0-9 ]*"
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ":"
-                },
-                {
-                  "type": "PATTERN",
-                  "value": "\\s*"
-                },
-                {
-                  "type": "FIELD",
-                  "name": "entity_desc",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "[^\\r\\n]+"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]*"
+        },
+        {
+          "type": "FIELD",
+          "name": "entity_desc",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\r\\n]+"
+          }
         }
       ]
     },
@@ -663,14 +634,14 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "\\s+"
+          "value": "[ \\t]+"
         },
         {
           "type": "FIELD",
           "name": "prop_key",
           "content": {
             "type": "PATTERN",
-            "value": "\\w+"
+            "value": "[a-z_][a-z_0-9]*"
           }
         },
         {
@@ -678,16 +649,8 @@
           "value": ":"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "\\s*"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "PATTERN",
+          "value": "[ \\t]*"
         },
         {
           "type": "FIELD",
@@ -713,10 +676,6 @@
         {
           "type": "PATTERN",
           "value": "[^\\r\\n]*"
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\r?\\n"
         }
       ]
     },
@@ -1389,8 +1348,8 @@
       }
     },
     "prose_line": {
-      "type": "PREC_RIGHT",
-      "value": 1,
+      "type": "PREC",
+      "value": -1,
       "content": {
         "type": "SEQ",
         "members": [

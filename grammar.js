@@ -9,7 +9,7 @@ module.exports = grammar({
   ],
 
   rules: {
-    source_file: ($) => repeat(choice($.line, $.entity_block, $.newline)),
+    source_file: ($) => repeat(choice($.line, $.entity_block, $.newline, $.line_comment)),
 
     line: ($) =>
       choice(
@@ -97,13 +97,12 @@ module.exports = grammar({
     entity_block: ($) =>
       seq(
         $.entity_block_start,
-        optional(/\s*\r?\n/),
         repeat(choice(
           $.entity_block_content,
           $.nested_block,
-          $.newline
+          $.newline,
+          /[^\r\n{}]+/  // Accept any content that's not braces or newlines
         )),
-        optional(/\s*/),
         $.entity_block_end
       ),
 
@@ -135,24 +134,26 @@ module.exports = grammar({
 
     block_entity_item: ($) =>
       seq(
-        /\s*/,
+        /[ \t]*/,
         "-",
-        /\s*/,
-        field("entity_name", /[^\r\n:{]+/),
-        optional(seq(":", /\s*/, field("entity_desc", /[^\r\n]+/)))
+        /[ \t]+/,
+        field("entity_name", /[A-Za-z][A-Za-z0-9 ]*/),
+        ":",
+        /[ \t]*/,
+        field("entity_desc", /[^\r\n]+/)
       ),
 
     block_property: ($) =>
       seq(
-        /\s+/,
-        field("prop_key", /\w+/),
+        /[ \t]+/,
+        field("prop_key", /[a-z_][a-z_0-9]*/),
         ":",
-        optional(/\s*/),
+        /[ \t]*/,
         field("prop_value", /[^\r\n]+/)
       ),
 
     block_comment: ($) => 
-      seq(/\s*/, "#", /[^\r\n]*/, /\r?\n/),
+      seq(/\s*/, "#", /[^\r\n]*/),
 
     // Support for nested blocks like @eras with proper indentation
     nested_block: ($) =>
@@ -271,7 +272,7 @@ module.exports = grammar({
 
     // Enhanced prose line to handle entity references
     prose_line: ($) => 
-      prec.right(1, seq(
+      prec(-1, seq(
         repeat1(choice(
           $.entity_reference,
           $.dialogue_speaker,
@@ -303,6 +304,7 @@ module.exports = grammar({
       ),
 
     prose_text: ($) => token(prec(-1, /[^\r\n{()}]+/)),
+
 
     newline: ($) => /\r?\n/,
   },
