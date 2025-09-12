@@ -17,6 +17,10 @@
           },
           {
             "type": "SYMBOL",
+            "name": "simple_entity_block"
+          },
+          {
+            "type": "SYMBOL",
             "name": "newline"
           },
           {
@@ -510,37 +514,8 @@
           "type": "FIELD",
           "name": "block_type",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "entities"
-              },
-              {
-                "type": "STRING",
-                "value": "characters"
-              },
-              {
-                "type": "STRING",
-                "value": "locations"
-              },
-              {
-                "type": "STRING",
-                "value": "items"
-              },
-              {
-                "type": "STRING",
-                "value": "creatures"
-              },
-              {
-                "type": "STRING",
-                "value": "eras"
-              },
-              {
-                "type": "STRING",
-                "value": "world_eras"
-              }
-            ]
+            "type": "PATTERN",
+            "value": "[A-Za-z_][A-Za-z0-9_]*"
           }
         },
         {
@@ -1491,6 +1466,51 @@
           "value": "[^\\r\\n{()}]+"
         }
       }
+    },
+    "simple_entity_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\w+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\s*"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[^{}]+"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "simple_entity_block"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\r?\\n"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
     },
     "newline": {
       "type": "PATTERN",

@@ -19,11 +19,6 @@
 (content_type_treatment) @keyword.control  
 (content_type_narrative) @keyword.control
 
-; Content type text
-(content_type_beat content: (_) @markup.bold)
-(content_type_treatment content: (_) @markup.italic)
-(content_type_narrative content: (_) @string)
-
 ; Entity definitions - highlight all @ symbols and types
 (entity_definition) @keyword
 (entity_definition "@" @keyword)
@@ -31,30 +26,30 @@
 (entity_definition name: (_) @variable.special)
 (entity_definition description: (_) @string)
 
-; Entity blocks - highlight all @ symbols and block types
-(entity_block_start) @keyword  
+; Entity blocks
+(entity_block_start) @keyword
 (entity_block_start "@" @keyword)
 (entity_block_start block_type: (_) @type)
+(open_brace) @punctuation.bracket
 (entity_block_end) @punctuation.bracket
 
-; Entity block content  
+; Block list items like "- Name: description"
+(block_entity_item) @type.builtin
+(block_entity_item "-" @punctuation)
 (block_entity_item entity_name: (_) @type.builtin)
+(block_entity_item ":" @punctuation)
 (block_entity_item entity_desc: (_) @string)
+
+; Block properties like "key: value"
+(block_property) @property
 (block_property prop_key: (_) @property)
+(block_property ":" @punctuation)
 (block_property prop_value: (_) @string)
-(block_comment) @comment
 
-; Bracket highlighting
-(open_brace) @punctuation.bracket
-(close_brace) @punctuation.bracket
-
-; Nested blocks like @eras - highlight all @ symbols
+; Nested blocks like "  @eras { ... }"
 (nested_block) @keyword
 (nested_block "@" @keyword)
 (nested_block nested_type: (_) @type)
-(deeper_nested_block key: (_) @property)
-(deeper_nested_block nested_key: (_) @property)
-(deeper_nested_block nested_value: (_) @string)
 
 ; Import statements
 (import_statement) @keyword

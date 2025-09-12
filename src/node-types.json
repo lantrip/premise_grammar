@@ -217,42 +217,7 @@
   {
     "type": "entity_block_start",
     "named": true,
-    "fields": {
-      "block_type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "characters",
-            "named": false
-          },
-          {
-            "type": "creatures",
-            "named": false
-          },
-          {
-            "type": "entities",
-            "named": false
-          },
-          {
-            "type": "eras",
-            "named": false
-          },
-          {
-            "type": "items",
-            "named": false
-          },
-          {
-            "type": "locations",
-            "named": false
-          },
-          {
-            "type": "world_eras",
-            "named": false
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
       "required": true,
@@ -468,6 +433,21 @@
     "fields": {}
   },
   {
+    "type": "simple_entity_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "simple_entity_block",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
@@ -490,6 +470,10 @@
         },
         {
           "type": "newline",
+          "named": true
+        },
+        {
+          "type": "simple_entity_block",
           "named": true
         }
       ]
@@ -552,10 +536,6 @@
     "named": false
   },
   {
-    "type": "characters",
-    "named": false
-  },
-  {
     "type": "close_brace",
     "named": true
   },
@@ -564,29 +544,9 @@
     "named": true
   },
   {
-    "type": "creatures",
-    "named": false
-  },
-  {
-    "type": "entities",
-    "named": false
-  },
-  {
-    "type": "eras",
-    "named": false
-  },
-  {
-    "type": "items",
-    "named": false
-  },
-  {
     "type": "line_comment",
     "named": true,
     "extra": true
-  },
-  {
-    "type": "locations",
-    "named": false
   },
   {
     "type": "open_brace",
@@ -609,7 +569,11 @@
     "named": true
   },
   {
-    "type": "world_eras",
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "}",
     "named": false
   }
 ]

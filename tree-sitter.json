@@ -1,0 +1,22 @@
+{
+  "grammars": [
+    {
+      "name": "cuneiform",
+      "scope": "source.cuneiform",
+      "file-types": ["cune", "cuneiform"],
+      "injection-regex": "^cuneiform$",
+      "highlights": ["queries/highlights.scm"],
+      "brackets": ["queries/brackets.scm"],
+      "indents": ["queries/indents.scm"]
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Cuneiform story language grammar with entity blocks and nested eras",
+    "authors": [{ "name": "David Lantrip" }],
+    "links": {
+      "repository": "https://github.com/lantrip/cuneiform_grammar"
+    }
+  }
+}
