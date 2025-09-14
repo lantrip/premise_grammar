@@ -1,6 +1,5 @@
 ; Indentation rules
-(entity_block_start) @indent
-(entity_block_end) @outdent
+; Note: entity blocks don't have specific start/end nodes
 
 ; Content under headers should be indented
 (act_header) @indent
