@@ -1,0 +1,5 @@
+# Test: Entity definitions (inline)
+@character Hero: A brave adventurer
+@location Castle: Ancient fortress
+@item Sword: Sharp blade
+@world_era Colony Days: Before the rescue

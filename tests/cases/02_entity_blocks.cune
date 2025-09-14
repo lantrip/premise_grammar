@@ -1,0 +1,12 @@
+# Test: Entity blocks (simple)
+@characters {
+    - Hero: A brave adventurer
+    - Villain: Dark sorcerer
+    - Mentor: Wise guide
+}
+
+@locations {
+    - Castle: Ancient fortress
+    - Forest: Dark woods
+    - Village: Peaceful settlement
+}

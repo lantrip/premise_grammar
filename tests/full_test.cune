@@ -1,0 +1,11 @@
+@character Hero: Description
+@world_eras { 
+  - Era 1: First time period
+}
+TITLE: Test Story
+= Act One
+== Scene One  
+=== Opening - INT. Castle - MORNING
+/// Beat content
+// Treatment content
+/ Narrative content

@@ -1,0 +1,4 @@
+@character Hero: A brave adventurer
+@world_eras {
+    - Test: Description
+}

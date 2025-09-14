@@ -1,0 +1,8 @@
+@characters {
+    - Camellia: Teenage capybara colony shepherd
+      role: protagonist
+      @eras {
+        colony_days: desperate leader
+        arrival: overwhelmed but curious
+      }
+}

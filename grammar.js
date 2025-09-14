@@ -4,19 +4,71 @@ module.exports = grammar({
 
   extras: ($) => [/[ \t]/, $.line_comment],
 
-  conflicts: ($) => [[$.entity_block, $.entity_block_content]],
+  conflicts: ($) => [],
 
   rules: {
     source_file: ($) =>
       repeat(
         choice(
           $.line,
-          $.entity_block,
-          $.simple_entity_block,
           $.newline,
           $.line_comment
         )
       ),
+
+    // Entity block rule - handle balanced braces (like @eras {...})
+    entity_block: ($) =>
+      seq(
+        "@",
+        field("block_type", choice(
+          /characters?\s*\{/,
+          /locations?\s*\{/,
+          /items?\s*\{/,
+          /entities\s*\{/,
+          /themes\s*\{/,
+          /custom_metadata\s*\{/,
+          /notes\s*\{/,
+          /metadata\s*\{/,
+          /display\s*\{/,
+          /requirements\s*\{/,
+          // Eras support
+          /world_eras\s*\{/,
+          /entity_eras\s*\{/,
+          /character_eras\s*\{/,
+          /location_eras\s*\{/,
+          /eras\s*\{/
+        )),
+        repeat(choice(
+          $.balanced_braces,  // Handle { ... } patterns
+          /[^{}]+/,          // Content without braces
+          $.newline           // Allow newlines
+        )),
+        "}"
+      ),
+
+    // Match balanced braces for nested patterns like @eras { ... }
+    balanced_braces: ($) =>
+      seq(
+        "{",
+        repeat(choice(
+          $.balanced_braces, // Recursive for deeper nesting
+          /[^{}]+/,         // Content between braces
+          $.newline
+        )),
+        "}"
+      ),
+
+    // Entity definition only (not unified anymore)
+    entity_construct: ($) =>
+      prec.dynamic(10, seq(
+        "@",
+        field("entity_type", /\w+/),
+        /\s+/,
+        field("name", /[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*/), // Allow multi-word names
+        ":",
+        optional(/\s*/),
+        field("description", /.+/)
+      )),
 
     line: ($) =>
       choice(
@@ -27,23 +79,24 @@ module.exports = grammar({
         $.content_type_beat,
         $.content_type_treatment,
         $.content_type_narrative,
-        $.entity_definition,
+        $.metadata_line,
+        $.entity_construct, // Entity definitions
+        $.entity_block,     // Entity blocks with braces
         $.import_statement,
         $.adapter_statement,
-        $.metadata_line,
-        $.prose_line
+        $.prose_line        // Last resort - lowest precedence
       ),
 
     line_comment: ($) => token(seq("#", /.*/)),
 
     file_header: ($) =>
       prec(
-        10,
+        100,  // Very high precedence
         seq(
-          field("key", /[A-Z][A-Z_]*/),
+          field("key", /[A-Z][A-Z_]*/),  // One or more uppercase letters
           ":",
           optional(/\s+/),
-          optional(field("value", /.*/))
+          optional(field("value", /[^\r\n]+/))
         )
       ),
 
@@ -97,42 +150,6 @@ module.exports = grammar({
     content_type_narrative: ($) =>
       prec.right(9, seq("/", optional(field("content", /.*/)))),
 
-    entity_definition: ($) =>
-      prec(
-        8,
-        seq(
-          "@",
-          field("entity_type", /\w+/),
-          /\s+/,
-          field("name", /[A-Za-z0-9][A-Za-z0-9\s]*[A-Za-z0-9]|[A-Za-z0-9]/),
-          optional(seq(":", field("description", /.*/)))
-        )
-      ),
-
-    // Enhanced entity block support
-    entity_block: ($) =>
-      seq(
-        $.entity_block_start,
-        repeat(
-          choice(
-            $.entity_block_content,
-            $.nested_block,
-            $.newline,
-            /[^\r\n{}]+/ // Accept any content that's not braces or newlines
-          )
-        ),
-        $.entity_block_end
-      ),
-
-    entity_block_start: ($) =>
-      seq(
-        "@",
-        field("block_type", /[A-Za-z_][A-Za-z0-9_]*/),
-        /\s*/,
-        alias("{", $.open_brace)
-      ),
-
-    entity_block_end: ($) => alias("}", $.close_brace),
 
     entity_block_content: ($) =>
       choice(
@@ -164,11 +181,11 @@ module.exports = grammar({
 
     block_comment: ($) => seq(/\s*/, "#", /[^\r\n]*/),
 
-    // Support for nested blocks like @eras with proper indentation
+    // Support for nested blocks like @eras (flexible indentation)
     nested_block: ($) =>
       prec.right(
         seq(
-          /\s+/, // Must be indented
+          /\s*/, // Optional indentation - more flexible
           "@",
           field("nested_type", /\w+/),
           /\s*/,
@@ -181,7 +198,7 @@ module.exports = grammar({
               $.newline
             )
           ),
-          optional(/\s+/), // Closing brace may or may not be indented
+          optional(/\s*/), // Closing brace may or may not be indented
           alias("}", $.close_brace)
         )
       ),
@@ -243,7 +260,10 @@ module.exports = grammar({
                 seq('"', field("adapter_path", /[^"]+/), '"'),
                 seq("'", field("adapter_path", /[^']+/), "'")
               ),
-              optional(seq(/\s+@timing:/, field("timing", /\w+/)))
+              optional(choice(
+                seq(/\s+timing=/, field("timing", /\w+/)),
+                seq(/\s+@timing:/, field("timing", /\w+/))
+              ))
             ),
             // Inline adapter definition
             $.adapter_inline_block
@@ -255,59 +275,36 @@ module.exports = grammar({
       seq(
         field("adapter_name", /\w+/),
         /\s*/,
-        alias("{", $.open_brace),
-        optional(/\s*\r?\n/),
-        repeat(choice($.adapter_property, $.adapter_nested_block, $.newline)),
-        optional(/\s*/),
-        alias("}", $.close_brace)
-      ),
-
-    adapter_property: ($) =>
-      seq(
-        /\s+/,
-        field("key", /\w+/),
-        ":",
-        optional(/\s*/),
-        field("value", /[^\r\n]+/)
-      ),
-
-    adapter_nested_block: ($) =>
-      prec.right(
-        seq(
-          /\s+/,
-          field("block_key", /\w+/),
-          ":",
-          repeat(
-            seq(
-              /\s+/,
-              "-",
-              /\s*/,
-              field("list_key", /\w+/),
-              ":",
-              optional(/\s*/),
-              field("list_value", /[^\r\n]+/)
-            )
-          )
-        )
+        "{",
+        repeat(choice(
+          $.balanced_braces,  // Handle nested { ... } patterns
+          /[^{}]+/,          // Content without braces
+          $.newline           // Allow newlines
+        )),
+        "}"
       ),
 
     metadata_line: ($) =>
       prec(
-        7,
-        seq("@", field("meta_key", /\w+/), ":", field("meta_value", /.*/))
+        7, // Standard precedence, no conflicts with @ syntax
+        seq("+", field("meta_key", /\w+/), ":", field("meta_value", /.*/))
       ),
 
-    // Enhanced prose line to handle entity references
+    // Enhanced prose line to handle entity references (single line only)
     prose_line: ($) =>
       prec(
         -1,
-        seq(
-          repeat1(
-            choice(
-              $.entity_reference,
-              $.dialogue_speaker,
-              $.parenthetical,
-              $.prose_text
+        choice(
+          // Standalone dialogue speaker (consumes newline)
+          $.dialogue_speaker,
+          // Mixed content on single line (no newlines)
+          seq(
+            repeat1(
+              choice(
+                $.entity_reference,
+                $.parenthetical,
+                $.prose_text
+              )
             )
           )
         )
@@ -337,17 +334,8 @@ module.exports = grammar({
         alias(")", $.close_paren)
       ),
 
-    prose_text: ($) => token(prec(-1, /[^\r\n{()}]+/)),
+    prose_text: ($) => prec(-10, /[^\r\n{}()=@+\/]+/),
 
-    simple_entity_block: ($) =>
-      seq(
-        "@",
-        /\w+/,
-        /\s*/,
-        "{",
-        repeat(choice(/[^{}]+/, $.simple_entity_block, /\r?\n/)),
-        "}"
-      ),
 
     newline: ($) => /\r?\n/,
   },

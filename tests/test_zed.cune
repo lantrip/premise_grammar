@@ -1,0 +1,4 @@
+@character Hero: Description
+@world_eras { 
+  - Era 1: First time period
+}

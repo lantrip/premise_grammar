@@ -1,0 +1,19 @@
+# Test: Story structure headers
+TITLE: Test Story
+WORLD: fantasy
+TEMPLATE: adventure
+
+= Act One - The Beginning (25%)
+
+== Opening Scene (50%)
+
+=== Hero's Introduction - INT. Castle - MORNING (30%)
+
+/// Beat
+{Hero} discovers the ancient secret.
+
+// Treatment
+The morning light filters through dusty windows as {Hero} approaches the mysterious door.
+
+/ Narrative
+"What lies beyond?" {Hero} whispered, hand trembling on the cold stone.

@@ -1,0 +1,17 @@
+# Test: Nested blocks (@eras within entities)
+@characters {
+    - Hero: Main protagonist
+      role: hero
+      abilities: magic, sword fighting
+      @eras {
+        beginning: young and naive
+        middle: learning and growing
+        end: experienced warrior
+      }
+
+    - Villain: Antagonist
+      @eras {
+        beginning: plotting in shadows
+        end: final confrontation
+      }
+}
