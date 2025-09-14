@@ -47,7 +47,7 @@ run_test() {
 
 # Test individual pattern files
 echo "📋 Testing individual syntax patterns:"
-for test_file in test_cases/*.cune; do
+for test_file in cases/*.cune; do
     if [ -f "$test_file" ]; then
         run_test "$test_file"
     fi
@@ -57,7 +57,7 @@ echo
 
 # Test the main example file
 echo "📋 Testing main example file:"
-EXAMPLE_FILE="../../examples/habitatable/world_with_inline_eras.cune"
+EXAMPLE_FILE="../../../examples/habitatable/world_with_inline_eras.cune"
 if [ -f "$EXAMPLE_FILE" ]; then
     run_test "$EXAMPLE_FILE"
 else
