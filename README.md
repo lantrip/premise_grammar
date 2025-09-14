@@ -229,4 +229,4 @@ This solves the fundamental parsing conflict where `@eras {` inside `@characters
 2. Run tests to ensure nothing breaks
 3. Build both parser and WASM
 4. Test in VSCode extension before committing
-5. Document any new syntax features in this README
+5. Document any new syntax features in this README# Updated Sun Sep 14 10:24:53 EDT 2025
