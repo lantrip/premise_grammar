@@ -45,7 +45,7 @@
 (adapter_statement) @keyword
 
 ; Metadata
-(metadata_line) @property
+(metadata_line) @meta.property
 
 ; Entity references - character/location/item names in story
 (entity_reference) @entity.name.reference
@@ -53,11 +53,16 @@
 (ref_close) @punctuation.definition.entity.end
 
 ; Story content - different types of narrative text
+(prose_line) @text.prose.line
 (dialogue_speaker) @entity.name.character.speaker
 (parenthetical) @text.parenthetical
 (prose_text) @text.narrative
 
-; Punctuation
+; Parenthetical punctuation - specific to dialogue/prose
+(open_paren) @punctuation.definition.parenthetical.begin
+(close_paren) @punctuation.definition.parenthetical.end
+
+; General punctuation
 ":" @punctuation.delimiter
 "{" @punctuation.bracket
 "}" @punctuation.bracket

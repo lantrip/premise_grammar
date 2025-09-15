@@ -73,15 +73,41 @@ for query_file in queries/*.scm; do
 done
 
 echo
-if [ -z "$FAILED_QUERIES" ]; then
-    echo -e "🎉 ${GREEN}All queries passed!${NC}"
+
+# Run scope validation if Python is available
+if command -v python3 &> /dev/null; then
+    echo "🔍 Running scope validation..."
+    echo
+    if [ -f "scripts/validate_scopes.py" ]; then
+        python3 scripts/validate_scopes.py
+        SCOPE_VALIDATION_RESULT=$?
+        echo
+    else
+        echo -e "${YELLOW}⚠️  Scope validation script not found${NC}"
+        echo "  Create scripts/validate_scopes.py for enhanced validation"
+        SCOPE_VALIDATION_RESULT=0
+    fi
+else
+    echo -e "${YELLOW}⚠️  Python3 not found - skipping scope validation${NC}"
+    SCOPE_VALIDATION_RESULT=0
+fi
+
+# Final results
+if [ -z "$FAILED_QUERIES" ] && [ $SCOPE_VALIDATION_RESULT -eq 0 ]; then
+    echo -e "🎉 ${GREEN}All queries and scopes passed!${NC}"
     exit 0
 else
-    echo -e "❌ ${RED}Some queries failed:${NC}"
-    for query in $FAILED_QUERIES; do
-        echo "  - $(basename $query)"
-    done
-    echo
-    echo "Fix these queries based on the available node types listed above."
+    if [ ! -z "$FAILED_QUERIES" ]; then
+        echo -e "❌ ${RED}Some queries failed:${NC}"
+        for query in $FAILED_QUERIES; do
+            echo "  - $(basename $query)"
+        done
+        echo
+        echo "Fix these queries based on the available node types listed above."
+    fi
+    if [ $SCOPE_VALIDATION_RESULT -ne 0 ]; then
+        echo -e "❌ ${RED}Scope validation failed${NC}"
+        echo "  See validation report above for details"
+    fi
     exit 1
 fi

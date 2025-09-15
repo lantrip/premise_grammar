@@ -1,0 +1,32 @@
+# Test: Eras blocks syntax and highlighting
+# Shows @eras usage in different contexts
+
+@characters {
+    - Hero: Young adventurer seeking their destiny
+      @eras {
+        beginning: naive and hopeful
+        middle: tested by harsh realities
+        end: wise and confident
+      }
+
+    - Mentor: Wise old sage
+      @eras {
+        beginning: mysterious stranger
+        middle: trusted advisor
+        end: proud elder
+      }
+}
+
+@locations {
+    - Village: Small community in valley
+      @eras {
+        beginning: haven of peace
+        middle: under siege
+        end: rebuilt stronger
+      }
+}
+
+@eras {
+  ancient: The time of legends
+  modern: The current age
+}
