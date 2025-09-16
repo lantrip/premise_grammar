@@ -52,8 +52,8 @@
 
 ; Contextual entity references - more specific scoping for prose/narrative
 (prose_line (entity_reference) @entity.name.reference.prose)
-(prose_line (ref_open) @punctuation.definition.entity.begin.prose)
-(prose_line (ref_close) @punctuation.definition.entity.end.prose)
+(prose_line (entity_reference (ref_open) @punctuation.definition.entity.begin.prose))
+(prose_line (entity_reference (ref_close) @punctuation.definition.entity.end.prose))
 
 ; Generic entity reference punctuation (fallback)
 (ref_open) @punctuation.definition.entity.begin
