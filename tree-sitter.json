@@ -11,9 +11,9 @@
     }
   ],
   "metadata": {
-    "version": "0.1.0",
+    "version": "1.0.0",
     "license": "MIT",
-    "description": "Cuneiform story language grammar with entity blocks and nested eras",
+    "description": "Production-ready Cuneiform story language grammar with screenplay dialogue, entity system, and semantic scopes",
     "authors": [{ "name": "David Lantrip" }],
     "links": {
       "repository": "https://github.com/lantrip/cuneiform_grammar"

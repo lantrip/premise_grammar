@@ -6,7 +6,8 @@
       "Bash(npx tree-sitter:*)",
       "Bash(cargo test)",
       "Read(//Users/davidlantrip/repos/proof-again/premise/cuneiform/**)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(./test_queries.sh:*)"
     ],
     "deny": [],
     "ask": []

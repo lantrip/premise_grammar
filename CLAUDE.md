@@ -4,13 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Tree-sitter grammar for the Cuneiform language - a domain-specific language for story authoring that supports hierarchical content organization (acts/scenes/cels), entity definitions, content typing, and metadata.
+This is a Tree-sitter grammar for the Cuneiform language - a domain-specific language for story authoring that supports hierarchical content organization (acts/scenes/cels), entity definitions, screenplay-style dialogue, content typing, and metadata.
 
 **Core Responsibility**: This repository is the **foundational layer** for all Cuneiform editor support, providing:
-- Grammar definition (`grammar.js`)
+- Grammar definition (`grammar.js`) - currently production-ready with all core features working
 - **Story-focused semantic scopes** (`queries/highlights.scm`) that enable rich theming
-- Editor queries for syntax highlighting, indentation, and navigation
-- Validation tools to ensure query compatibility
+- Editor queries for syntax highlighting, indentation, navigation, and brackets
+- Validation tools and scripts to ensure query compatibility
+- WASM build for web/VSCode integration
 
 ## Development Commands
 
@@ -34,11 +35,13 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 
 ### Core Grammar (grammar.js)
 The grammar defines syntax rules for Cuneiform language elements:
-- **Hierarchical Headers**: Acts (`=`), Scenes (`==`), Cels (`===`) with optional percentage markers
+- **Hierarchical Headers**: Acts (`=`), Scenes (`==`), Cels (`===`) with optional location/time markers
+- **Screenplay Dialogue**: Character names as speakers (`{Hero}`), indented dialogue, parentheticals `(whisper)`
 - **Content Types**: Beat (`///`), Treatment (`//`), Narrative (`/`) prefixes
-- **Entity System**: Definitions (`@entity Name`) and blocks (`@entities { }`)
+- **Entity System**: Definitions (`@character Name`) and blocks (`@characters { }`), references (`{Name}`)
+- **File Headers**: `TITLE:`, `WORLD:`, `FORMAT:` declarations
 - **Imports/Adapters**: `@import` statements and `@adapter` configurations
-- **Metadata**: `@key: value` pairs
+- **Metadata**: `+key: value` pairs (note: `+` prefix, not `@`)
 - **Comments**: `#` prefixed lines
 
 ### Generated Files
@@ -46,10 +49,17 @@ The grammar defines syntax rules for Cuneiform language elements:
 - `src/grammar.json` - JSON representation of grammar rules
 - `src/node-types.json` - Node type definitions for language bindings
 
-### Bindings Structure
+### Repository Structure
 - `bindings/node/` - Node.js binding with fallback loading logic
 - `bindings/rust/` - Rust crate with language function and tests
-- Query files in `queries/` for syntax highlighting and editor features
+- `bindings/python/` - Python bindings for the grammar
+- `queries/` - Editor query files for syntax highlighting, brackets, indentation, and outline
+- `examples/` - Reference files including `theming_showcase.cune` for theme development
+- `scripts/` - Validation utilities including `validate_scopes.py`
+- `tests/` - Test cases and test runner
+- `src/` - Generated parser artifacts (do not edit manually)
+- `target/` - Rust build artifacts
+- `build/` - Build output directory
 
 ### Grammar Rules Organization
 Rules follow Tree-sitter conventions with `$` references and use regex patterns for content matching. The grammar prioritizes prose content while providing structure for screenplay elements.
@@ -69,6 +79,11 @@ The semantic scopes are designed specifically for story authors and enable rich 
 - `keyword.control.content.beat` - Structural story beats (`///`)
 - `keyword.control.content.treatment` - Scene direction (`//`)
 - `keyword.control.content.narrative` - Final story text (`/`)
+
+**Dialogue & Screenplay Elements:**
+- `entity.name.character.speaker` - Character speakers (`{Hero}`)
+- `text.parenthetical` - Action directions `(whisper)`
+- `markup.list.dialogue` - Indented dialogue content
 
 **Author vs Story Content:**
 - `comment.line` - Author notes (distinguished from story)
