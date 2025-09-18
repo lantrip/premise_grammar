@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Tree-sitter grammar for the Cuneiform language - a domain-specific language for story authoring that supports hierarchical content organization (acts/scenes/cels), entity definitions, screenplay-style dialogue, content typing, and metadata.
 
 **Core Responsibility**: This repository is the **foundational layer** for all Cuneiform editor support, providing:
+
 - Grammar definition (`grammar.js`) - currently production-ready with all core features working
 - **Story-focused semantic scopes** (`queries/highlights.scm`) that enable rich theming
 - Editor queries for syntax highlighting, indentation, navigation, and brackets
@@ -16,6 +17,7 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 ## Development Commands
 
 ### Essential Commands
+
 - `./build.sh` - Build grammar and WASM (recommended)
 - `./test_queries.sh` - **Critical**: Validate all query files before committing
 - `tree-sitter generate` - Generate parser from grammar.js
@@ -23,17 +25,20 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 - `tree-sitter parse <file>` - Parse a file and show syntax tree
 
 ### Query Development
+
 - **Always run `./test_queries.sh` after modifying `queries/*.scm`**
 - This validates that semantic scopes match actual grammar nodes
 - Prevents editor extension errors from invalid queries
 
 ### Language Bindings
+
 - **Node.js**: Built using binding.gyp with `node-gyp rebuild`
 - **Rust**: Built with `cargo build` - includes test for grammar loading
 
 ## Cuneiform Language Syntax
 
 ### Core Grammar Elements
+
 - **Hierarchical Headers**: Acts (`=`), Scenes (`==`), Cels (`===`) with optional location/time markers
 - **Screenplay Dialogue**: Character names as speakers (`{Hero}`), indented dialogue, parentheticals `(whisper)`
 - **Content Types**: Beat (`///`), Treatment (`//`), Narrative (`/`) prefixes
@@ -44,6 +49,7 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 - **Comments**: `#` prefixed lines
 
 ### Repository Structure
+
 - `grammar.js` - Core grammar definition
 - `queries/` - Editor query files for syntax highlighting, brackets, indentation, and outline
 - `examples/` - Reference files including `theming_showcase.cune` for theme development
@@ -58,27 +64,33 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 The semantic scopes are designed specifically for story authors and enable rich theming across different writing workflows:
 
 **Story Structure Hierarchy:**
+
 - `markup.heading.1.story.act` - Act headers
 - `markup.heading.2.story.scene` - Scene headers
 - `markup.heading.3.story.cel` - Cel headers
 
 **Content Type Layers:**
+
 - `keyword.control.content.beat` - Structural story beats (`///`)
 - `keyword.control.content.treatment` - Scene direction (`//`)
 - `keyword.control.content.narrative` - Final story text (`/`)
 
 **Dialogue & Screenplay Elements:**
+
 - `entity.name.character.speaker` - Character speakers (`{Hero}`)
 - `text.parenthetical` - Action directions `(whisper)`
 - `markup.list.dialogue` - Indented dialogue content
 
 **Author vs Story Content:**
+
 - `comment.line` - Author notes (distinguished from story)
 - `text.narrative` - Story prose and dialogue
 - `entity.name.reference` - Character/location names (`{Hero}`)
 
 ### Critical Importance
+
 These scopes are the **foundation** that enables:
+
 - Story author themes (screenplay, novel, dark themes)
 - Content layer distinction (planning vs final text)
 - Visual hierarchy for different story elements
@@ -87,6 +99,7 @@ These scopes are the **foundation** that enables:
 **Any changes to semantic scopes affect all editor extensions that consume this grammar.**
 
 ### Scope Validation
+
 - Run `./test_queries.sh` after any changes to verify scopes match grammar nodes
 - This prevents editor extension failures from invalid scope references
 - Extensions depend on these scopes for proper theming functionality
@@ -94,6 +107,7 @@ These scopes are the **foundation** that enables:
 ## Grammar Status
 
 **Production Ready**: All core features work reliably
+
 - ✅ Story structure (acts/scenes/cels)
 - ✅ Entity system with references
 - ✅ Screenplay-style dialogue
@@ -101,6 +115,7 @@ These scopes are the **foundation** that enables:
 - ✅ Semantic highlighting with story-focused scopes
 
 **Minor Edge Cases**: Intentional parsing constraints
+
 - 🟡 Empty entity references `{}` (invalid by design)
 - 🟡 Nested braces in entities (prevents ambiguity)
 - 🟡 Multi-line entity names (maintains readability)
@@ -115,7 +130,9 @@ These scopes are the **foundation** that enables:
 ## Extension Development Workflow
 
 ### Monorepo Structure
+
 This repository now includes editor extensions in `extensions/`:
+
 - `extensions/zed/` - Zed editor extension
 - `extensions/vscode/` - VSCode extension
 - `themes/` - Shared theme definitions
@@ -124,11 +141,13 @@ This repository now includes editor extensions in `extensions/`:
 ### Development vs Production
 
 **Development (Local Testing):**
+
 - Zed: Uses `file://` reference to local grammar in `extension.toml`
 - VSCode: Copies WASM and queries from grammar root
 - Test changes immediately without git commits
 
 **Production (Publishing):**
+
 - Zed: Must reference git repository with specific commit/rev
 - VSCode: Bundles pre-built WASM in extension package
 - Requires committed changes in main repository
@@ -136,6 +155,7 @@ This repository now includes editor extensions in `extensions/`:
 ### Extension Development Commands
 
 **Sync Extensions from Grammar:**
+
 ```bash
 # Copy WASM and queries to extensions
 ./scripts/sync-extensions.sh
@@ -151,6 +171,7 @@ code --install-extension .
 ```
 
 **Publishing Extensions:**
+
 ```bash
 # Update Zed extension.toml to reference git repo
 # Commit grammar changes first
@@ -175,3 +196,31 @@ vsce publish
 4. **Use example files**: Reference working `.cune` files rather than documenting syntax extensively
 5. **Maintain semantic scopes**: These are critical for editor extension functionality
 6. **Coordinate releases**: Update extensions after grammar changes are committed
+
+## New: Entity Block Highlighting – Implementation Notes
+
+Goal: highlight entity names differently from their values inside entity blocks and support nested object values (e.g., `@eras`).
+
+Changes you must preserve:
+
+- Grammar
+  - `entity_line` now: `- <entity_name>: <entity_desc | entity_object>`
+  - Added nodes: `entity_object`, `object_property`, `prop_key`, `prop_value`
+- Queries
+  - Capture `(entity_line (entity_name))`, `(entity_line (entity_desc))`
+  - Capture `(object_property (prop_key))` and `(prop_value)` for nested objects
+- VSCode semantics
+  - Map `entity_name` → `variable` (with `readonly` modifier)
+  - Map `entity_desc`/`prop_value` → `string`
+  - Map `prop_key` → `property`
+- TextMate guard
+  - Avoid TM rules that apply broad scopes which overshadow semantic tokens
+  - We replaced a block `{…}` pattern with a minimal `{[^{}\n]+}` reference rule
+- Themes
+  - Ensure `"semanticHighlighting": true` and include a color for `property`
+
+Debugging tips:
+
+- Use Developer: Inspect Editor Tokens and Scopes to confirm semantic tokens
+- Watch extension host logs for `Found entity_name`/`Found entity_desc` and token counts
+- If you see “Semantic token with invalid length”, check for zero-length ranges and clamp

@@ -30,20 +30,52 @@ class CuneiformSemanticTokensProvider {
         this.parser = parser;
         this.legend = new vscode.SemanticTokensLegend([
             // Basic types
-            'comment', 'keyword', 'string', 'number', 'operator',
-            'namespace', 'type', 'class', 'enum', 'interface',
-            'struct', 'typeParameter', 'parameter', 'variable',
-            'property', 'enumMember', 'event', 'function',
-            'method', 'macro', 'label',
+            "comment",
+            "keyword",
+            "string",
+            "number",
+            "operator",
+            "namespace",
+            "type",
+            "class",
+            "enum",
+            "interface",
+            "struct",
+            "typeParameter",
+            "parameter",
+            "variable",
+            "property",
+            "enumMember",
+            "event",
+            "function",
+            "method",
+            "macro",
+            "label",
             // Cuneiform-specific types
-            'story-act', 'story-scene', 'story-cel',
-            'content-beat', 'content-treatment', 'content-narrative',
-            'entity-reference', 'character-speaker', 'entity-definition',
-            'file-header', 'metadata', 'import'
+            "story-act",
+            "story-scene",
+            "story-cel",
+            "content-beat",
+            "content-treatment",
+            "content-narrative",
+            "entity-reference",
+            "character-speaker",
+            "entity-definition",
+            "file-header",
+            "metadata",
+            "import",
         ], [
-            'bold', 'italic', 'underline', 'strikethrough',
-            'readonly', 'static', 'abstract', 'deprecated',
-            'modification', 'documentation', 'defaultLibrary'
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "readonly",
+            "static",
+            "abstract",
+            "deprecated",
+            "modification",
+            "documentation",
+            "defaultLibrary",
         ]);
     }
     provideDocumentSemanticTokens(document) {
@@ -51,56 +83,76 @@ class CuneiformSemanticTokensProvider {
         const tokens = [];
         if (tree) {
             this.traverseTree(tree.rootNode, tokens, document);
+            console.log(`Cuneiform: Generated ${tokens.length / 5} semantic tokens`);
         }
         return new vscode.SemanticTokens(new Uint32Array(tokens));
     }
     traverseTree(node, tokens, document) {
         // Map Tree-sitter grammar nodes to semantic tokens
         switch (node.type) {
-            case 'act_header':
-                this.addToken(tokens, node, 'story-act', ['bold'], document);
+            case "act_header":
+                this.addToken(tokens, node, "story-act", ["bold"], document);
                 break;
-            case 'scene_header':
-                this.addToken(tokens, node, 'story-scene', ['bold'], document);
+            case "scene_header":
+                this.addToken(tokens, node, "story-scene", ["bold"], document);
                 break;
-            case 'cel_header':
-                this.addToken(tokens, node, 'story-cel', ['bold'], document);
+            case "cel_header":
+                this.addToken(tokens, node, "story-cel", ["bold"], document);
                 break;
-            case 'content_type_beat':
-                this.addToken(tokens, node, 'content-beat', ['bold'], document);
+            case "content_type_beat":
+                this.addToken(tokens, node, "content-beat", ["bold"], document);
                 break;
-            case 'content_type_treatment':
-                this.addToken(tokens, node, 'content-treatment', ['bold'], document);
+            case "content_type_treatment":
+                this.addToken(tokens, node, "content-treatment", ["bold"], document);
                 break;
-            case 'content_type_narrative':
-                this.addToken(tokens, node, 'content-narrative', ['bold'], document);
+            case "content_type_narrative":
+                this.addToken(tokens, node, "content-narrative", ["bold"], document);
                 break;
-            case 'entity_reference':
-                this.addToken(tokens, node, 'entity-reference', [], document);
+            case "entity_reference":
+                this.addToken(tokens, node, "entity-reference", [], document);
                 break;
-            case 'dialogue_speaker':
-                this.addToken(tokens, node, 'character-speaker', ['bold'], document);
+            case "dialogue_speaker":
+                this.addToken(tokens, node, "character-speaker", ["bold"], document);
                 break;
-            case 'entity_construct':
-                this.addToken(tokens, node, 'entity-definition', [], document);
+            case "entity_construct":
+                this.addToken(tokens, node, "entity-definition", [], document);
                 break;
-            case 'file_header':
-                this.addToken(tokens, node, 'file-header', ['bold'], document);
+            case "file_header":
+                this.addToken(tokens, node, "file-header", ["bold"], document);
                 break;
-            case 'metadata_line':
-                this.addToken(tokens, node, 'metadata', [], document);
+            case "metadata_line":
+                this.addToken(tokens, node, "metadata", [], document);
                 break;
-            case 'import_statement':
-                this.addToken(tokens, node, 'import', [], document);
+            case "import_statement":
+                this.addToken(tokens, node, "import", [], document);
                 break;
-            case 'adapter_statement':
-                this.addToken(tokens, node, 'import', [], document);
+            case "adapter_statement":
+                this.addToken(tokens, node, "import", [], document);
                 break;
-            case 'line_comment':
-                this.addToken(tokens, node, 'comment', ['italic'], document);
+            case "line_comment":
+                this.addToken(tokens, node, "comment", ["italic"], document);
                 break;
-            case 'parenthetical':
-                this.addToken(tokens, node, 'comment', ['italic'], document);
+            case "parenthetical":
+                this.addToken(tokens, node, "comment", ["italic"], document);
+                break;
+            case "entity_name":
+                console.log(`Found entity_name: ${document
+                    .getText()
+                    .substring(node.startIndex, node.endIndex)}`);
+                // Use standard token type so most themes colorize without customization
+                this.addToken(tokens, node, "variable", ["readonly"], document);
+                break;
+            case "entity_desc":
+                console.log(`Found entity_desc: ${document
+                    .getText()
+                    .substring(node.startIndex, node.endIndex)}`);
+                this.addToken(tokens, node, "string", [], document);
+                break;
+            case "prop_key":
+                this.addToken(tokens, node, "property", [], document);
+                break;
+            case "prop_value":
+                this.addToken(tokens, node, "string", [], document);
                 break;
         }
         // Recursively process child nodes
@@ -116,14 +168,18 @@ class CuneiformSemanticTokensProvider {
             console.warn(`Unknown token type: ${tokenType}`);
             return;
         }
-        tokens.push(startPos.line, startPos.character, endPos.character - startPos.character, tokenTypeIndex, this.encodeModifiers(modifiers));
+        const length = endPos.character - startPos.character;
+        if (length <= 0) {
+            return;
+        }
+        tokens.push(startPos.line, startPos.character, length, tokenTypeIndex, this.encodeModifiers(modifiers));
     }
     encodeModifiers(modifiers) {
         let result = 0;
         for (const modifier of modifiers) {
             const index = this.legend.tokenModifiers.indexOf(modifier);
             if (index !== -1) {
-                result |= (1 << index);
+                result |= 1 << index;
             }
         }
         return result;

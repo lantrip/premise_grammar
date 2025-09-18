@@ -141,14 +141,14 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "\\s*-\\s+"
+          "value": "[ \\t]*-\\s+"
         },
         {
           "type": "FIELD",
           "name": "entity_name",
           "content": {
-            "type": "PATTERN",
-            "value": "[A-Za-z][A-Za-z0-9 ]*"
+            "type": "SYMBOL",
+            "name": "entity_name"
           }
         },
         {
@@ -157,15 +157,28 @@
         },
         {
           "type": "PATTERN",
-          "value": "\\s*"
+          "value": "[ \\t]*"
         },
         {
-          "type": "FIELD",
-          "name": "entity_desc",
-          "content": {
-            "type": "PATTERN",
-            "value": "[^\\r\\n{}]+"
-          }
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "entity_desc",
+              "content": {
+                "type": "SYMBOL",
+                "name": "entity_desc"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "entity_object",
+              "content": {
+                "type": "SYMBOL",
+                "name": "entity_object"
+              }
+            }
+          ]
         }
       ]
     },
@@ -199,6 +212,82 @@
         {
           "type": "STRING",
           "value": "}"
+        }
+      ]
+    },
+    "entity_object": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "{"
+          },
+          "named": true,
+          "value": "open_brace"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "object_property"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "block_comment"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "newline"
+              }
+            ]
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "}"
+          },
+          "named": true,
+          "value": "close_brace"
+        }
+      ]
+    },
+    "object_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]*"
+        },
+        {
+          "type": "FIELD",
+          "name": "prop_key",
+          "content": {
+            "type": "SYMBOL",
+            "name": "prop_key"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]*"
+        },
+        {
+          "type": "FIELD",
+          "name": "prop_value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "prop_value"
+          }
         }
       ]
     },
@@ -1441,6 +1530,22 @@
     "newline": {
       "type": "PATTERN",
       "value": "\\r?\\n"
+    },
+    "entity_name": {
+      "type": "PATTERN",
+      "value": "[A-Za-z][A-Za-z0-9 ]*"
+    },
+    "entity_desc": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n{}]+"
+    },
+    "prop_key": {
+      "type": "PATTERN",
+      "value": "[a-z_][a-z_0-9]*"
+    },
+    "prop_value": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n]+"
     }
   },
   "extras": [

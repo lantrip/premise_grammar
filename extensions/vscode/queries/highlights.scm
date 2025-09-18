@@ -38,6 +38,17 @@
 ; Note: Field-level highlighting of entity_name/entity_desc requires
 ; more complex grammar rules with separate node types
 (entity_line) @variable.definition.entity
+; New: differentiate entity name vs value in list items
+(entity_line (entity_name) @entity.name.definition)
+(entity_line (entity_desc) @string.description.entity)
+(entity_line ":" @punctuation.separator.entity)
+
+; New: object values for nested entity properties
+(entity_line (entity_object) @meta.object.entity)
+(entity_object (open_brace) @punctuation.bracket)
+(entity_object (close_brace) @punctuation.bracket)
+(object_property (prop_key) @property.entity)
+(object_property (prop_value) @string.description.entity)
 
 ; Nested blocks (handled by balanced_braces)
 (balanced_braces) @type

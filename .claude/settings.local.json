@@ -9,7 +9,9 @@
       "Bash(git add:*)",
       "Bash(./test_queries.sh:*)",
       "Bash(npx vsce package:*)",
-      "Bash(npm run compile:*)"
+      "Bash(npm run compile:*)",
+      "Bash(./install-extensions.sh)",
+      "Bash(code:*)"
     ],
     "deny": [],
     "ask": []

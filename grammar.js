@@ -7,79 +7,104 @@ module.exports = grammar({
   conflicts: ($) => [],
 
   rules: {
-    source_file: ($) =>
-      repeat(
-        choice(
-          $.line,
-          $.newline,
-          $.line_comment
-        )
-      ),
+    source_file: ($) => repeat(choice($.line, $.newline, $.line_comment)),
 
     // Entity block rule - handle balanced braces (like @eras {...})
     entity_block: ($) =>
       seq(
         "@",
-        field("block_type", choice(
-          /characters?\s*\{/,
-          /locations?\s*\{/,
-          /items?\s*\{/,
-          /entities\s*\{/,
-          /themes\s*\{/,
-          /custom_metadata\s*\{/,
-          /notes\s*\{/,
-          /metadata\s*\{/,
-          /display\s*\{/,
-          /requirements\s*\{/,
-          // Eras support
-          /world_eras\s*\{/,
-          /entity_eras\s*\{/,
-          /character_eras\s*\{/,
-          /location_eras\s*\{/,
-          /eras\s*\{/
-        )),
-        repeat(choice(
-          prec(3, $.entity_line),   // Highest precedence for structured entity lines
-          $.balanced_braces,        // Handle { ... } patterns
-          prec(-1, /[^{}\-\s][^{}]*/), // Fallback: Content not starting with dash/whitespace
-          $.newline                 // Allow newlines
-        )),
+        field(
+          "block_type",
+          choice(
+            /characters?\s*\{/,
+            /locations?\s*\{/,
+            /items?\s*\{/,
+            /entities\s*\{/,
+            /themes\s*\{/,
+            /custom_metadata\s*\{/,
+            /notes\s*\{/,
+            /metadata\s*\{/,
+            /display\s*\{/,
+            /requirements\s*\{/,
+            // Eras support
+            /world_eras\s*\{/,
+            /entity_eras\s*\{/,
+            /character_eras\s*\{/,
+            /location_eras\s*\{/,
+            /eras\s*\{/
+          )
+        ),
+        repeat(
+          choice(
+            prec(3, $.entity_line), // Highest precedence for structured entity lines
+            $.balanced_braces, // Handle { ... } patterns
+            prec(-1, /[^{}\-\s][^{}]*/), // Fallback: Content not starting with dash/whitespace
+            $.newline // Allow newlines
+          )
+        ),
         "}"
       ),
 
     // Entity line for structured parsing within entity blocks
+    // Supports either a simple description or a nested object value
     entity_line: ($) =>
       seq(
-        /\s*-\s+/, // Dash with surrounding whitespace
-        field("entity_name", /[A-Za-z][A-Za-z0-9 ]*/),
+        /[ \t]*-\s+/, // Dash with surrounding whitespace
+        field("entity_name", $.entity_name),
         ":",
-        /\s*/,
-        field("entity_desc", /[^\r\n{}]+/) // Exclude braces to avoid conflicts
+        /[ \t]*/,
+        choice(
+          field("entity_desc", $.entity_desc),
+          field("entity_object", $.entity_object)
+        )
       ),
 
     // Match balanced braces for nested patterns like @eras { ... }
     balanced_braces: ($) =>
       seq(
         "{",
-        repeat(choice(
-          $.balanced_braces, // Recursive for deeper nesting
-          /[^{}]+/,         // Content between braces
-          $.newline
-        )),
+        repeat(
+          choice(
+            $.balanced_braces, // Recursive for deeper nesting
+            /[^{}]+/, // Content between braces
+            $.newline
+          )
+        ),
         "}"
+      ),
+
+    // Entity object value: { key: value, ... } with one property per line
+    entity_object: ($) =>
+      seq(
+        alias("{", $.open_brace),
+        repeat(choice($.object_property, $.block_comment, $.newline)),
+        alias("}", $.close_brace)
+      ),
+
+    // Property inside an entity object value
+    object_property: ($) =>
+      seq(
+        /[ \t]*/,
+        field("prop_key", $.prop_key),
+        ":",
+        /[ \t]*/,
+        field("prop_value", $.prop_value)
       ),
 
     // Entity definition only (not unified anymore)
     entity_construct: ($) =>
-      prec.dynamic(10, seq(
-        "@",
-        field("entity_type", /\w+/),
-        /\s+/,
-        field("name", /[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*/), // Allow multi-word names
-        ":",
-        optional(/\s*/),
-        field("description", /.+/)
-      )),
+      prec.dynamic(
+        10,
+        seq(
+          "@",
+          field("entity_type", /\w+/),
+          /\s+/,
+          field("name", /[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*/), // Allow multi-word names
+          ":",
+          optional(/\s*/),
+          field("description", /.+/)
+        )
+      ),
 
     line: ($) =>
       choice(
@@ -92,19 +117,19 @@ module.exports = grammar({
         $.content_type_narrative,
         $.metadata_line,
         $.entity_construct, // Entity definitions
-        $.entity_block,     // Entity blocks with braces
+        $.entity_block, // Entity blocks with braces
         $.import_statement,
         $.adapter_statement,
-        $.prose_line        // Last resort - lowest precedence
+        $.prose_line // Last resort - lowest precedence
       ),
 
     line_comment: ($) => token(seq("#", /.*/)),
 
     file_header: ($) =>
       prec(
-        100,  // Very high precedence
+        100, // Very high precedence
         seq(
-          field("key", /[A-Z][A-Z_]*/),  // One or more uppercase letters
+          field("key", /[A-Z][A-Z_]*/), // One or more uppercase letters
           ":",
           optional(/\s+/),
           optional(field("value", /[^\r\n]+/))
@@ -160,7 +185,6 @@ module.exports = grammar({
 
     content_type_narrative: ($) =>
       prec.right(9, seq("/", optional(field("content", /.*/)))),
-
 
     entity_block_content: ($) =>
       choice(
@@ -271,10 +295,12 @@ module.exports = grammar({
                 seq('"', field("adapter_path", /[^"]+/), '"'),
                 seq("'", field("adapter_path", /[^']+/), "'")
               ),
-              optional(choice(
-                seq(/\s+timing=/, field("timing", /\w+/)),
-                seq(/\s+@timing:/, field("timing", /\w+/))
-              ))
+              optional(
+                choice(
+                  seq(/\s+timing=/, field("timing", /\w+/)),
+                  seq(/\s+@timing:/, field("timing", /\w+/))
+                )
+              )
             ),
             // Inline adapter definition
             $.adapter_inline_block
@@ -287,11 +313,13 @@ module.exports = grammar({
         field("adapter_name", /\w+/),
         /\s*/,
         "{",
-        repeat(choice(
-          $.balanced_braces,  // Handle nested { ... } patterns
-          /[^{}]+/,          // Content without braces
-          $.newline           // Allow newlines
-        )),
+        repeat(
+          choice(
+            $.balanced_braces, // Handle nested { ... } patterns
+            /[^{}]+/, // Content without braces
+            $.newline // Allow newlines
+          )
+        ),
         "}"
       ),
 
@@ -310,13 +338,7 @@ module.exports = grammar({
           $.dialogue_speaker,
           // Mixed content on single line (no newlines)
           seq(
-            repeat1(
-              choice(
-                $.entity_reference,
-                $.parenthetical,
-                $.prose_text
-              )
-            )
+            repeat1(choice($.entity_reference, $.parenthetical, $.prose_text))
           )
         )
       ),
@@ -347,7 +369,12 @@ module.exports = grammar({
 
     prose_text: ($) => prec(-10, /[^\r\n{}()=@+\/]+/),
 
-
     newline: ($) => /\r?\n/,
+
+    // Named tokens for entity parts
+    entity_name: ($) => /[A-Za-z][A-Za-z0-9 ]*/,
+    entity_desc: ($) => /[^\r\n{}]+/,
+    prop_key: ($) => /[a-z_][a-z_0-9]*/,
+    prop_value: ($) => /[^\r\n]+/,
   },
 });

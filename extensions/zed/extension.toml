@@ -11,4 +11,4 @@ themes = ["themes/*.json"]
 # For production, change to: repository = "https://github.com/davidlantrip/cuneiform-grammar"
 [grammars.cuneiform]
 repository = "file:///Users/davidlantrip/repos/cuneiform_grammar"
-rev = "e725abb59172cf76f24f6464e0fe26a84c4a7b78"
+rev = "4909ee428cffbf5ea721b0b6b86420a9d836f443"

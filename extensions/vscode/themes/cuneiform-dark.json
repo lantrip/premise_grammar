@@ -5,6 +5,7 @@
     "editor.background": "#1e1e1e",
     "editor.foreground": "#d4d4d4"
   },
+  "semanticHighlighting": true,
   "tokenColors": [
     {
       "scope": "comment.line",
@@ -47,6 +48,64 @@
         "foreground": "#d7ba7d",
         "fontStyle": "bold"
       }
+    },
+    {
+      "scope": "entity.name.function.cuneiform",
+      "settings": {
+        "foreground": "#4fc1ff",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "string.unquoted.description.cuneiform",
+      "settings": {
+        "foreground": "#ce9178"
+      }
+    },
+    {
+      "scope": "punctuation.separator.cuneiform",
+      "settings": {
+        "foreground": "#d4d4d4"
+      }
     }
-  ]
+  ],
+  "semanticTokenColors": {
+    "entity-definition": {
+      "foreground": "#4fc1ff",
+      "fontStyle": "bold"
+    },
+    "entity-definition.bold": {
+      "foreground": "#4fc1ff",
+      "fontStyle": "bold"
+    },
+    "string": "#ce9178",
+    "story-act": {
+      "foreground": "#569cd6",
+      "fontStyle": "bold"
+    },
+    "story-scene": {
+      "foreground": "#4ec9b0",
+      "fontStyle": "bold"
+    },
+    "story-cel": {
+      "foreground": "#dcdcaa",
+      "fontStyle": "bold"
+    },
+    "content-beat": {
+      "foreground": "#d7ba7d",
+      "fontStyle": "bold"
+    },
+    "content-treatment": {
+      "foreground": "#d7ba7d"
+    },
+    "content-narrative": {
+      "foreground": "#d7ba7d"
+    },
+    "entity-reference": "#c586c0",
+    "character-speaker": {
+      "foreground": "#c586c0",
+      "fontStyle": "bold"
+    },
+    "property": "#dcdcaa"
+  }
 }

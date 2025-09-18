@@ -5,6 +5,7 @@
     "editor.background": "#fefefe",
     "editor.foreground": "#34495e"
   },
+  "semanticHighlighting": true,
   "tokenColors": [
     {
       "scope": "comment.line",
@@ -49,6 +50,64 @@
       "settings": {
         "foreground": "#27ae60"
       }
+    },
+    {
+      "scope": "entity.name.function.cuneiform",
+      "settings": {
+        "foreground": "#8e44ad",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "string.unquoted.description.cuneiform",
+      "settings": {
+        "foreground": "#d35400"
+      }
+    },
+    {
+      "scope": "punctuation.separator.cuneiform",
+      "settings": {
+        "foreground": "#34495e"
+      }
     }
-  ]
+  ],
+  "semanticTokenColors": {
+    "entity-definition": {
+      "foreground": "#8e44ad",
+      "fontStyle": "bold"
+    },
+    "entity-definition.bold": {
+      "foreground": "#8e44ad",
+      "fontStyle": "bold"
+    },
+    "string": "#d35400",
+    "story-act": {
+      "foreground": "#2c3e50",
+      "fontStyle": "bold"
+    },
+    "story-scene": {
+      "foreground": "#34495e",
+      "fontStyle": "bold"
+    },
+    "story-cel": {
+      "foreground": "#7f8c8d",
+      "fontStyle": "bold"
+    },
+    "content-beat": {
+      "foreground": "#27ae60",
+      "fontStyle": "bold"
+    },
+    "content-treatment": {
+      "foreground": "#27ae60"
+    },
+    "content-narrative": {
+      "foreground": "#27ae60"
+    },
+    "entity-reference": "#8e44ad",
+    "character-speaker": {
+      "foreground": "#8e44ad",
+      "fontStyle": "bold"
+    },
+    "property": "#7f8c8d"
+  }
 }
