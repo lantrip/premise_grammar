@@ -104,12 +104,24 @@
             "type": "CHOICE",
             "members": [
               {
+                "type": "PREC",
+                "value": 3,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "entity_line"
+                }
+              },
+              {
                 "type": "SYMBOL",
                 "name": "balanced_braces"
               },
               {
-                "type": "PATTERN",
-                "value": "[^{}]+"
+                "type": "PREC",
+                "value": -1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[^{}\\-\\s][^{}]*"
+                }
               },
               {
                 "type": "SYMBOL",
@@ -121,6 +133,39 @@
         {
           "type": "STRING",
           "value": "}"
+        }
+      ]
+    },
+    "entity_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "\\s*-\\s+"
+        },
+        {
+          "type": "FIELD",
+          "name": "entity_name",
+          "content": {
+            "type": "PATTERN",
+            "value": "[A-Za-z][A-Za-z0-9 ]*"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\s*"
+        },
+        {
+          "type": "FIELD",
+          "name": "entity_desc",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\r\\n{}]+"
+          }
         }
       ]
     },

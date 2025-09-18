@@ -8,7 +8,8 @@
       "Read(//Users/davidlantrip/repos/proof-again/premise/cuneiform/**)",
       "Bash(git add:*)",
       "Bash(./test_queries.sh:*)",
-      "Bash(npx vsce package:*)"
+      "Bash(npx vsce package:*)",
+      "Bash(npm run compile:*)"
     ],
     "deny": [],
     "ask": []

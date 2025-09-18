@@ -1,58 +1,84 @@
-; Cuneiform Syntax Highlighting for Zed
-; Using Zed-compatible scopes
+; Cuneiform Syntax Highlighting
+; Simplified version without field references
 
-; Comments
-(line_comment) @comment
+; Comments - distinguish from story content
+(line_comment) @comment.line
 
-; File headers - prominent keywords
-(file_header) @keyword
+; File headers - metadata about the story
+(file_header) @keyword.directive
 
-; Structure headers - using title for prominence
-(act_header) @title
-(scene_header) @title
-(cel_header) @title
+; Structure headers - story organization
+(act_header) @markup.heading.1.story.act
+(scene_header) @markup.heading.2.story.scene
+(cel_header) @markup.heading.3.story.cel
 
-; Content type markers - keywords for story layers
-(content_type_beat) @keyword
-(content_type_treatment) @keyword
-(content_type_narrative) @keyword
+; Header markers - visual hierarchy
+"=" @punctuation.definition.heading.story.act
+"==" @punctuation.definition.heading.story.scene
+"===" @punctuation.definition.heading.story.cel
 
-; Entity constructs - single line definitions
-(entity_construct) @type
+; Content type markers - story layer indicators
+(content_type_beat) @keyword.control.content.beat
+(content_type_treatment) @keyword.control.content.treatment
+(content_type_narrative) @keyword.control.content.narrative
 
-; Entity blocks - the @ symbol and type should be highlighted as keywords
-(entity_block) @function
+; Content type punctuation - visual cues for story layers
+"///" @punctuation.definition.content.beat
+"//" @punctuation.definition.content.treatment
+"/" @punctuation.definition.content.narrative
 
-; Nested blocks (content within braces)
-(balanced_braces) @string
+; Entity definitions
+(entity_construct) @variable.special
+"@" @punctuation.special
+
+; Entity blocks
+(entity_block) @type
+
+; Entity lines within blocks - structured parsing
+; Note: Field-level highlighting of entity_name/entity_desc requires
+; more complex grammar rules with separate node types
+(entity_line) @variable.definition.entity
+
+; Nested blocks (handled by balanced_braces)
+(balanced_braces) @type
+
+; Note: @eras blocks are parsed as entity_block, not nested_block
+; Specific eras highlighting is handled by the entity_block rule above
 
 ; Import and adapter statements
-(import_statement) @keyword
+(import_statement) @keyword.import
 (adapter_statement) @keyword
 
-; Metadata lines
-(metadata_line) @property
+; Metadata
+(metadata_line) @meta.property
 
-; Entity references - character/location names
-(entity_reference) @variable.special
+; Entity references - character/location/item names in story
+(entity_reference) @entity.name.reference
 
-; Reference punctuation
-(ref_open) @punctuation.bracket
-(ref_close) @punctuation.bracket
+; Contextual entity references - more specific scoping for prose/narrative
+(prose_line (entity_reference) @entity.name.reference.prose)
+(prose_line (entity_reference (ref_open) @punctuation.definition.entity.begin.prose))
+(prose_line (entity_reference (ref_close) @punctuation.definition.entity.end.prose))
 
-; Dialogue speakers
-(dialogue_speaker) @emphasis.strong
+; Generic entity reference punctuation (fallback)
+(ref_open) @punctuation.definition.entity.begin
+(ref_close) @punctuation.definition.entity.end
 
-; Parentheticals (stage directions)
-(parenthetical) @comment
+; Story content - different types of narrative text
+(prose_line) @text.prose.line
+(dialogue_speaker) @entity.name.character.speaker
+(parenthetical) @text.parenthetical
+(prose_text) @text.narrative
 
-; Parenthetical punctuation
-(open_paren) @punctuation.bracket
-(close_paren) @punctuation.bracket
+; Parenthetical punctuation - specific to dialogue/prose
+(open_paren) @punctuation.definition.parenthetical.begin
+(close_paren) @punctuation.definition.parenthetical.end
 
-; Prose content
-(prose_line) @text
-(prose_text) @text
+; General punctuation
+":" @punctuation.delimiter
+"{" @punctuation.bracket
+"}" @punctuation.bracket
+"-" @punctuation.special
 
 ; Error recovery
 (ERROR) @error

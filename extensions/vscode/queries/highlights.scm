@@ -34,6 +34,11 @@
 ; Entity blocks
 (entity_block) @type
 
+; Entity lines within blocks - structured parsing
+; Note: Field-level highlighting of entity_name/entity_desc requires
+; more complex grammar rules with separate node types
+(entity_line) @variable.definition.entity
+
 ; Nested blocks (handled by balanced_braces)
 (balanced_braces) @type
 

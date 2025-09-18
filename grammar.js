@@ -39,11 +39,22 @@ module.exports = grammar({
           /eras\s*\{/
         )),
         repeat(choice(
-          $.balanced_braces,  // Handle { ... } patterns
-          /[^{}]+/,          // Content without braces
-          $.newline           // Allow newlines
+          prec(3, $.entity_line),   // Highest precedence for structured entity lines
+          $.balanced_braces,        // Handle { ... } patterns
+          prec(-1, /[^{}\-\s][^{}]*/), // Fallback: Content not starting with dash/whitespace
+          $.newline                 // Allow newlines
         )),
         "}"
+      ),
+
+    // Entity line for structured parsing within entity blocks
+    entity_line: ($) =>
+      seq(
+        /\s*-\s+/, // Dash with surrounding whitespace
+        field("entity_name", /[A-Za-z][A-Za-z0-9 ]*/),
+        ":",
+        /\s*/,
+        field("entity_desc", /[^\r\n{}]+/) // Exclude braces to avoid conflicts
       ),
 
     // Match balanced braces for nested patterns like @eras { ... }

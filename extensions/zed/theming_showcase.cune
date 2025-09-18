@@ -29,30 +29,30 @@
 
 # Block entity definitions
 @characters {
-  Mentor: A wise old wizard who guides the hero
-  Villain: The dark sorcerer threatening the realm
-  Sidekick: A loyal companion with a sense of humor
+  - Mentor: A wise old wizard who guides the hero
+  - Villain: The dark sorcerer threatening the realm
+  - Sidekick: A loyal companion with a sense of humor
 }
 
 @locations {
-  Village: A peaceful farming community
-  Forest: Dark woods filled with mystery
-  Mountain: The highest peak where dragons dwell
+  - Village: A peaceful farming community
+  - Forest: Dark woods filled with mystery
+  - Mountain: The highest peak where dragons dwell
 }
 
 @items {
-  Map: An ancient map showing hidden paths
-  Amulet: A protective charm with magical properties
-  Book: The tome of ancient knowledge
+  - Map: An ancient map showing hidden paths
+  - Amulet: A protective charm with magical properties
+  - Book: The tome of ancient knowledge
 }
 
 # Nested eras definition (special entity type)
 @eras {
-  ancient: {
+  - ancient: {
     description: "The time of legends"
     duration: "1000 years ago"
   }
-  modern: {
+  - modern: {
     description: "The current age"
     duration: "Present day"
   }

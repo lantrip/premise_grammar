@@ -109,6 +109,10 @@
           "named": true
         },
         {
+          "type": "entity_line",
+          "named": true
+        },
+        {
           "type": "newline",
           "named": true
         }
@@ -117,6 +121,11 @@
   },
   {
     "type": "entity_construct",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "entity_line",
     "named": true,
     "fields": {}
   },
