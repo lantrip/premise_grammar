@@ -1,0 +1,54 @@
+{
+  "name": "Cuneiform Novel",
+  "type": "light",
+  "colors": {
+    "editor.background": "#fefefe",
+    "editor.foreground": "#34495e"
+  },
+  "tokenColors": [
+    {
+      "scope": "comment.line",
+      "settings": {
+        "foreground": "#95a5a6",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "markup.heading.1.cuneiform",
+      "settings": {
+        "foreground": "#2c3e50",
+        "fontStyle": "bold",
+        "fontFamily": "Georgia, serif"
+      }
+    },
+    {
+      "scope": "markup.heading.2.cuneiform",
+      "settings": {
+        "foreground": "#34495e",
+        "fontStyle": "bold",
+        "fontFamily": "Georgia, serif"
+      }
+    },
+    {
+      "scope": "markup.heading.3.cuneiform",
+      "settings": {
+        "foreground": "#7f8c8d",
+        "fontStyle": "bold",
+        "fontFamily": "Georgia, serif"
+      }
+    },
+    {
+      "scope": "entity.name.function.cuneiform",
+      "settings": {
+        "foreground": "#8e44ad",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "keyword.control.cuneiform",
+      "settings": {
+        "foreground": "#27ae60"
+      }
+    }
+  ]
+}

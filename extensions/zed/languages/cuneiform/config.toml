@@ -1,0 +1,20 @@
+name = "Cuneiform"
+grammar = "cuneiform"
+path_suffixes = ["cune"]
+
+line_comment = "#"
+
+# Cuneiform doesn't have block comments currently
+# If it did, it would be: block_comment = ["/*", "*/"]
+
+[bracket_pairs]
+"(" = ")"
+"{" = "}"
+"[" = "]"
+
+autoclose_before = "})]"
+
+# Language-specific settings
+[language_settings]
+tab_size = 2
+hard_tabs = false

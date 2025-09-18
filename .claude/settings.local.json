@@ -7,7 +7,8 @@
       "Bash(cargo test)",
       "Read(//Users/davidlantrip/repos/proof-again/premise/cuneiform/**)",
       "Bash(git add:*)",
-      "Bash(./test_queries.sh:*)"
+      "Bash(./test_queries.sh:*)",
+      "Bash(npx vsce package:*)"
     ],
     "deny": [],
     "ask": []

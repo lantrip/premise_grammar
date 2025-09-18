@@ -1,0 +1,52 @@
+{
+  "name": "Cuneiform Dark",
+  "type": "dark",
+  "colors": {
+    "editor.background": "#1e1e1e",
+    "editor.foreground": "#d4d4d4"
+  },
+  "tokenColors": [
+    {
+      "scope": "comment.line",
+      "settings": {
+        "foreground": "#6a9955",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "markup.heading.1.cuneiform",
+      "settings": {
+        "foreground": "#569cd6",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "markup.heading.2.cuneiform",
+      "settings": {
+        "foreground": "#4ec9b0",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "markup.heading.3.cuneiform",
+      "settings": {
+        "foreground": "#dcdcaa",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "entity.name.function.cuneiform",
+      "settings": {
+        "foreground": "#c586c0",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "keyword.control.cuneiform",
+      "settings": {
+        "foreground": "#d7ba7d",
+        "fontStyle": "bold"
+      }
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "name": "Cuneiform Screenplay",
+  "type": "light",
+  "colors": {
+    "editor.background": "#f8f8f8",
+    "editor.foreground": "#2c3e50"
+  },
+  "tokenColors": [
+    {
+      "scope": "comment.line",
+      "settings": {
+        "foreground": "#7f8c8d",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "markup.heading.1.cuneiform",
+      "settings": {
+        "foreground": "#e74c3c",
+        "fontStyle": "bold",
+        "fontFamily": "Courier New, monospace"
+      }
+    },
+    {
+      "scope": "markup.heading.2.cuneiform",
+      "settings": {
+        "foreground": "#d35400",
+        "fontStyle": "bold",
+        "fontFamily": "Courier New, monospace"
+      }
+    },
+    {
+      "scope": "markup.heading.3.cuneiform",
+      "settings": {
+        "foreground": "#f39c12",
+        "fontStyle": "bold",
+        "fontFamily": "Courier New, monospace"
+      }
+    },
+    {
+      "scope": "entity.name.function.cuneiform",
+      "settings": {
+        "foreground": "#2980b9",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "keyword.control.cuneiform",
+      "settings": {
+        "foreground": "#27ae60",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "keyword.directive.cuneiform",
+      "settings": {
+        "foreground": "#8e44ad",
+        "fontStyle": "bold"
+      }
+    }
+  ],
+  "semanticTokenColors": {
+    "story-act": "#e74c3c",
+    "story-scene": "#d35400",
+    "story-cel": "#f39c12",
+    "content-beat": "#27ae60",
+    "content-treatment": "#f39c12",
+    "content-narrative": "#2ecc71",
+    "character-speaker": "#2980b9",
+    "entity-reference": "#9b59b6",
+    "entity-definition": "#34495e",
+    "file-header": "#8e44ad",
+    "metadata": "#95a5a6",
+    "import": "#e67e22"
+  }
+}

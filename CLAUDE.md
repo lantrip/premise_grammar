@@ -31,10 +31,9 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 - **Node.js**: Built using binding.gyp with `node-gyp rebuild`
 - **Rust**: Built with `cargo build` - includes test for grammar loading
 
-## Architecture
+## Cuneiform Language Syntax
 
-### Core Grammar (grammar.js)
-The grammar defines syntax rules for Cuneiform language elements:
+### Core Grammar Elements
 - **Hierarchical Headers**: Acts (`=`), Scenes (`==`), Cels (`===`) with optional location/time markers
 - **Screenplay Dialogue**: Character names as speakers (`{Hero}`), indented dialogue, parentheticals `(whisper)`
 - **Content Types**: Beat (`///`), Treatment (`//`), Narrative (`/`) prefixes
@@ -44,25 +43,13 @@ The grammar defines syntax rules for Cuneiform language elements:
 - **Metadata**: `+key: value` pairs (note: `+` prefix, not `@`)
 - **Comments**: `#` prefixed lines
 
-### Generated Files
-- `src/parser.c` - Generated C parser (do not edit)
-- `src/grammar.json` - JSON representation of grammar rules
-- `src/node-types.json` - Node type definitions for language bindings
-
 ### Repository Structure
-- `bindings/node/` - Node.js binding with fallback loading logic
-- `bindings/rust/` - Rust crate with language function and tests
-- `bindings/python/` - Python bindings for the grammar
+- `grammar.js` - Core grammar definition
 - `queries/` - Editor query files for syntax highlighting, brackets, indentation, and outline
 - `examples/` - Reference files including `theming_showcase.cune` for theme development
 - `scripts/` - Validation utilities including `validate_scopes.py`
 - `tests/` - Test cases and test runner
 - `src/` - Generated parser artifacts (do not edit manually)
-- `target/` - Rust build artifacts
-- `build/` - Build output directory
-
-### Grammar Rules Organization
-Rules follow Tree-sitter conventions with `$` references and use regex patterns for content matching. The grammar prioritizes prose content while providing structure for screenplay elements.
 
 ## Semantic Scopes Architecture
 
@@ -103,3 +90,88 @@ These scopes are the **foundation** that enables:
 - Run `./test_queries.sh` after any changes to verify scopes match grammar nodes
 - This prevents editor extension failures from invalid scope references
 - Extensions depend on these scopes for proper theming functionality
+
+## Grammar Status
+
+**Production Ready**: All core features work reliably
+- ✅ Story structure (acts/scenes/cels)
+- ✅ Entity system with references
+- ✅ Screenplay-style dialogue
+- ✅ Content types and file headers
+- ✅ Semantic highlighting with story-focused scopes
+
+**Minor Edge Cases**: Intentional parsing constraints
+- 🟡 Empty entity references `{}` (invalid by design)
+- 🟡 Nested braces in entities (prevents ambiguity)
+- 🟡 Multi-line entity names (maintains readability)
+
+## Working with Examples
+
+- Use `examples/theming_showcase.cune` for comprehensive syntax testing
+- Reference `.cune` files in `examples/` rather than trying to document every syntax pattern
+- All major language features are demonstrated in working example files
+- Parse examples with `tree-sitter parse examples/file.cune` to understand structure
+
+## Extension Development Workflow
+
+### Monorepo Structure
+This repository now includes editor extensions in `extensions/`:
+- `extensions/zed/` - Zed editor extension
+- `extensions/vscode/` - VSCode extension
+- `themes/` - Shared theme definitions
+- `scripts/` - Build and sync utilities
+
+### Development vs Production
+
+**Development (Local Testing):**
+- Zed: Uses `file://` reference to local grammar in `extension.toml`
+- VSCode: Copies WASM and queries from grammar root
+- Test changes immediately without git commits
+
+**Production (Publishing):**
+- Zed: Must reference git repository with specific commit/rev
+- VSCode: Bundles pre-built WASM in extension package
+- Requires committed changes in main repository
+
+### Extension Development Commands
+
+**Sync Extensions from Grammar:**
+```bash
+# Copy WASM and queries to extensions
+./scripts/sync-extensions.sh
+
+# Test Zed extension (development)
+cd extensions/zed
+# Use "Install Dev Extension" in Zed command palette
+
+# Test VSCode extension
+cd extensions/vscode
+npm run compile
+code --install-extension .
+```
+
+**Publishing Extensions:**
+```bash
+# Update Zed extension.toml to reference git repo
+# Commit grammar changes first
+git commit -am "Update grammar"
+git push
+
+# Update rev/commit hash in extension.toml
+# Submit to Zed extension registry
+
+# Package VSCode extension
+cd extensions/vscode
+npm run vscode:prepublish
+vsce package
+vsce publish
+```
+
+## Key Development Rules
+
+1. **Always validate queries**: Run `./test_queries.sh` after any grammar or query changes
+2. **Sync extensions**: Run `./scripts/sync-extensions.sh` after grammar updates
+3. **Test locally first**: Use dev extension workflow before publishing
+4. **Use example files**: Reference working `.cune` files rather than documenting syntax extensively
+5. **Maintain semantic scopes**: These are critical for editor extension functionality
+6. **Coordinate releases**: Update extensions after grammar changes are committed
