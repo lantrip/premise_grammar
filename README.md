@@ -53,7 +53,30 @@ tree-sitter build --wasm    # Build WASM
 # Testing
 tree-sitter test            # Run test suite
 tree-sitter parse file.cune # Test specific file
+
+# Extension development
+./scripts/sync-extensions.sh     # Sync WASM/queries to extensions
+./scripts/update-zed-rev.sh      # Update Zed extension to current commit
 ```
+
+### Editor Extension Development
+
+**Quick Setup:**
+```bash
+# Zed - Push changes, then update and install
+git push && ./scripts/update-zed-rev.sh
+# Then: Zed → Cmd+Shift+P → "Install Dev Extension" → select extensions/zed/
+
+# VSCode - Build and install
+cd extensions/vscode && npm run compile && code --install-extension .
+```
+
+**Key Points:**
+- Zed extension always uses GitHub repository (push changes first)
+- Always run `./test_queries.sh` after changing `queries/*.scm`
+- Use `./scripts/sync-extensions.sh` to copy updates to extensions
+- Use `./scripts/update-zed-rev.sh` to point Zed to latest commit
+- See `CLAUDE.md` for detailed extension development workflow
 
 ## Repository Structure
 

@@ -51,30 +51,23 @@
 (object_property (prop_value) @string.description.entity)
 
 ; Adapter blocks and properties
-(adapter_inline_block) @meta.object.adapter
-(adapter_inline_block (adapter_name) @entity.name.definition.adapter)
+(adapter_statement (adapter_name) @entity.name.definition.adapter)
 (adapter_statement (adapter_path) @string.path.adapter)
-(adapter_statement (adapter_timing) @keyword.modifier.adapter)
-(adapter_list_property (prop_key) @property.adapter)
-(adapter_list_property (prop_value) @string.adapter)
 
-; Canonical adapter path spec: @adapter "path": value | { ... }
+; Adapter property keys and values (nested content)
+(prop_key) @property
+(prop_value) @string
+(simple_value) @string
+
+; Canonical adapter path spec
 (adapter_statement (prop_value) @string.adapter)
-(adapter_statement (prop_value (object_value (open_brace) @punctuation.bracket)))
-(adapter_statement (prop_value (object_value (close_brace) @punctuation.bracket)))
-
-; YAML-style block scalars
-(block_scalar) @string.block
-
-; Nested blocks (handled by balanced_braces)
-(balanced_braces) @type
 
 ; Note: @eras blocks are parsed as entity_block, not nested_block
 ; Specific eras highlighting is handled by the entity_block rule above
 
 ; Import and adapter statements
 (import_statement) @keyword.import
-(adapter_statement) @keyword
+(adapter_statement) @keyword.adapter
 
 ; Metadata
 (metadata_line) @meta.property

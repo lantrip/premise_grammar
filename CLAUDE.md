@@ -170,6 +170,30 @@ npm run compile
 code --install-extension .
 ```
 
+### Zed Extension Development Workflow
+
+**Simplified Workflow**: Always use GitHub repository with revision hash.
+
+**Testing Zed Extension Changes:**
+```bash
+# 1. Make your grammar/query changes
+# 2. Commit and push changes
+git add . && git commit -m "Update grammar/queries"
+git push
+
+# 3. Update extension to use latest commit
+./scripts/update-zed-rev.sh
+
+# 4. Install in Zed
+# In Zed: Cmd+Shift+P → "Install Dev Extension" → select extensions/zed/
+```
+
+**Key Points:**
+- Extension always points to GitHub repository (no local file:// switching)
+- Grammar/query changes must be committed and pushed before testing
+- `./scripts/update-zed-rev.sh` updates the rev to current commit and cleans cache
+- Simpler workflow eliminates local/remote repository confusion
+
 **Publishing Extensions:**
 
 ```bash

@@ -4,11 +4,11 @@ description = "Syntax highlighting and theming for Cuneiform story files"
 version = "1.0.0"
 schema_version = 1
 authors = ["David Lantrip <david@example.com>"]
-repository = "https://github.com/davidlantrip/cuneiform-grammar"
+repository = "https://github.com/lantrip/cuneiform_grammar"
 themes = ["themes/*.json"]
 
 # IMPORTANT: For development, we use file:// URL with local path
-# For production, change to: repository = "https://github.com/davidlantrip/cuneiform-grammar"
+# For production, change to: repository = "https://github.com/lantrip/cuneiform_grammar"
 [grammars.cuneiform]
-repository = "file:///Users/davidlantrip/repos/cuneiform_grammar"
-rev = "4909ee428cffbf5ea721b0b6b86420a9d836f443"
+repository = "https://github.com/lantrip/cuneiform_grammar"
+rev = "488fec82a1a74cfbda49d08bb653cc019e2bb5dd"

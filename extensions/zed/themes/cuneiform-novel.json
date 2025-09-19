@@ -238,6 +238,54 @@
           "variable.special": {
             "color": "#9876aa",
             "font_style": "italic"
+          },
+          "markup.heading.1.story.act": {
+            "color": "#8b4513",
+            "font_style": "bold"
+          },
+          "markup.heading.2.story.scene": {
+            "color": "#2f4f4f",
+            "font_style": "bold"
+          },
+          "markup.heading.3.story.cel": {
+            "color": "#4682b4",
+            "font_style": "bold"
+          },
+          "keyword.control.content.beat": {
+            "color": "#228b22",
+            "font_style": "bold"
+          },
+          "keyword.control.content.treatment": {
+            "color": "#daa520",
+            "font_style": "bold"
+          },
+          "keyword.control.content.narrative": {
+            "color": "#9932cc",
+            "font_style": "bold"
+          },
+          "punctuation.definition.heading.story.act": {
+            "color": "#8b4513",
+            "font_style": "bold"
+          },
+          "punctuation.definition.heading.story.scene": {
+            "color": "#2f4f4f",
+            "font_style": "bold"
+          },
+          "punctuation.definition.heading.story.cel": {
+            "color": "#4682b4",
+            "font_style": "bold"
+          },
+          "punctuation.definition.content.beat": {
+            "color": "#228b22",
+            "font_style": "bold"
+          },
+          "punctuation.definition.content.treatment": {
+            "color": "#daa520",
+            "font_style": "bold"
+          },
+          "punctuation.definition.content.narrative": {
+            "color": "#9932cc",
+            "font_style": "bold"
           }
         }
       }

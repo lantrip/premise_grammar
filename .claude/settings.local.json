@@ -12,7 +12,8 @@
       "Bash(npm run compile:*)",
       "Bash(./install-extensions.sh)",
       "Bash(code:*)",
-      "Bash(vsce package:*)"
+      "Bash(vsce package:*)",
+      "Read(///**)"
     ],
     "deny": [],
     "ask": []
