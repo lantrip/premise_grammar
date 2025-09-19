@@ -79,6 +79,13 @@
       }
     },
     {
+      "scope": "punctuation.definition.keyword.cuneiform",
+      "settings": {
+        "foreground": "#e74c3c",
+        "fontStyle": "bold"
+      }
+    },
+    {
       "scope": "keyword.adapter.cuneiform",
       "settings": {
         "foreground": "#e74c3c",
@@ -123,7 +130,7 @@
       }
     },
     {
-      "scope": "keyword.adapters.block.cuneiform",
+      "scope": "keyword.adapters.cuneiform",
       "settings": {
         "foreground": "#e74c3c",
         "fontStyle": "bold"
@@ -144,7 +151,7 @@
       }
     },
     {
-      "scope": "keyword.entity.block.cuneiform",
+      "scope": "keyword.entity.cuneiform",
       "settings": {
         "foreground": "#e74c3c",
         "fontStyle": "bold"
@@ -167,6 +174,26 @@
       "scope": "string.unquoted.entity.value.cuneiform",
       "settings": {
         "foreground": "#27ae60"
+      }
+    },
+    {
+      "scope": "entity.name.character.screenplay.cuneiform",
+      "settings": {
+        "foreground": "#45b7d1",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "text.dialogue.screenplay.cuneiform",
+      "settings": {
+        "foreground": "#2c3e50",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "punctuation.separator.dialogue.cuneiform",
+      "settings": {
+        "foreground": "#45b7d1"
       }
     }
   ],

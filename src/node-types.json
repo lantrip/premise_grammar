@@ -379,6 +379,10 @@
         {
           "type": "scene_header",
           "named": true
+        },
+        {
+          "type": "screenplay_dialogue",
+          "named": true
         }
       ]
     }
@@ -525,6 +529,11 @@
   },
   {
     "type": "scene_header",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "screenplay_dialogue",
     "named": true,
     "fields": {}
   },

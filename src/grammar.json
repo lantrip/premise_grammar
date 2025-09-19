@@ -409,6 +409,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "screenplay_dialogue"
+        },
+        {
+          "type": "SYMBOL",
           "name": "prose_line"
         }
       ]
@@ -1227,6 +1231,55 @@
           {
             "type": "PATTERN",
             "value": "\\s*\\r?\\n"
+          }
+        ]
+      }
+    },
+    "screenplay_dialogue": {
+      "type": "PREC_RIGHT",
+      "value": 8,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "character",
+            "content": {
+              "type": "PATTERN",
+              "value": "[A-Z][A-Z ]+"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": ":"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "\\s+"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "dialogue",
+                "content": {
+                  "type": "PATTERN",
+                  "value": ".*"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }

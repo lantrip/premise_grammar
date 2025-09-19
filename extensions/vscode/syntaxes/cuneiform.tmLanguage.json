@@ -32,13 +32,23 @@
       "match": "@import\\b"
     },
     {
+      "name": "meta.screenplay.dialogue.cuneiform",
+      "match": "^\\s*([A-Z][A-Z0-9 ]*[A-Z])(:)\\s*(.*)$",
+      "captures": {
+        "1": { "name": "entity.name.character.screenplay.cuneiform" },
+        "2": { "name": "punctuation.separator.dialogue.cuneiform" },
+        "3": { "name": "text.dialogue.screenplay.cuneiform" }
+      }
+    },
+    {
       "name": "meta.adapter.inline.cuneiform",
-      "begin": "^\\s*(@adapter)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(:)\\s*(\\{)",
+      "begin": "^\\s*(@)(adapter)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(:)\\s*(\\{)",
       "beginCaptures": {
-        "1": { "name": "keyword.adapter.inline.cuneiform" },
-        "2": { "name": "entity.name.function.adapter.cuneiform" },
-        "3": { "name": "punctuation.separator.key-value.cuneiform" },
-        "4": { "name": "punctuation.bracket.curly.cuneiform" }
+        "1": { "name": "punctuation.definition.keyword.cuneiform" },
+        "2": { "name": "keyword.adapter.cuneiform" },
+        "3": { "name": "entity.name.function.adapter.cuneiform" },
+        "4": { "name": "punctuation.separator.key-value.cuneiform" },
+        "5": { "name": "punctuation.bracket.curly.cuneiform" }
       },
       "end": "^\\s*\\}",
       "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
@@ -46,10 +56,11 @@
     },
     {
       "name": "meta.adapters.block.cuneiform",
-      "begin": "^\\s*(@adapters)\\s*(\\{)",
+      "begin": "^\\s*(@)(adapters)\\s*(\\{)",
       "beginCaptures": {
-        "1": { "name": "keyword.adapters.block.cuneiform" },
-        "2": { "name": "punctuation.bracket.curly.cuneiform" }
+        "1": { "name": "punctuation.definition.keyword.cuneiform" },
+        "2": { "name": "keyword.adapters.cuneiform" },
+        "3": { "name": "punctuation.bracket.curly.cuneiform" }
       },
       "end": "^\\s*\\}",
       "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
@@ -78,10 +89,10 @@
     },
     {
       "name": "meta.entity.block.cuneiform",
-      "begin": "^\\s*@(characters?|locations?|items?|entities|themes|custom_metadata|notes|metadata|display|requirements|world_eras|entity_eras|character_eras|location_eras|eras)\\s*\\{",
+      "begin": "^\\s*(@)(characters?|locations?|items?|entities|themes|custom_metadata|notes|metadata|display|requirements|world_eras|entity_eras|character_eras|location_eras|eras)\\s*\\{",
       "beginCaptures": {
-        "0": { "name": "keyword.entity.block.cuneiform" },
-        "1": { "name": "entity.name.type.cuneiform" }
+        "1": { "name": "punctuation.definition.keyword.cuneiform" },
+        "2": { "name": "keyword.entity.cuneiform" }
       },
       "end": "^\\s*\\}",
       "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
@@ -139,10 +150,12 @@
     },
     {
       "name": "meta.adapter.external.cuneiform",
-      "begin": "^\\s*@adapter\\s+(\"[^\"]*\"|'[^']*')\\s*(:)\\s*",
+      "begin": "^\\s*(@)(adapter)\\s+(\"[^\"]*\"|'[^']*')\\s*(:)\\s*",
       "beginCaptures": {
-        "1": { "name": "string.quoted.adapter.path.cuneiform" },
-        "2": { "name": "punctuation.separator.key-value.cuneiform" }
+        "1": { "name": "punctuation.definition.keyword.cuneiform" },
+        "2": { "name": "keyword.adapter.cuneiform" },
+        "3": { "name": "string.quoted.adapter.path.cuneiform" },
+        "4": { "name": "punctuation.separator.key-value.cuneiform" }
       },
       "end": "$",
       "patterns": [
@@ -155,9 +168,11 @@
     },
     {
       "name": "meta.adapter.inline.cuneiform",
-      "begin": "^\\s*@adapter\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:\\s*\\{",
+      "begin": "^\\s*(@)(adapter)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:\\s*\\{",
       "beginCaptures": {
-        "1": { "name": "entity.name.function.adapter.cuneiform" }
+        "1": { "name": "punctuation.definition.keyword.cuneiform" },
+        "2": { "name": "keyword.adapter.cuneiform" },
+        "3": { "name": "entity.name.function.adapter.cuneiform" }
       },
       "end": "^\\s*\\}",
       "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
