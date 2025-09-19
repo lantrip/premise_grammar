@@ -97,7 +97,19 @@
       }
     },
     {
+      "scope": "string.unquoted.adapter.value.cuneiform",
+      "settings": {
+        "foreground": "#27ae60"
+      }
+    },
+    {
       "scope": "string.quoted.adapter.path.cuneiform",
+      "settings": {
+        "foreground": "#27ae60"
+      }
+    },
+    {
+      "scope": "string.quoted.double.cuneiform",
       "settings": {
         "foreground": "#27ae60"
       }
