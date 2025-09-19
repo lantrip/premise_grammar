@@ -101,6 +101,20 @@
       }
     },
     {
+      "scope": "keyword.adapters.block.cuneiform",
+      "settings": {
+        "foreground": "#c586c0",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "keyword.adapter.inline.cuneiform",
+      "settings": {
+        "foreground": "#c586c0",
+        "fontStyle": "bold"
+      }
+    },
+    {
       "scope": "string.quoted.block.cuneiform",
       "settings": {
         "foreground": "#ce9178",

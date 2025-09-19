@@ -129,7 +129,7 @@ class CuneiformSemanticTokensProvider {
                 this.addToken(builder, node, "import", [], document);
                 break;
             case "adapter_statement":
-                this.addToken(builder, node, "keyword", [], document);
+                // Skip semantic tokens for adapter_statement - TextMate handles this better
                 break;
             case "line_comment":
                 this.addToken(builder, node, "comment", ["italic"], document);

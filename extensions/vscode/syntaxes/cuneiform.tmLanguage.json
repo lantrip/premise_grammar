@@ -32,8 +32,49 @@
       "match": "@import\\b"
     },
     {
-      "name": "keyword.adapter.cuneiform",
-      "match": "@adapters?\\b"
+      "name": "meta.adapter.inline.cuneiform",
+      "begin": "^\\s*(@adapter)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(:)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "keyword.adapter.inline.cuneiform" },
+        "2": { "name": "entity.name.function.adapter.cuneiform" },
+        "3": { "name": "punctuation.separator.key-value.cuneiform" },
+        "4": { "name": "punctuation.bracket.curly.cuneiform" }
+      },
+      "end": "^\\s*\\}",
+      "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
+      "patterns": [{ "include": "#adapterObjectBody" }]
+    },
+    {
+      "name": "meta.adapters.block.cuneiform",
+      "begin": "^\\s*(@adapters)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "keyword.adapters.block.cuneiform" },
+        "2": { "name": "punctuation.bracket.curly.cuneiform" }
+      },
+      "end": "^\\s*\\}",
+      "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
+      "patterns": [
+        {
+          "name": "meta.adapters.item.cuneiform",
+          "begin": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "entity.name.function.adapter.cuneiform" }
+          },
+          "end": "^\\s*\\}",
+          "endCaptures": {
+            "0": { "name": "punctuation.bracket.curly.cuneiform" }
+          },
+          "patterns": [{ "include": "#adapterObjectBody" }]
+        },
+        {
+          "name": "meta.adapters.item.line.cuneiform",
+          "match": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:(.*)$",
+          "captures": {
+            "1": { "name": "entity.name.function.adapter.cuneiform" },
+            "0": { "name": "meta.line.adapter.cuneiform" }
+          }
+        }
+      ]
     },
     {
       "name": "meta.entity.block.cuneiform",
@@ -121,37 +162,6 @@
       "end": "^\\s*\\}",
       "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
       "patterns": [{ "include": "#adapterObjectBody" }]
-    },
-    {
-      "name": "meta.adapters.block.cuneiform",
-      "begin": "^\\s*@adapters\\s*\\{",
-      "beginCaptures": {
-        "0": { "name": "punctuation.bracket.curly.cuneiform" }
-      },
-      "end": "^\\s*\\}",
-      "endCaptures": { "0": { "name": "punctuation.bracket.curly.cuneiform" } },
-      "patterns": [
-        {
-          "name": "meta.adapters.item.cuneiform",
-          "begin": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:\\s*\\{",
-          "beginCaptures": {
-            "1": { "name": "entity.name.function.adapter.cuneiform" }
-          },
-          "end": "^\\s*\\}",
-          "endCaptures": {
-            "0": { "name": "punctuation.bracket.curly.cuneiform" }
-          },
-          "patterns": [{ "include": "#adapterObjectBody" }]
-        },
-        {
-          "name": "meta.adapters.item.line.cuneiform",
-          "match": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:(.*)$",
-          "captures": {
-            "1": { "name": "entity.name.function.adapter.cuneiform" },
-            "0": { "name": "meta.line.adapter.cuneiform" }
-          }
-        }
-      ]
     }
   ],
   "repository": {

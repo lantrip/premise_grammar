@@ -188,6 +188,38 @@ vsce package
 vsce publish
 ```
 
+## Debugging Syntax Highlighting Issues
+
+When users report highlighting problems, use VSCode's **Token Inspector**:
+
+1. Have user open the problematic `.cune` file
+2. Place cursor on the incorrectly highlighted text
+3. `Cmd+Shift+P` → "Developer: Inspect Editor Tokens and Scopes"
+4. Analyze the token panel to identify issues:
+   - **TextMate scopes**: Which patterns are matching (or not)
+   - **Semantic token type**: Tree-sitter semantic tokens
+   - **Foreground color**: Active theme rules
+
+Common issues and fixes:
+
+- **"No theme selector" / only `source.cuneiform`**: TextMate pattern not matching
+  - Check pattern ordering in `syntaxes/cuneiform.tmLanguage.json`
+  - Earlier patterns win - move specific patterns before general ones
+
+- **Split token coloring** (e.g., `@adapt` different from `er`):
+  - Semantic token conflict with TextMate
+  - May need to disable semantic token in `semanticTokens.ts`
+
+- **Wrong color despite correct scope**:
+  - Missing theme support - add scope to all theme files
+  - Semantic token overriding - check precedence
+
+- **ERROR nodes in parse tree**:
+  ```bash
+  tree-sitter parse file.cune | grep ERROR
+  ```
+  - Grammar issue - fix in `grammar.js`
+
 ## Key Development Rules
 
 1. **Always validate queries**: Run `./test_queries.sh` after any grammar or query changes
@@ -196,6 +228,7 @@ vsce publish
 4. **Use example files**: Reference working `.cune` files rather than documenting syntax extensively
 5. **Maintain semantic scopes**: These are critical for editor extension functionality
 6. **Coordinate releases**: Update extensions after grammar changes are committed
+7. **Debug with Token Inspector**: Use VSCode's inspector to diagnose highlighting issues
 
 ## New: Entity Block Highlighting – Implementation Notes
 

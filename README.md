@@ -144,6 +144,38 @@ This repository includes editor extensions in `extensions/`:
 The extensions auto-build and install to your local editors for immediate testing.
 See `extensions/README.md` for detailed extension development workflow.
 
+## Debugging Syntax Highlighting
+
+**VSCode Token Inspector** (Essential for debugging highlighting issues):
+
+1. Open a `.cune` file in VSCode
+2. Place cursor on the problematic text
+3. Press `Cmd+Shift+P` → "Developer: Inspect Editor Tokens and Scopes"
+4. Review the token information panel:
+   - **TextMate scopes**: Shows which grammar rules are matching
+   - **Semantic token type**: Shows Tree-sitter semantic tokens
+   - **Foreground color**: Shows which theme rule is being applied
+
+Common debugging scenarios:
+
+- **No TextMate scopes** (only `source.cuneiform`): Pattern isn't matching - check pattern precedence
+- **Semantic token overriding TextMate**: Semantic tokens take priority - may need to disable semantic token for that node
+- **Split coloring** (e.g., `@adapt` vs `er`): Conflicting tokens - check both semantic and TextMate rules
+- **Wrong scope matching**: Earlier pattern taking precedence - reorder patterns in `syntaxes/cuneiform.tmLanguage.json`
+
+Tree-sitter debugging:
+
+```bash
+# Parse file and show syntax tree
+tree-sitter parse examples/theming_showcase.cune
+
+# Test specific text
+echo '@adapter test: { }' | tree-sitter parse
+
+# Check for ERROR nodes (indicates grammar issues)
+tree-sitter parse file.cune | grep ERROR
+```
+
 ## Contributing
 
 1. Edit `grammar.js` and/or `queries/*.scm`
@@ -151,5 +183,6 @@ See `extensions/README.md` for detailed extension development workflow.
 3. Run `./test_queries.sh` to validate
 4. Run `./scripts/sync-extensions.sh` to update extensions
 5. Test extensions with example files
+6. Use VSCode's token inspector to verify highlighting
 
 **Key Rule**: Always validate queries with `./test_queries.sh` before committing to prevent editor extension errors.
