@@ -1,0 +1,29 @@
+# Adapters and Block Scalars Test
+
+# External adapter with inline value
+@adapter "adapters/text_enhancement.yaml": after_generation
+
+# External adapter with object spec
+@adapter "adapters/post_processing.yaml": { timing: during_generation }
+
+# Named adapter with object and YAML block scalar
+@adapter style_adapter: {
+  type: text
+  timing: after_generation
+  description: |
+    Replace select verbs with elevated synonyms.
+    Applies only to narrative prose.
+}
+
+# Adapters block list with nested objects and scalar notes
+@adapters {
+  - representation_adapter: {
+    type: character
+    timing: during_generation
+    notes: |
+      Map narrative labels to canonical entity names while generating text.
+      Dialogue lines are updated when update_dialogue is true.
+  }
+}
+
+

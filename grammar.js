@@ -19,6 +19,7 @@ module.exports = grammar({
             /characters?\s*\{/,
             /locations?\s*\{/,
             /items?\s*\{/,
+            /adapters\s*\{/,
             /entities\s*\{/,
             /themes\s*\{/,
             /custom_metadata\s*\{/,
@@ -77,7 +78,14 @@ module.exports = grammar({
     entity_object: ($) =>
       seq(
         alias("{", $.open_brace),
-        repeat(choice($.object_property, $.block_comment, $.newline)),
+        repeat(
+          choice(
+            $.object_property,
+            $.adapter_list_property,
+            $.block_comment,
+            $.newline
+          )
+        ),
         alias("}", $.close_brace)
       ),
 
@@ -186,84 +194,7 @@ module.exports = grammar({
     content_type_narrative: ($) =>
       prec.right(9, seq("/", optional(field("content", /.*/)))),
 
-    entity_block_content: ($) =>
-      choice(
-        $.block_entity_item,
-        $.block_property,
-        $.block_comment,
-        $.nested_block
-      ),
-
-    block_entity_item: ($) =>
-      seq(
-        /[ \t]*/,
-        "-",
-        /[ \t]+/,
-        field("entity_name", /[A-Za-z][A-Za-z0-9 ]*/),
-        ":",
-        /[ \t]*/,
-        field("entity_desc", /[^\r\n]+/)
-      ),
-
-    block_property: ($) =>
-      seq(
-        /[ \t]+/,
-        field("prop_key", /[a-z_][a-z_0-9]*/),
-        ":",
-        /[ \t]*/,
-        field("prop_value", /[^\r\n]+/)
-      ),
-
     block_comment: ($) => seq(/\s*/, "#", /[^\r\n]*/),
-
-    // Support for nested blocks like @eras (flexible indentation)
-    nested_block: ($) =>
-      prec.right(
-        seq(
-          /\s*/, // Optional indentation - more flexible
-          "@",
-          field("nested_type", /\w+/),
-          /\s*/,
-          alias("{", $.open_brace),
-          repeat(
-            choice(
-              $.block_property,
-              $.block_comment,
-              $.deeper_nested_block,
-              $.newline
-            )
-          ),
-          optional(/\s*/), // Closing brace may or may not be indented
-          alias("}", $.close_brace)
-        )
-      ),
-
-    // Support deeply nested blocks
-    deeper_nested_block: ($) =>
-      seq(
-        /\s+/,
-        field("key", /\w+/),
-        ":",
-        /\s*/,
-        alias("{", $.open_brace),
-        /\s*\r?\n/,
-        repeat(
-          choice(
-            seq(
-              /\s+/,
-              field("nested_key", /\w+/),
-              ":",
-              /\s*/,
-              field("nested_value", /[^\r\n]+/),
-              /\r?\n/
-            ),
-            $.block_comment,
-            $.newline
-          )
-        ),
-        /\s+/,
-        alias("}", $.close_brace)
-      ),
 
     import_statement: ($) =>
       prec(
@@ -283,44 +214,47 @@ module.exports = grammar({
       ),
 
     adapter_statement: ($) =>
-      prec(
-        8,
-        seq(
-          "@adapter",
-          /\s+/,
-          choice(
-            // External adapter reference
-            seq(
-              choice(
-                seq('"', field("adapter_path", /[^"]+/), '"'),
-                seq("'", field("adapter_path", /[^']+/), "'")
-              ),
-              optional(
-                choice(
-                  seq(/\s+timing=/, field("timing", /\w+/)),
-                  seq(/\s+@timing:/, field("timing", /\w+/))
-                )
-              )
+      choice(
+        // External adapter reference: @adapter "path": value
+        prec(
+          12,
+          seq(
+            token.immediate(seq("@", "adapter")),
+            /\s+/,
+            choice(
+              seq('"', field("adapter_path", $.adapter_path), '"'),
+              seq("'", field("adapter_path", $.adapter_path), "'")
             ),
-            // Inline adapter definition
-            $.adapter_inline_block
+            /\s*/,
+            ":",
+            /\s*/,
+            field("adapter_spec", $.prop_value)
+          )
+        ),
+        // Named inline adapter: @adapter name: { ... }
+        prec(
+          11,
+          seq(
+            token.immediate(seq("@", "adapter")),
+            /\s+/,
+            field("adapter_name", $.adapter_name),
+            /\s*/,
+            ":",
+            /\s*/,
+            $.object_value
           )
         )
       ),
 
-    adapter_inline_block: ($) =>
+
+    // Adapter list item property: dash-prefixed key-value
+    adapter_list_property: ($) =>
       seq(
-        field("adapter_name", /\w+/),
-        /\s*/,
-        "{",
-        repeat(
-          choice(
-            $.balanced_braces, // Handle nested { ... } patterns
-            /[^{}]+/, // Content without braces
-            $.newline // Allow newlines
-          )
-        ),
-        "}"
+        /[ \t]*-\s+/,
+        field("prop_key", $.prop_key),
+        ":",
+        /[ \t]*/,
+        field("prop_value", $.prop_value)
       ),
 
     metadata_line: ($) =>
@@ -372,9 +306,37 @@ module.exports = grammar({
     newline: ($) => /\r?\n/,
 
     // Named tokens for entity parts
-    entity_name: ($) => /[A-Za-z][A-Za-z0-9 ]*/,
+    entity_name: ($) => /[A-Za-z_][A-Za-z0-9_ ]*/,
     entity_desc: ($) => /[^\r\n{}]+/,
     prop_key: ($) => /[a-z_][a-z_0-9]*/,
-    prop_value: ($) => /[^\r\n]+/,
+    // Generic value for properties: supports inline simple values, nested objects, and YAML-style block scalars
+    prop_value: ($) => choice($.object_value, $.block_scalar, $.simple_value),
+
+    // Inline simple scalar (single line, no braces)
+    simple_value: ($) => /[^\r\n{}]+/,
+
+    // Object value reused across adapters and entities
+    object_value: ($) =>
+      seq(
+        alias("{", $.open_brace),
+        repeat(
+          choice(
+            $.object_property,
+            $.adapter_list_property,
+            $.block_comment,
+            $.newline
+          )
+        ),
+        alias("}", $.close_brace)
+      ),
+
+    // YAML-style block scalar: key: |\n  indented text...
+    block_scalar: ($) =>
+      seq("|", optional(/[ \t]*/), $.newline, repeat1($.indented_text_line)),
+
+    indented_text_line: ($) => seq(/[ \t]+/, /[^\r\n]*/, $.newline),
+    adapter_name: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
+    adapter_path: ($) => /[^"']+/,
+    adapter_timing: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
   },
 });

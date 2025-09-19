@@ -2,7 +2,7 @@
 # Test all Tree-sitter queries against the grammar
 set -e
 
-echo "🧪 Testing Cuneiform Grammar Queries..."
+echo "🧪 Testing Cuneiform Grammar & Queries..."
 echo
 
 # Colors for output
@@ -56,7 +56,13 @@ discover_nodes() {
     echo
 }
 
-# Discover available nodes first
+SAMPLE_FILES=(
+  tests/cases/01_entity_definitions.cune
+  tests/cases/09_adapters_and_block_scalars.cune
+  examples/theming_showcase.cune
+)
+
+# Discover available nodes from a comprehensive file
 discover_nodes
 
 # Test each query file
@@ -66,7 +72,22 @@ echo
 FAILED_QUERIES=""
 for query_file in queries/*.scm; do
     if [ -f "$query_file" ]; then
-        if ! test_query "$query_file"; then
+        ALL_OK=1
+        for f in "${SAMPLE_FILES[@]}"; do
+            if [ -f "$f" ]; then
+              echo "Running $(basename "$query_file") on $(basename "$f")..." >/dev/null
+              if ! tree-sitter query "$query_file" "$f" >/dev/null 2>/tmp/query_error.txt; then
+                  ALL_OK=0
+                  break
+              fi
+            fi
+        done
+        if [ $ALL_OK -eq 1 ]; then
+            echo -e "Testing $(basename "$query_file") query... ${GREEN}PASSED${NC}"
+        else
+            echo -e "Testing $(basename "$query_file") query... ${RED}FAILED${NC}"
+            echo "  Error:"
+            cat /tmp/query_error.txt | sed 's/^/    /'
             FAILED_QUERIES="$FAILED_QUERIES $query_file"
         fi
     fi

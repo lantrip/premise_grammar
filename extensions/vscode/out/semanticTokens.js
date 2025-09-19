@@ -80,87 +80,101 @@ class CuneiformSemanticTokensProvider {
     }
     provideDocumentSemanticTokens(document) {
         const tree = this.parser.parse(document.getText());
-        const tokens = [];
+        const builder = new vscode.SemanticTokensBuilder(this.legend);
         if (tree) {
-            this.traverseTree(tree.rootNode, tokens, document);
-            console.log(`Cuneiform: Generated ${tokens.length / 5} semantic tokens`);
+            this.traverseTree(tree.rootNode, builder, document);
         }
-        return new vscode.SemanticTokens(new Uint32Array(tokens));
+        const result = builder.build();
+        const count = (result.data?.length ?? 0) / 5;
+        console.log(`Cuneiform: Generated ${count} semantic tokens`);
+        return result;
     }
-    traverseTree(node, tokens, document) {
+    traverseTree(node, builder, document) {
         // Map Tree-sitter grammar nodes to semantic tokens
         switch (node.type) {
             case "act_header":
-                this.addToken(tokens, node, "story-act", ["bold"], document);
+                this.addToken(builder, node, "story-act", ["bold"], document);
                 break;
             case "scene_header":
-                this.addToken(tokens, node, "story-scene", ["bold"], document);
+                this.addToken(builder, node, "story-scene", ["bold"], document);
                 break;
             case "cel_header":
-                this.addToken(tokens, node, "story-cel", ["bold"], document);
+                this.addToken(builder, node, "story-cel", ["bold"], document);
                 break;
             case "content_type_beat":
-                this.addToken(tokens, node, "content-beat", ["bold"], document);
+                this.addToken(builder, node, "content-beat", ["bold"], document);
                 break;
             case "content_type_treatment":
-                this.addToken(tokens, node, "content-treatment", ["bold"], document);
+                this.addToken(builder, node, "content-treatment", ["bold"], document);
                 break;
             case "content_type_narrative":
-                this.addToken(tokens, node, "content-narrative", ["bold"], document);
+                this.addToken(builder, node, "content-narrative", ["bold"], document);
                 break;
             case "entity_reference":
-                this.addToken(tokens, node, "entity-reference", [], document);
+                this.addToken(builder, node, "entity-reference", [], document);
                 break;
             case "dialogue_speaker":
-                this.addToken(tokens, node, "character-speaker", ["bold"], document);
+                this.addToken(builder, node, "character-speaker", ["bold"], document);
                 break;
             case "entity_construct":
-                this.addToken(tokens, node, "entity-definition", [], document);
+                this.addToken(builder, node, "entity-definition", [], document);
                 break;
             case "file_header":
-                this.addToken(tokens, node, "file-header", ["bold"], document);
+                this.addToken(builder, node, "file-header", ["bold"], document);
                 break;
             case "metadata_line":
-                this.addToken(tokens, node, "metadata", [], document);
+                this.addToken(builder, node, "metadata", [], document);
                 break;
             case "import_statement":
-                this.addToken(tokens, node, "import", [], document);
+                this.addToken(builder, node, "import", [], document);
                 break;
             case "adapter_statement":
-                this.addToken(tokens, node, "import", [], document);
+                this.addToken(builder, node, "keyword", [], document);
                 break;
             case "line_comment":
-                this.addToken(tokens, node, "comment", ["italic"], document);
+                this.addToken(builder, node, "comment", ["italic"], document);
                 break;
             case "parenthetical":
-                this.addToken(tokens, node, "comment", ["italic"], document);
+                this.addToken(builder, node, "comment", ["italic"], document);
                 break;
             case "entity_name":
-                console.log(`Found entity_name: ${document
-                    .getText()
-                    .substring(node.startIndex, node.endIndex)}`);
-                // Use standard token type so most themes colorize without customization
-                this.addToken(tokens, node, "variable", ["readonly"], document);
+                this.addToken(builder, node, "variable", ["readonly"], document);
                 break;
             case "entity_desc":
-                console.log(`Found entity_desc: ${document
-                    .getText()
-                    .substring(node.startIndex, node.endIndex)}`);
-                this.addToken(tokens, node, "string", [], document);
+                this.addToken(builder, node, "string", [], document);
                 break;
             case "prop_key":
-                this.addToken(tokens, node, "property", [], document);
+                this.addToken(builder, node, "property", [], document);
                 break;
             case "prop_value":
-                this.addToken(tokens, node, "string", [], document);
+                this.addToken(builder, node, "string", [], document);
+                break;
+            case "block_scalar":
+                this.addToken(builder, node, "string", [], document);
+                break;
+            case "indented_text_line":
+                this.addToken(builder, node, "string", [], document);
+                break;
+            case "adapter_name":
+                this.addToken(builder, node, "variable", ["readonly"], document);
+                break;
+            case "adapter_path":
+                this.addToken(builder, node, "string", [], document);
+                break;
+            case "adapter_timing":
+                this.addToken(builder, node, "keyword", [], document);
+                break;
+            case "open_brace":
+            case "close_brace":
+                this.addToken(builder, node, "operator", [], document);
                 break;
         }
         // Recursively process child nodes
         for (const child of node.children) {
-            this.traverseTree(child, tokens, document);
+            this.traverseTree(child, builder, document);
         }
     }
-    addToken(tokens, node, tokenType, modifiers, document) {
+    addToken(builder, node, tokenType, modifiers, document) {
         const startPos = document.positionAt(node.startIndex);
         const endPos = document.positionAt(node.endIndex);
         const tokenTypeIndex = this.legend.tokenTypes.indexOf(tokenType);
@@ -172,7 +186,7 @@ class CuneiformSemanticTokensProvider {
         if (length <= 0) {
             return;
         }
-        tokens.push(startPos.line, startPos.character, length, tokenTypeIndex, this.encodeModifiers(modifiers));
+        builder.push(startPos.line, startPos.character, length, tokenTypeIndex, this.encodeModifiers(modifiers));
     }
     encodeModifiers(modifiers) {
         let result = 0;

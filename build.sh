@@ -19,9 +19,18 @@ fi
 echo "🌳 Generating parser..."
 tree-sitter generate
 
+# Build native parser (for local CLI parsing/tests)
+echo "🔨 Building native parser..."
+tree-sitter build
+
 # Build WASM
 echo "🏗️  Building WASM..."
-tree-sitter build --wasm
+# Support both CLI syntaxes across versions
+if tree-sitter build-wasm >/dev/null 2>&1; then
+  tree-sitter build-wasm
+else
+  tree-sitter build --wasm
+fi
 
 # The WASM should be generated as tree-sitter-cuneiform.wasm
 if [ -f "tree-sitter-cuneiform.wasm" ]; then

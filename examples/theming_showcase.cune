@@ -16,7 +16,7 @@
 @import "entities/fantasy_world.yaml"
 @import "templates/hero_journey.yaml" #acts|scenes
 
-@adapter "./story-adapter.ts"
+@adapter "./story-adapter.ts": after_generation
 
 # ============================================================================
 # ENTITY DEFINITIONS - INLINE STYLE
@@ -68,7 +68,7 @@ This act introduces our hero and sets up the central conflict.
 == Opening Scene - The Peaceful Village
 The story begins in a quiet farming village at dawn.
 
-=== INT. Hero's Cottage - Morning
+=== INT. Hero's Cottage - Morninghere
 
 # Metadata for the cel
 +location: Hero's humble cottage
@@ -224,6 +224,55 @@ SIDEKICK: (fighting with surprising skill)
 # ============================================================================
 # ADDITIONAL SCOPE DEMONSTRATIONS
 # ============================================================================
+# Adapter examples
+
+# External adapter reference
+@adapter "adapters/text_enhancement.yaml": { timing: after_generation }
+
+# Adapter block list (mirrors @eras style)
+@adapters {
+  - style_adapter: {
+    type: text
+    timing: after_generation
+  }
+  - representation_adapter: {
+    type: character
+    timing: during_generation
+  }
+}
+
+# Inline adapter definitions with nested properties
+@adapter style_adapter: {
+  type: text
+  timing: after_generation
+  description: |
+    Replace select verbs with elevated synonyms during post-processing.
+    Applies only to narrative prose.
+  
+  pattern_rules:
+    - source_pattern: "walk"
+      target_pattern: "stride"
+      pattern_type: word_boundary
+      explanation: |
+        Replace only whole-word matches to avoid partial substitutions.
+    - source_pattern: "runs"
+      target_pattern: "sprints"
+      pattern_type: word_boundary
+}
+
+@adapter representation_adapter: {
+  type: character
+  timing: during_generation
+  notes: |
+    Map narrative labels to canonical entity names while generating text.
+    Dialogue lines are updated when update_dialogue is true.
+  
+  character_mappings: {
+    source_name: "Protagonist"
+    target_name: "Hero"
+    update_dialogue: true
+  }
+}
 
 # Parenthetical examples in various contexts
 CHARACTER: (whispering urgently)

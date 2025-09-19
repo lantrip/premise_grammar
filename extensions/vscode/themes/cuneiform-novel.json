@@ -69,9 +69,79 @@
       "settings": {
         "foreground": "#34495e"
       }
+    },
+    {
+      "scope": "keyword.adapter.cuneiform",
+      "settings": {
+        "foreground": "#8e44ad",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "entity.name.function.adapter.cuneiform",
+      "settings": {
+        "foreground": "#2c3e50",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "variable.other.property.adapter.cuneiform",
+      "settings": {
+        "foreground": "#3498db"
+      }
+    },
+    {
+      "scope": "string.adapter",
+      "settings": {
+        "foreground": "#27ae60"
+      }
+    },
+    {
+      "scope": "string.quoted.adapter.path.cuneiform",
+      "settings": {
+        "foreground": "#27ae60"
+      }
+    },
+    {
+      "scope": "string.quoted.block.cuneiform",
+      "settings": {
+        "foreground": "#27ae60",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "keyword.entity.block.cuneiform",
+      "settings": {
+        "foreground": "#8e44ad",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "entity.name.type.cuneiform",
+      "settings": {
+        "foreground": "#2c3e50",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "variable.other.property.cuneiform",
+      "settings": {
+        "foreground": "#3498db"
+      }
+    },
+    {
+      "scope": "string.unquoted.entity.value.cuneiform",
+      "settings": {
+        "foreground": "#27ae60"
+      }
     }
   ],
   "semanticTokenColors": {
+    "variable": "#8e44ad",
+    "variable.readonly": {
+      "foreground": "#8e44ad",
+      "fontStyle": "bold"
+    },
     "entity-definition": {
       "foreground": "#8e44ad",
       "fontStyle": "bold"
@@ -108,6 +178,7 @@
       "foreground": "#8e44ad",
       "fontStyle": "bold"
     },
-    "property": "#7f8c8d"
+    "property": "#7f8c8d",
+    "keyword": "#27ae60"
   }
 }
