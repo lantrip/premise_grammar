@@ -17,13 +17,13 @@ echo "📦 Building grammar..."
 
 # Sync to Zed extension
 echo "🦓 Syncing to Zed extension..."
-cp -r queries/* extensions/zed/languages/cuneiform/
+cp -r queries/* extensions/zed/languages/premise/
 echo "   ✅ Copied query files to Zed"
 
 # Sync to VSCode extension
 echo "📘 Syncing to VSCode extension..."
 mkdir -p extensions/vscode/queries
-cp tree-sitter-cuneiform.wasm extensions/vscode/
+cp tree-sitter-premise.wasm extensions/vscode/
 cp -r queries/* extensions/vscode/queries/
 echo "   ✅ Copied WASM and queries to VSCode"
 

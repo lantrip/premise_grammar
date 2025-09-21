@@ -1,6 +1,6 @@
-# Cuneiform Tree-sitter Grammar
+# Premise Tree-sitter Grammar
 
-Tree-sitter grammar for the Cuneiform language - a domain-specific language for story authoring with hierarchical content organization, entity definitions, and screenplay-style dialogue.
+Tree-sitter grammar for the Premise language - a domain-specific language for story authoring with hierarchical content organization, entity definitions, and screenplay-style dialogue.
 
 ## Quick Start
 
@@ -12,7 +12,7 @@ Tree-sitter grammar for the Cuneiform language - a domain-specific language for 
 ./test_queries.sh
 
 # Test on a file
-tree-sitter parse examples/theming_showcase.cune
+tree-sitter parse examples/theming_showcase.prem
 ```
 
 ## Core Features
@@ -62,6 +62,7 @@ tree-sitter parse file.cune # Test specific file
 ### Editor Extension Development
 
 **Quick Setup:**
+
 ```bash
 # Zed - Push changes, then update and install
 git push && ./scripts/update-zed-rev.sh
@@ -72,6 +73,7 @@ cd extensions/vscode && npm run compile && code --install-extension .
 ```
 
 **Key Points:**
+
 - Zed extension always uses GitHub repository (push changes first)
 - Always run `./test_queries.sh` after changing `queries/*.scm`
 - Use `./scripts/sync-extensions.sh` to copy updates to extensions
@@ -132,12 +134,12 @@ Why this was needed:
 Editor/theme notes:
 
 - VSCode themes must have semantic highlighting enabled. Our themes now set `"semanticHighlighting": true` and include colors for the `property` token.
-- If using non-Cuneiform themes, semantic tokens still work because we use standard token types (`variable`, `string`, `property`).
+- If using non-Premise themes, semantic tokens still work because we use standard token types (`variable`, `string`, `property`).
 
 ## Integration
 
 **VSCode/Cursor Extension**: Uses this grammar for syntax highlighting, outline, and navigation
-**Web/WASM**: `tree-sitter-cuneiform.wasm` for browser-based editing
+**Web/WASM**: `tree-sitter-premise.wasm` for browser-based editing
 **Other Editors**: Reference `queries/` for syntax highlighting rules
 
 ## Semantic Scopes
@@ -181,10 +183,10 @@ See `extensions/README.md` for detailed extension development workflow.
 
 Common debugging scenarios:
 
-- **No TextMate scopes** (only `source.cuneiform`): Pattern isn't matching - check pattern precedence
+- **No TextMate scopes** (only `source.premise`): Pattern isn't matching - check pattern precedence
 - **Semantic token overriding TextMate**: Semantic tokens take priority - may need to disable semantic token for that node
 - **Split coloring** (e.g., `@adapt` vs `er`): Conflicting tokens - check both semantic and TextMate rules
-- **Wrong scope matching**: Earlier pattern taking precedence - reorder patterns in `syntaxes/cuneiform.tmLanguage.json`
+- **Wrong scope matching**: Earlier pattern taking precedence - reorder patterns in `syntaxes/premise.tmLanguage.json`
 
 Tree-sitter debugging:
 

@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-# Cuneiform Grammar Test Runner
+# Premise Grammar Test Runner
 # Tests grammar against various syntax patterns
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "🧪 Running Cuneiform Grammar Tests..."
+echo "🧪 Running Premise Grammar Tests..."
 echo
 
 # Colors for output
@@ -22,7 +22,7 @@ FAILED_TESTS=0
 
 run_test() {
     local test_file=$1
-    local test_name=$(basename "$test_file" .cune)
+    local test_name=$(basename "$test_file" .prem)
     
     echo -n "Testing $test_name... "
     TOTAL_TESTS=$((TOTAL_TESTS + 1))
@@ -47,7 +47,7 @@ run_test() {
 
 # Test individual pattern files
 echo "📋 Testing individual syntax patterns:"
-for test_file in cases/*.cune; do
+for test_file in cases/*.prem; do
     if [ -f "$test_file" ]; then
         run_test "$test_file"
     fi
@@ -57,7 +57,7 @@ echo
 
 # Test the main example file
 echo "📋 Testing main example file:"
-EXAMPLE_FILE="../../../examples/habitatable/world_with_inline_eras.cune"
+EXAMPLE_FILE="../../../examples/habitatable/world_with_inline_eras.prem"
 if [ -f "$EXAMPLE_FILE" ]; then
     run_test "$EXAMPLE_FILE"
 else

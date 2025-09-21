@@ -1,9 +1,9 @@
 {
-  "name": "cuneiform",
-  "displayName": "Cuneiform Language Support",
-  "description": "Syntax highlighting and theming for Cuneiform story files",
+  "name": "premise",
+  "displayName": "Premise Language Support",
+  "description": "Syntax highlighting and theming for Premise story files",
   "version": "1.0.0",
-  "publisher": "cuneiform-lang",
+  "publisher": "premise-lang",
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -12,57 +12,57 @@
     "Themes"
   ],
   "keywords": [
-    "cuneiform",
+    "premise",
     "story",
     "screenplay",
     "narrative"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/davidlantrip/cuneiform-grammar"
+    "url": "https://github.com/davidlantrip/premise-grammar"
   },
   "contributes": {
     "languages": [
       {
-        "id": "cuneiform",
+        "id": "premise",
         "aliases": [
-          "Cuneiform",
-          "cuneiform"
+          "Premise",
+          "premise"
         ],
         "extensions": [
-          ".cune"
+          ".prem"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "cuneiform",
-        "scopeName": "source.cuneiform",
-        "path": "./syntaxes/cuneiform.tmLanguage.json"
+        "language": "premise",
+        "scopeName": "source.premise",
+        "path": "./syntaxes/premise.tmLanguage.json"
       }
     ],
     "themes": [
       {
-        "label": "Cuneiform Screenplay",
+        "label": "Premise Screenplay",
         "uiTheme": "vs",
-        "path": "./themes/cuneiform-screenplay.json"
+        "path": "./themes/premise-screenplay.json"
       },
       {
-        "label": "Cuneiform Novel",
+        "label": "Premise Novel",
         "uiTheme": "vs",
-        "path": "./themes/cuneiform-novel.json"
+        "path": "./themes/premise-novel.json"
       },
       {
-        "label": "Cuneiform Dark",
+        "label": "Premise Dark",
         "uiTheme": "vs-dark",
-        "path": "./themes/cuneiform-dark.json"
+        "path": "./themes/premise-dark.json"
       }
     ]
   },
   "main": "./out/extension.js",
   "activationEvents": [
-    "onLanguage:cuneiform"
+    "onLanguage:premise"
   ],
   "scripts": {
     "compile": "tsc -p ./ --listEmittedFiles false",

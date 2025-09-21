@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install Cuneiform extensions to local editors
+# Install Premise extensions to local editors
 
 set -e
 
@@ -52,7 +52,7 @@ else
     done
 fi
 
-echo -e "${BLUE}🚀 Installing Cuneiform extensions...${NC}"
+echo -e "${BLUE}🚀 Installing Premise extensions...${NC}"
 
 # Build and sync first
 echo -e "${BLUE}📦 Building grammar...${NC}"

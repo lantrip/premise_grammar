@@ -2,7 +2,7 @@
 # Test all Tree-sitter queries against the grammar
 set -e
 
-echo "🧪 Testing Cuneiform Grammar & Queries..."
+echo "🧪 Testing Premise Grammar & Queries..."
 echo
 
 # Colors for output
@@ -28,7 +28,7 @@ test_query() {
     echo -n "Testing $query_name query... "
 
     # Try to compile the query
-    if tree-sitter query "$query_file" tests/cases/01_entity_definitions.cune 2>/tmp/query_error.txt > /dev/null; then
+    if tree-sitter query "$query_file" tests/cases/01_entity_definitions.prem 2>/tmp/query_error.txt > /dev/null; then
         echo -e "${GREEN}PASSED${NC}"
         return 0
     else
@@ -46,7 +46,7 @@ discover_nodes() {
 
     # Parse a comprehensive test file and extract node types
     echo "Parsing test file to discover nodes..."
-    tree-sitter parse tests/cases/04_story_structure.cune 2>/dev/null | \
+    tree-sitter parse tests/cases/04_story_structure.prem 2>/dev/null | \
         grep -o '([a-z_]*' | \
         sed 's/(//' | \
         sort -u > /tmp/available_nodes.txt
@@ -57,9 +57,9 @@ discover_nodes() {
 }
 
 SAMPLE_FILES=(
-  tests/cases/01_entity_definitions.cune
-  tests/cases/09_adapters_and_block_scalars.cune
-  examples/theming_showcase.cune
+  tests/cases/01_entity_definitions.prem
+  tests/cases/09_adapters_and_block_scalars.prem
+  examples/theming_showcase.prem
 )
 
 # Discover available nodes from a comprehensive file

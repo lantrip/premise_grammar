@@ -1,4 +1,4 @@
-; Cuneiform Syntax Highlighting
+; Premise Syntax Highlighting
 ; Simplified version without field references
 
 ; Comments - distinguish from story content

@@ -1,10 +1,10 @@
-name = "Cuneiform"
-grammar = "cuneiform"
-path_suffixes = ["cune"]
+name = "Premise"
+grammar = "premise"
+path_suffixes = ["prem"]
 
 line_comment = "#"
 
-# Cuneiform doesn't have block comments currently
+# Premise doesn't have block comments currently
 # If it did, it would be: block_comment = ["/*", "*/"]
 
 [bracket_pairs]

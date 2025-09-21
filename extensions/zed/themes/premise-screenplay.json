@@ -1,10 +1,10 @@
 {
   "$schema": "https://zed.dev/schema/themes/v0.1.0.json",
-  "name": "Cuneiform Screenplay",
+  "name": "Premise Screenplay",
   "author": "David Lantrip",
   "themes": [
     {
-      "name": "Cuneiform Screenplay",
+      "name": "Premise Screenplay",
       "appearance": "light",
       "style": {
         "background": "#f8f8f8",
@@ -286,6 +286,38 @@
           "punctuation.definition.content.narrative": {
             "color": "#e67e22",
             "font_style": "bold"
+          },
+          "entity.name.reference": {
+            "color": "#f1c40f",
+            "font_style": "bold"
+          },
+          "entity.name.character.speaker": {
+            "color": "#2980b9",
+            "font_style": "bold"
+          },
+          "entity.name.definition": {
+            "color": "#16a085",
+            "font_style": "bold"
+          },
+          "punctuation.definition.entity.begin": {
+            "color": "#f1c40f",
+            "font_style": "bold"
+          },
+          "punctuation.definition.entity.end": {
+            "color": "#f1c40f",
+            "font_style": "bold"
+          },
+          "text.parenthetical": {
+            "color": "#95a5a6",
+            "font_style": "italic"
+          },
+          "text.narrative": {
+            "color": "#2c3e50",
+            "font_style": null
+          },
+          "text.prose.line": {
+            "color": "#2c3e50",
+            "font_style": null
           }
         }
       }

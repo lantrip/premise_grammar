@@ -1,4 +1,4 @@
-; Bracket pairs for matching in Cuneiform
+; Bracket pairs for matching in Premise
 ; Based on actual available nodes from the grammar
 
 ; Entity references {Hero}

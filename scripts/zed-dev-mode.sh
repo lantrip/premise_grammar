@@ -36,7 +36,7 @@ check_extension_dir() {
 
 clean_grammars() {
     echo -e "${YELLOW}🧹 Cleaning old grammar directories...${NC}"
-    rm -rf "$ZED_EXTENSION_DIR/grammars/cuneiform"
+    rm -rf "$ZED_EXTENSION_DIR/grammars/premise"
     echo -e "${GREEN}✅ Cleaned grammar cache${NC}"
 }
 
@@ -44,7 +44,7 @@ switch_to_dev() {
     echo -e "${YELLOW}🔧 Switching to development mode...${NC}"
 
     # Update extension.toml to use local file path
-    sed -i '' 's|repository = "https://github\.com/lantrip/cuneiform_grammar"|repository = "file:///Users/davidlantrip/repos/cuneiform_grammar"|g' "$EXTENSION_TOML"
+    sed -i '' 's|repository = "https://github\.com/lantrip/premise_grammar"|repository = "file:///Users/davidlantrip/repos/premise_grammar"|g' "$EXTENSION_TOML"
 
     # Remove the rev line entirely for local development
     sed -i '' '/^rev = /d' "$EXTENSION_TOML"
@@ -68,14 +68,14 @@ switch_to_prod() {
     CURRENT_REV=$(git rev-parse HEAD)
 
     # Update extension.toml to use GitHub repository
-    sed -i '' 's|repository = "file:///Users/davidlantrip/repos/cuneiform_grammar"|repository = "https://github.com/lantrip/cuneiform_grammar"|g' "$EXTENSION_TOML"
+    sed -i '' 's|repository = "file:///Users/davidlantrip/repos/premise_grammar"|repository = "https://github.com/lantrip/premise_grammar"|g' "$EXTENSION_TOML"
 
     # Add or update the rev line
     if grep -q "^rev = " "$EXTENSION_TOML"; then
         sed -i '' "s|^rev = .*|rev = \"$CURRENT_REV\"|g" "$EXTENSION_TOML"
     else
         # Add rev line after repository line
-        sed -i '' "/^repository = \"https:\/\/github\.com\/lantrip\/cuneiform_grammar\"/a\\
+        sed -i '' "/^repository = \"https:\/\/github\.com\/lantrip\/premise_grammar\"/a\\
 rev = \"$CURRENT_REV\"
 " "$EXTENSION_TOML"
     fi

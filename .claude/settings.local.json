@@ -5,7 +5,7 @@
       "Bash(npm install)",
       "Bash(npx tree-sitter:*)",
       "Bash(cargo test)",
-      "Read(//Users/davidlantrip/repos/proof-again/premise/cuneiform/**)",
+      "Read(//Users/davidlantrip/repos/proof-again/premise/premise/**)",
       "Bash(git add:*)",
       "Bash(./test_queries.sh:*)",
       "Bash(npx vsce package:*)",
@@ -13,7 +13,17 @@
       "Bash(./install-extensions.sh)",
       "Bash(code:*)",
       "Bash(vsce package:*)",
-      "Read(///**)"
+      "Read(///**)",
+      "Bash(grep:*)",
+      "Bash(while read file)",
+      "Bash(do newfile=\"$file%.prem\")",
+      "Bash(echo \"Renamed: $file -> $newfile\")",
+      "Bash(done)",
+      "Bash(tree-sitter generate:*)",
+      "Bash(tree-sitter parse:*)",
+      "Bash(tree-sitter build:*)",
+      "Bash(find:*)",
+      "Bash(tree-sitter test:*)"
     ],
     "deny": [],
     "ask": []

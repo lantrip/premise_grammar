@@ -1,0 +1,307 @@
+{
+  "scopeName": "source.premise",
+  "name": "Premise",
+  "fileTypes": ["prem"],
+  "patterns": [
+    {
+      "name": "comment.line.hash.premise",
+      "match": "#.*$"
+    },
+    {
+      "name": "markup.heading.1.premise",
+      "match": "^=\\s+.*$"
+    },
+    {
+      "name": "markup.heading.2.premise",
+      "match": "^==\\s+.*$"
+    },
+    {
+      "name": "markup.heading.3.premise",
+      "match": "^===\\s+.*$"
+    },
+    {
+      "name": "keyword.control.content.beat.premise",
+      "match": "^///\\s.*$"
+    },
+    {
+      "name": "keyword.control.content.treatment.premise",
+      "match": "^//\\s.*$"
+    },
+    {
+      "name": "keyword.control.content.narrative.premise",
+      "match": "^/\\s.*$"
+    },
+    {
+      "name": "keyword.directive.premise",
+      "match": "^(TITLE|WORLD|FORMAT):"
+    },
+    {
+      "name": "keyword.import.premise",
+      "match": "@import\\b"
+    },
+    {
+      "name": "meta.screenplay.dialogue.premise",
+      "match": "^\\s*([A-Z][A-Z0-9 ]*[A-Z])(:)\\s*(.*)$",
+      "captures": {
+        "1": { "name": "entity.name.character.screenplay.premise" },
+        "2": { "name": "punctuation.separator.dialogue.premise" },
+        "3": { "name": "text.dialogue.screenplay.premise" }
+      }
+    },
+    {
+      "name": "meta.adapter.inline.premise",
+      "begin": "^\\s*(@)(adapter)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(:)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.keyword.premise" },
+        "2": { "name": "keyword.adapter.premise" },
+        "3": { "name": "entity.name.function.adapter.premise" },
+        "4": { "name": "punctuation.separator.key-value.premise" },
+        "5": { "name": "punctuation.bracket.curly.premise" }
+      },
+      "end": "^\\s*\\}",
+      "endCaptures": { "0": { "name": "punctuation.bracket.curly.premise" } },
+      "patterns": [{ "include": "#adapterObjectBody" }]
+    },
+    {
+      "name": "meta.adapters.block.premise",
+      "begin": "^\\s*(@)(adapters)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.keyword.premise" },
+        "2": { "name": "keyword.adapters.premise" },
+        "3": { "name": "punctuation.bracket.curly.premise" }
+      },
+      "end": "^\\s*\\}",
+      "endCaptures": { "0": { "name": "punctuation.bracket.curly.premise" } },
+      "patterns": [
+        {
+          "name": "meta.adapters.item.premise",
+          "begin": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "entity.name.function.adapter.premise" }
+          },
+          "end": "^\\s*\\}",
+          "endCaptures": {
+            "0": { "name": "punctuation.bracket.curly.premise" }
+          },
+          "patterns": [{ "include": "#adapterObjectBody" }]
+        },
+        {
+          "name": "meta.adapters.item.line.premise",
+          "match": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:(.*)$",
+          "captures": {
+            "1": { "name": "entity.name.function.adapter.premise" },
+            "0": { "name": "meta.line.adapter.premise" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "meta.entity.block.premise",
+      "begin": "^\\s*(@)(characters?|locations?|items?|entities|themes|custom_metadata|notes|metadata|display|requirements|world_eras|entity_eras|character_eras|location_eras|eras)\\s*\\{",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.keyword.premise" },
+        "2": { "name": "keyword.entity.premise" }
+      },
+      "end": "^\\s*\\}",
+      "endCaptures": { "0": { "name": "punctuation.bracket.curly.premise" } },
+      "patterns": [
+        {
+          "name": "meta.entity.item.premise",
+          "begin": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_ ]*)\\s*:\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "entity.name.function.premise" }
+          },
+          "end": "^\\s*\\}",
+          "endCaptures": {
+            "0": { "name": "punctuation.bracket.curly.premise" }
+          },
+          "patterns": [{ "include": "#entityObjectBody" }]
+        },
+        {
+          "name": "meta.entity.item.line.premise",
+          "match": "^\\s*-\\s+([A-Za-z_][A-Za-z0-9_ ]*)\\s*:(.*)$",
+          "captures": {
+            "1": { "name": "entity.name.function.premise" },
+            "2": { "name": "string.unquoted.description.premise" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "entity.name.tag.premise",
+      "match": "@\\w+"
+    },
+    {
+      "name": "meta.entity.line.premise",
+      "match": "^\\s*-\\s+([A-Za-z][A-Za-z0-9 ]*)(: )?(.+)?$",
+      "captures": {
+        "1": { "name": "entity.name.function.premise" },
+        "2": { "name": "punctuation.separator.key-value.premise" },
+        "3": { "name": "string.unquoted.description.premise" }
+      }
+    },
+    {
+      "name": "variable.other.property.premise",
+      "match": "^\\+\\w+:"
+    },
+    {
+      "name": "entity.name.reference.premise",
+      "match": "\\{[^{}\n]+\\}"
+    },
+    {
+      "name": "string.quoted.double.premise",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "constant.character.escape.premise", "match": "\\\\." }
+      ]
+    },
+    {
+      "name": "meta.adapter.external.premise",
+      "begin": "^\\s*(@)(adapter)\\s+(\"[^\"]*\"|'[^']*')\\s*(:)\\s*",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.keyword.premise" },
+        "2": { "name": "keyword.adapter.premise" },
+        "3": { "name": "string.quoted.adapter.path.premise" },
+        "4": { "name": "punctuation.separator.key-value.premise" }
+      },
+      "end": "$",
+      "patterns": [
+        { "name": "punctuation.bracket.curly.premise", "match": "[{}]" },
+        {
+          "name": "string.unquoted.adapter.value.premise",
+          "match": "[A-Za-z_][A-Za-z0-9_]*"
+        }
+      ]
+    },
+    {
+      "name": "meta.adapter.inline.premise",
+      "begin": "^\\s*(@)(adapter)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:\\s*\\{",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.keyword.premise" },
+        "2": { "name": "keyword.adapter.premise" },
+        "3": { "name": "entity.name.function.adapter.premise" }
+      },
+      "end": "^\\s*\\}",
+      "endCaptures": { "0": { "name": "punctuation.bracket.curly.premise" } },
+      "patterns": [{ "include": "#adapterObjectBody" }]
+    }
+  ],
+  "repository": {
+    "adapterListItemValue": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.premise",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.premise", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "constant.language.boolean.premise",
+          "match": "\\b(true|false)\\b"
+        },
+        { "name": "constant.numeric.integer.premise", "match": "\\b\\d+\\b" },
+        {
+          "name": "string.unquoted.adapter.value.premise",
+          "match": "(?<=:)\\s*[A-Za-z_][A-Za-z0-9_]*"
+        }
+      ]
+    },
+    "adapterObjectBody": {
+      "patterns": [
+        {
+          "name": "variable.other.property.adapter.premise",
+          "match": "^\\s+([a-z_][a-z0-9_]*)\\s*:(?=\\s|$)",
+          "captures": {
+            "1": { "name": "variable.other.property.adapter.premise" }
+          }
+        },
+        {
+          "name": "meta.adapter.prop.list-item.premise",
+          "begin": "^\\s*-\\s+([a-z_][a-z0-9_]*)\\s*:",
+          "beginCaptures": {
+            "1": { "name": "variable.other.property.adapter.premise" },
+            "0": { "name": "meta.line.adapter.list-item.premise" }
+          },
+          "end": "$",
+          "patterns": [
+            {
+              "name": "punctuation.separator.key-value.premise",
+              "match": ":"
+            },
+            { "include": "#adapterListItemValue" }
+          ]
+        },
+        {
+          "name": "meta.adapter.prop.scalar-block.premise",
+          "begin": "^\\s+([a-z_][a-z0-9_]*)\\s*:\\s*\\|\\s*$",
+          "beginCaptures": {
+            "1": { "name": "variable.other.property.adapter.premise" }
+          },
+          "end": "^(?=\\s*[a-z_]|\\s*\\}|\\s*-)",
+          "patterns": [
+            { "name": "string.quoted.block.premise", "match": "^\\s+.+$" }
+          ]
+        },
+        { "name": "punctuation.separator.key-value.premise", "match": ":" },
+        { "name": "punctuation.bracket.curly.premise", "match": "[{}]" },
+        { "name": "punctuation.definition.list.premise", "match": "^-" },
+        {
+          "name": "string.quoted.double.premise",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.premise", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "constant.language.boolean.premise",
+          "match": "\\b(true|false)\\b"
+        },
+        { "name": "constant.numeric.integer.premise", "match": "\\b\\d+\\b" },
+        {
+          "name": "string.unquoted.adapter.value.premise",
+          "match": "(?<=:)\\s*[A-Za-z_][A-Za-z0-9_]*"
+        }
+      ]
+    },
+    "entityObjectBody": {
+      "patterns": [
+        {
+          "name": "variable.other.property.premise",
+          "match": "^\\s+([a-z_][a-z0-9_]*)\\s*:(?=\\s|$)",
+          "captures": {
+            "1": { "name": "variable.other.property.premise" }
+          }
+        },
+        {
+          "name": "meta.entity.prop.scalar-block.premise",
+          "begin": "^\\s+([a-z_][a-z0-9_]*)\\s*:\\s*\\|\\s*$",
+          "beginCaptures": {
+            "1": { "name": "variable.other.property.premise" }
+          },
+          "end": "^(?=\\s*[a-z_]|\\s*\\}|\\s*-)",
+          "patterns": [
+            { "name": "string.quoted.block.premise", "match": "^\\s+.+$" }
+          ]
+        },
+        { "name": "punctuation.separator.key-value.premise", "match": ":" },
+        { "name": "punctuation.bracket.curly.premise", "match": "[{}]" },
+        {
+          "name": "string.quoted.double.premise",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.premise", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "string.unquoted.entity.value.premise",
+          "match": "(?<=:)\\s*[^\\r\\n]+"
+        }
+      ]
+    }
+  }
+}

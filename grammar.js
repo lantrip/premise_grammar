@@ -1,6 +1,6 @@
-// Tree-sitter grammar for Cuneiform
+// Tree-sitter grammar for Premise
 module.exports = grammar({
-  name: "cuneiform",
+  name: "premise",
 
   extras: ($) => [/[ \t]/, $.line_comment],
 

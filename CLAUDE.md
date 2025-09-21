@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Tree-sitter grammar for the Cuneiform language - a domain-specific language for story authoring that supports hierarchical content organization (acts/scenes/cels), entity definitions, screenplay-style dialogue, content typing, and metadata.
+This is a Tree-sitter grammar for the Premise language - a domain-specific language for story authoring that supports hierarchical content organization (acts/scenes/cels), entity definitions, screenplay-style dialogue, content typing, and metadata.
 
-**Core Responsibility**: This repository is the **foundational layer** for all Cuneiform editor support, providing:
+**Core Responsibility**: This repository is the **foundational layer** for all Premise editor support, providing:
 
 - Grammar definition (`grammar.js`) - currently production-ready with all core features working
 - **Story-focused semantic scopes** (`queries/highlights.scm`) that enable rich theming
@@ -35,7 +35,7 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 - **Node.js**: Built using binding.gyp with `node-gyp rebuild`
 - **Rust**: Built with `cargo build` - includes test for grammar loading
 
-## Cuneiform Language Syntax
+## Premise Language Syntax
 
 ### Core Grammar Elements
 
@@ -52,7 +52,7 @@ This is a Tree-sitter grammar for the Cuneiform language - a domain-specific lan
 
 - `grammar.js` - Core grammar definition
 - `queries/` - Editor query files for syntax highlighting, brackets, indentation, and outline
-- `examples/` - Reference files including `theming_showcase.cune` for theme development
+- `examples/` - Reference files including `theming_showcase.prem` for theme development
 - `scripts/` - Validation utilities including `validate_scopes.py`
 - `tests/` - Test cases and test runner
 - `src/` - Generated parser artifacts (do not edit manually)
@@ -122,10 +122,10 @@ These scopes are the **foundation** that enables:
 
 ## Working with Examples
 
-- Use `examples/theming_showcase.cune` for comprehensive syntax testing
-- Reference `.cune` files in `examples/` rather than trying to document every syntax pattern
+- Use `examples/theming_showcase.prem` for comprehensive syntax testing
+- Reference `.prem` files in `examples/` rather than trying to document every syntax pattern
 - All major language features are demonstrated in working example files
-- Parse examples with `tree-sitter parse examples/file.cune` to understand structure
+- Parse examples with `tree-sitter parse examples/file.prem` to understand structure
 
 ## Extension Development Workflow
 
@@ -216,7 +216,7 @@ vsce publish
 
 When users report highlighting problems, use VSCode's **Token Inspector**:
 
-1. Have user open the problematic `.cune` file
+1. Have user open the problematic `.prem` file
 2. Place cursor on the incorrectly highlighted text
 3. `Cmd+Shift+P` → "Developer: Inspect Editor Tokens and Scopes"
 4. Analyze the token panel to identify issues:
@@ -226,8 +226,8 @@ When users report highlighting problems, use VSCode's **Token Inspector**:
 
 Common issues and fixes:
 
-- **"No theme selector" / only `source.cuneiform`**: TextMate pattern not matching
-  - Check pattern ordering in `syntaxes/cuneiform.tmLanguage.json`
+- **"No theme selector" / only `source.premise`**: TextMate pattern not matching
+  - Check pattern ordering in `syntaxes/premise.tmLanguage.json`
   - Earlier patterns win - move specific patterns before general ones
 
 - **Split token coloring** (e.g., `@adapt` different from `er`):
@@ -240,7 +240,7 @@ Common issues and fixes:
 
 - **ERROR nodes in parse tree**:
   ```bash
-  tree-sitter parse file.cune | grep ERROR
+  tree-sitter parse file.prem | grep ERROR
   ```
   - Grammar issue - fix in `grammar.js`
 
@@ -249,7 +249,7 @@ Common issues and fixes:
 1. **Always validate queries**: Run `./test_queries.sh` after any grammar or query changes
 2. **Sync extensions**: Run `./scripts/sync-extensions.sh` after grammar updates
 3. **Test locally first**: Use dev extension workflow before publishing
-4. **Use example files**: Reference working `.cune` files rather than documenting syntax extensively
+4. **Use example files**: Reference working `.prem` files rather than documenting syntax extensively
 5. **Maintain semantic scopes**: These are critical for editor extension functionality
 6. **Coordinate releases**: Update extensions after grammar changes are committed
 7. **Debug with Token Inspector**: Use VSCode's inspector to diagnose highlighting issues

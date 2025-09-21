@@ -1,10 +1,10 @@
 {
   "grammars": [
     {
-      "name": "cuneiform",
-      "scope": "source.cuneiform",
-      "file-types": ["cune", "cuneiform"],
-      "injection-regex": "^cuneiform$",
+      "name": "premise",
+      "scope": "source.premise",
+      "file-types": ["cune", "premise"],
+      "injection-regex": "^premise$",
       "highlights": ["queries/highlights.scm"],
       "brackets": ["queries/brackets.scm"],
       "indents": ["queries/indents.scm"]
@@ -13,10 +13,10 @@
   "metadata": {
     "version": "1.0.0",
     "license": "MIT",
-    "description": "Production-ready Cuneiform story language grammar with screenplay dialogue, entity system, and semantic scopes",
+    "description": "Production-ready Premise story language grammar with screenplay dialogue, entity system, and semantic scopes",
     "authors": [{ "name": "David Lantrip" }],
     "links": {
-      "repository": "https://github.com/lantrip/cuneiform_grammar"
+      "repository": "https://github.com/lantrip/premise_grammar"
     }
   }
 }

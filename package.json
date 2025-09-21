@@ -1,5 +1,5 @@
 {
-  "name": "tree-sitter-cuneiform",
+  "name": "tree-sitter-premise",
   "version": "1.0.0",
   "main": "grammar.js",
   "scripts": {
@@ -7,10 +7,10 @@
     "build": "./build.sh",
     "validate": "./test_queries.sh"
   },
-  "keywords": ["tree-sitter", "grammar", "cuneiform", "story", "screenplay", "writing"],
+  "keywords": ["tree-sitter", "grammar", "premise", "story", "screenplay", "writing"],
   "author": "David Lantrip",
   "license": "MIT",
-  "description": "Production-ready Tree-sitter grammar for the Cuneiform story authoring language",
+  "description": "Production-ready Tree-sitter grammar for the Premise story authoring language",
   "dependencies": {
     "nan": "^2.17.0"
   },
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lantrip/cuneiform_grammar.git"
+    "url": "https://github.com/lantrip/premise_grammar.git"
   },
   "files": [
     "grammar.js",
@@ -29,6 +29,6 @@
     "bindings/node",
     "bindings/rust",
     "bindings/python",
-    "tree-sitter-cuneiform.wasm"
+    "tree-sitter-premise.wasm"
   ]
 }

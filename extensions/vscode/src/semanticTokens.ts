@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { Parser } from "web-tree-sitter";
 
-export class CuneiformSemanticTokensProvider
+export class PremiseSemanticTokensProvider
   implements vscode.DocumentSemanticTokensProvider
 {
   readonly legend = new vscode.SemanticTokensLegend(
@@ -29,7 +29,7 @@ export class CuneiformSemanticTokensProvider
       "macro",
       "label",
 
-      // Cuneiform-specific types
+      // Premise-specific types
       "story-act",
       "story-scene",
       "story-cel",
@@ -72,7 +72,7 @@ export class CuneiformSemanticTokensProvider
 
     const result = builder.build();
     const count = (result.data?.length ?? 0) / 5;
-    console.log(`Cuneiform: Generated ${count} semantic tokens`);
+    console.log(`Premise: Generated ${count} semantic tokens`);
     return result;
   }
 

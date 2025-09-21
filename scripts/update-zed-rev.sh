@@ -24,7 +24,7 @@ CURRENT_REV=$(git rev-parse HEAD)
 sed -i '' "s|^rev = .*|rev = \"$CURRENT_REV\"|g" "$EXTENSION_TOML"
 
 # Clean old grammar cache
-rm -rf "$ZED_EXTENSION_DIR/grammars/cuneiform"
+rm -rf "$ZED_EXTENSION_DIR/grammars/premise"
 
 echo -e "${GREEN}✅ Updated Zed extension rev to: $CURRENT_REV${NC}"
 echo -e "${YELLOW}📝 Make sure your changes are pushed to GitHub!${NC}"

@@ -1,8 +1,8 @@
-# Cuneiform Grammar Status
+# Premise Grammar Status
 
 ## Production Ready ✅
 
-All core Cuneiform features parse correctly and work reliably in production:
+All core Premise features parse correctly and work reliably in production:
 
 - ✅ Story structure (Acts, Scenes, Cels)
 - ✅ Entity system (definitions, blocks, references)
@@ -24,7 +24,7 @@ These represent intentional parsing constraints that maintain language clarity:
 ## Testing Status
 
 Parse testing with `tree-sitter parse`:
-- `examples/theming_showcase.cune` - 0 errors ✅
+- `examples/theming_showcase.prem` - 0 errors ✅
 - All test cases in `tests/cases/` - Pass ✅
 - Real-world example files - Parse cleanly ✅
 
@@ -32,4 +32,4 @@ Parse testing with `tree-sitter parse`:
 
 The grammar is **ready for production use**. The identified "edge cases" are intentional design decisions that keep the language unambiguous and readable.
 
-For comprehensive syntax examples, see `examples/theming_showcase.cune`.
+For comprehensive syntax examples, see `examples/theming_showcase.prem`.

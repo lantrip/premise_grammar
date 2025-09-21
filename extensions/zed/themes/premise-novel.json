@@ -1,10 +1,10 @@
 {
   "$schema": "https://zed.dev/schema/themes/v0.1.0.json",
-  "name": "Cuneiform Novel",
+  "name": "Premise Novel",
   "author": "David Lantrip",
   "themes": [
     {
-      "name": "Cuneiform Novel",
+      "name": "Premise Novel",
       "appearance": "light",
       "style": {
         "background": "#fdfdf8",
@@ -286,6 +286,38 @@
           "punctuation.definition.content.narrative": {
             "color": "#9932cc",
             "font_style": "bold"
+          },
+          "entity.name.reference": {
+            "color": "#b8860b",
+            "font_style": "bold"
+          },
+          "entity.name.character.speaker": {
+            "color": "#4682b4",
+            "font_style": "bold"
+          },
+          "entity.name.definition": {
+            "color": "#6b8e23",
+            "font_style": "bold"
+          },
+          "punctuation.definition.entity.begin": {
+            "color": "#b8860b",
+            "font_style": "bold"
+          },
+          "punctuation.definition.entity.end": {
+            "color": "#b8860b",
+            "font_style": "bold"
+          },
+          "text.parenthetical": {
+            "color": "#8b7d6b",
+            "font_style": "italic"
+          },
+          "text.narrative": {
+            "color": "#2f2f2f",
+            "font_style": null
+          },
+          "text.prose.line": {
+            "color": "#2f2f2f",
+            "font_style": null
           }
         }
       }

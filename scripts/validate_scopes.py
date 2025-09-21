@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Scope Validation Script for Cuneiform Grammar
+Scope Validation Script for Premise Grammar
 
 This script validates that all semantic scopes defined in highlights.scm
 correspond to actual nodes in the grammar and test files.
@@ -11,6 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Set, Dict, List, Tuple
+
 
 class ScopeValidator:
     def __init__(self, repo_root: Path):
@@ -28,18 +29,20 @@ class ScopeValidator:
             return {}
 
         scopes = {}
-        with open(highlights_path, 'r') as f:
+        with open(highlights_path, "r") as f:
             content = f.read()
 
         # Extract scope definitions ONLY from Tree-sitter query context
         # Pattern: (node_name) @scope.name or "string" @scope.name
         # This avoids false matches from comments or other content
-        scope_pattern = r'(?:\([^)]+\)|"[^"]+")[ \t]+@([a-zA-Z0-9._]+(?:\.[a-zA-Z0-9._]+)*)'
+        scope_pattern = (
+            r'(?:\([^)]+\)|"[^"]+")[ \t]+@([a-zA-Z0-9._]+(?:\.[a-zA-Z0-9._]+)*)'
+        )
 
         for match in re.finditer(scope_pattern, content):
             scope = match.group(1)
             # Track line number for debugging
-            line_num = content[:match.start()].count('\n') + 1
+            line_num = content[: match.start()].count("\n") + 1
             if scope not in scopes:
                 scopes[scope] = set()
             scopes[scope].add(line_num)
@@ -54,12 +57,12 @@ class ScopeValidator:
             return set()
 
         node_types = set()
-        with open(grammar_path, 'r') as f:
+        with open(grammar_path, "r") as f:
             content = f.read()
 
         # Extract node definitions from grammar.js
         # Look for patterns like: node_name: $ =>
-        node_pattern = r'(\w+):\s*\$\s*=>'
+        node_pattern = r"(\w+):\s*\$\s*=>"
         for match in re.finditer(node_pattern, content):
             node_types.add(match.group(1))
 
@@ -69,10 +72,10 @@ class ScopeValidator:
         """Use tree-sitter to parse a test file and extract node types"""
         try:
             result = subprocess.run(
-                ['tree-sitter', 'parse', str(test_file)],
+                ["tree-sitter", "parse", str(test_file)],
                 capture_output=True,
                 text=True,
-                cwd=self.repo_root
+                cwd=self.repo_root,
             )
 
             if result.returncode != 0:
@@ -81,9 +84,9 @@ class ScopeValidator:
 
             # Extract node types from parse output
             node_types = set()
-            for line in result.stdout.split('\n'):
+            for line in result.stdout.split("\n"):
                 # Extract node types from parse tree output
-                match = re.search(r'\(([a-z_]+)', line)
+                match = re.search(r"\(([a-z_]+)", line)
                 if match:
                     node_types.add(match.group(1))
 
@@ -96,26 +99,28 @@ class ScopeValidator:
     def validate_scope_semantics(self, scopes: Dict[str, Set[int]]) -> Dict[str, str]:
         """Validate that scope names follow semantic conventions"""
         semantic_rules = {
-            'comment': 'Comments and documentation',
-            'keyword': 'Language keywords and directives',
-            'markup': 'Document structure and headings',
-            'punctuation': 'Delimiters and special characters',
-            'variable': 'Variables and identifiers',
-            'entity': 'Named entities (characters, locations)',
-            'text': 'Story content and narrative',
-            'type': 'Type definitions and blocks',
-            'meta': 'Metadata and properties',
-            'error': 'Error nodes'
+            "comment": "Comments and documentation",
+            "keyword": "Language keywords and directives",
+            "markup": "Document structure and headings",
+            "punctuation": "Delimiters and special characters",
+            "variable": "Variables and identifiers",
+            "entity": "Named entities (characters, locations)",
+            "text": "Story content and narrative",
+            "type": "Type definitions and blocks",
+            "meta": "Metadata and properties",
+            "error": "Error nodes",
         }
 
         scope_validation = {}
         for scope in scopes:
-            parts = scope.split('.')
+            parts = scope.split(".")
             if parts[0] in semantic_rules:
-                scope_validation[scope] = 'valid'
+                scope_validation[scope] = "valid"
             else:
                 scope_validation[scope] = f"Unknown semantic category: {parts[0]}"
-                self.warnings.append(f"Scope '{scope}' uses non-standard category '{parts[0]}'")
+                self.warnings.append(
+                    f"Scope '{scope}' uses non-standard category '{parts[0]}'"
+                )
 
         return scope_validation
 
@@ -136,10 +141,10 @@ class ScopeValidator:
         highlights_path = self.queries_dir / "highlights.scm"
         covered_nodes = set()
         if highlights_path.exists():
-            with open(highlights_path, 'r') as f:
+            with open(highlights_path, "r") as f:
                 content = f.read()
                 # Look for (node_name) patterns
-                for match in re.finditer(r'\(([a-z_]+)\)', content):
+                for match in re.finditer(r"\(([a-z_]+)\)", content):
                     covered_nodes.add(match.group(1))
 
         # Find uncovered nodes
@@ -150,7 +155,7 @@ class ScopeValidator:
 
     def generate_report(self):
         """Generate validation report"""
-        print("🔍 Cuneiform Grammar Scope Validation Report\n")
+        print("🔍 Premise Grammar Scope Validation Report\n")
         print("=" * 60)
 
         # Extract and validate scopes
@@ -159,7 +164,7 @@ class ScopeValidator:
 
         # Validate semantic naming
         scope_validation = self.validate_scope_semantics(scopes)
-        valid_count = sum(1 for v in scope_validation.values() if v == 'valid')
+        valid_count = sum(1 for v in scope_validation.values() if v == "valid")
         print(f"✅ {valid_count}/{len(scopes)} scopes follow semantic conventions")
 
         # Check node coverage
@@ -198,10 +203,12 @@ class ScopeValidator:
             print("\n✅ Scope validation passed!")
             return 0
 
+
 def main():
     repo_root = Path(__file__).parent.parent
     validator = ScopeValidator(repo_root)
     sys.exit(validator.generate_report())
+
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-echo -e "${BLUE}🔄 Rebuilding Cuneiform...${NC}"
+echo -e "${BLUE}🔄 Rebuilding Premise...${NC}"
 
 # Build grammar
 ./build.sh > /dev/null 2>&1
