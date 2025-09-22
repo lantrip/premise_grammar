@@ -36,6 +36,7 @@ This is a Tree-sitter grammar for the Premise language - a domain-specific langu
 - **Rust**: Built with `cargo build` - includes test for grammar loading
 - **Python (PyO3/maturin)**:
   - Location: `premisecore/`
+  - Naming note: Python modules cannot contain hyphens, so the Python package/module is `premisecore` (no `-`). The Rust crate remains `premise-core`.
   - Build locally:
     ```bash
     cd premisecore

@@ -10,6 +10,8 @@ This repo now includes:
 - Rust core crate `premise-core` with a CLI and JSON outputs
 - Python bindings `premisecore` (PyO3/maturin)
 
+Note: Python packages cannot contain hyphens; the Python crate/module is named `premisecore` while the Rust crate is `premise-core`.
+
 Read the quick start guide: [QUICKSTART.md](./QUICKSTART.md)
 
 ### What we have now
