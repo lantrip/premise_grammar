@@ -57,6 +57,11 @@
         "label": "Premise Dark",
         "uiTheme": "vs-dark",
         "path": "./themes/premise-dark.json"
+      },
+      {
+        "label": "Premise Prose",
+        "uiTheme": "vs",
+        "path": "./themes/premise-prose.json"
       }
     ]
   },

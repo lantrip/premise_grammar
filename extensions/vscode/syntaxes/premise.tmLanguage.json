@@ -145,8 +145,18 @@
       "match": "^\\+\\w+:"
     },
     {
-      "name": "entity.name.reference.premise",
-      "match": "\\{[^{}\n]+\\}"
+      "name": "meta.entity.reference.premise",
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.entity.reference.begin.premise" }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.entity.reference.end.premise" }
+      },
+      "patterns": [
+        { "name": "entity.name.reference.premise", "match": "[^{}\n]+" }
+      ]
     },
     {
       "name": "string.quoted.double.premise",

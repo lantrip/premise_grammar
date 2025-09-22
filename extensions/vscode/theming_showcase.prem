@@ -7,7 +7,7 @@
 
 +premise: novel
 +setting: fantasy
-+tone: epic
++tone: epic`
 
 # ============================================================================
 # IMPORT STATEMENTS
@@ -139,6 +139,8 @@ providing comic relief in the dark woods.
 The path into the {Forest} was barely visible, overgrown with thorns
 and shadowed by towering oaks that seemed to lean inward, blocking
 out the sun.
+
+"Does this work her", yes it does he said.
 
 SIDEKICK: (dropping from a tree)
           Well, well! A boy with a glowing sword and an old man
@@ -301,7 +303,7 @@ darkness. {Hero} traced fingers along faded spines until one book
 seemed to pulse with warmth - the {Book} of royal lineages.
 
 "Your father was the last true king," {Mentor} said softly.
-  
+
 HERO: (shocked)
       That's impossible! I'm just a farmer!
 

@@ -29,8 +29,8 @@ echo "   ✅ Copied WASM and queries to VSCode"
 
 # Copy example files for testing
 echo "📋 Copying example files..."
-cp examples/theming_showcase.cune extensions/zed/
-cp examples/theming_showcase.cune extensions/vscode/
+cp examples/theming_showcase.prem extensions/zed/
+cp examples/theming_showcase.prem extensions/vscode/
 echo "   ✅ Copied example files"
 
 echo ""
