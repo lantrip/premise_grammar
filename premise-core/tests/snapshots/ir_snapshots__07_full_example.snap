@@ -1,0 +1,68 @@
+---
+source: tests/ir_snapshots.rs
+expression: analysis
+---
+{
+  "ir": {
+    "story": {
+      "acts": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 5,
+              "column": 0
+            },
+            "end": {
+              "row": 5,
+              "column": 9
+            },
+            "start_byte": 93,
+            "end_byte": 102
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 6,
+              "column": 0
+            },
+            "end": {
+              "row": 6,
+              "column": 14
+            },
+            "start_byte": 103,
+            "end_byte": 117
+          }
+        }
+      ],
+      "cels": [
+        {
+          "title": "",
+          "location_type": null,
+          "time": null,
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 7,
+              "column": 0
+            },
+            "end": {
+              "row": 7,
+              "column": 12
+            },
+            "start_byte": 118,
+            "end_byte": 130
+          }
+        }
+      ]
+    },
+    "adapters": []
+  },
+  "diagnostics": []
+}

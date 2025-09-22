@@ -11,13 +11,13 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# First, build the grammar
-echo "📦 Building grammar..."
-./build.sh > /dev/null 2>&1 || {
-    echo -e "${RED}Failed to build grammar${NC}"
+# First, ensure grammar is generated
+echo "📦 Generating grammar..."
+tree-sitter generate > /dev/null 2>&1 || {
+    echo -e "${RED}Failed to generate grammar${NC}"
     exit 1
 }
-echo -e "${GREEN}✓ Grammar built successfully${NC}"
+echo -e "${GREEN}✓ Grammar generated successfully${NC}"
 echo
 
 # Function to test a query file

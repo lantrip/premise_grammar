@@ -1,0 +1,1279 @@
+---
+source: tests/ast_snapshots.rs
+expression: value
+---
+{
+  "ast": {
+    "children": [
+      {
+        "children": [],
+        "field": null,
+        "kind": "line_comment",
+        "range": {
+          "end": {
+            "column": 31,
+            "row": 0
+          },
+          "end_byte": 31,
+          "start": {
+            "column": 0,
+            "row": 0
+          },
+          "start_byte": 0
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 1
+          },
+          "end_byte": 32,
+          "start": {
+            "column": 31,
+            "row": 0
+          },
+          "start_byte": 31
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 17,
+                    "row": 1
+                  },
+                  "end_byte": 49,
+                  "start": {
+                    "column": 0,
+                    "row": 1
+                  },
+                  "start_byte": 32
+                }
+              }
+            ],
+            "field": null,
+            "kind": "prose_line",
+            "range": {
+              "end": {
+                "column": 17,
+                "row": 1
+              },
+              "end_byte": 49,
+              "start": {
+                "column": 0,
+                "row": 1
+              },
+              "start_byte": 32
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 17,
+            "row": 1
+          },
+          "end_byte": 49,
+          "start": {
+            "column": 0,
+            "row": 1
+          },
+          "start_byte": 32
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 2
+          },
+          "end_byte": 50,
+          "start": {
+            "column": 17,
+            "row": 1
+          },
+          "start_byte": 49
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 14,
+                    "row": 2
+                  },
+                  "end_byte": 64,
+                  "start": {
+                    "column": 0,
+                    "row": 2
+                  },
+                  "start_byte": 50
+                }
+              }
+            ],
+            "field": null,
+            "kind": "prose_line",
+            "range": {
+              "end": {
+                "column": 14,
+                "row": 2
+              },
+              "end_byte": 64,
+              "start": {
+                "column": 0,
+                "row": 2
+              },
+              "start_byte": 50
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 14,
+            "row": 2
+          },
+          "end_byte": 64,
+          "start": {
+            "column": 0,
+            "row": 2
+          },
+          "start_byte": 50
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 3
+          },
+          "end_byte": 65,
+          "start": {
+            "column": 14,
+            "row": 2
+          },
+          "start_byte": 64
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 19,
+                    "row": 3
+                  },
+                  "end_byte": 84,
+                  "start": {
+                    "column": 0,
+                    "row": 3
+                  },
+                  "start_byte": 65
+                }
+              }
+            ],
+            "field": null,
+            "kind": "prose_line",
+            "range": {
+              "end": {
+                "column": 19,
+                "row": 3
+              },
+              "end_byte": 84,
+              "start": {
+                "column": 0,
+                "row": 3
+              },
+              "start_byte": 65
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 19,
+            "row": 3
+          },
+          "end_byte": 84,
+          "start": {
+            "column": 0,
+            "row": 3
+          },
+          "start_byte": 65
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 4
+          },
+          "end_byte": 85,
+          "start": {
+            "column": 19,
+            "row": 3
+          },
+          "start_byte": 84
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 5
+          },
+          "end_byte": 86,
+          "start": {
+            "column": 0,
+            "row": 4
+          },
+          "start_byte": 85
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "=",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 5
+                  },
+                  "end_byte": 87,
+                  "start": {
+                    "column": 0,
+                    "row": 5
+                  },
+                  "start_byte": 86
+                }
+              }
+            ],
+            "field": null,
+            "kind": "act_header",
+            "range": {
+              "end": {
+                "column": 31,
+                "row": 5
+              },
+              "end_byte": 117,
+              "start": {
+                "column": 0,
+                "row": 5
+              },
+              "start_byte": 86
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 31,
+            "row": 5
+          },
+          "end_byte": 117,
+          "start": {
+            "column": 0,
+            "row": 5
+          },
+          "start_byte": 86
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 6
+          },
+          "end_byte": 118,
+          "start": {
+            "column": 31,
+            "row": 5
+          },
+          "start_byte": 117
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 7
+          },
+          "end_byte": 119,
+          "start": {
+            "column": 0,
+            "row": 6
+          },
+          "start_byte": 118
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "==",
+                "range": {
+                  "end": {
+                    "column": 2,
+                    "row": 7
+                  },
+                  "end_byte": 121,
+                  "start": {
+                    "column": 0,
+                    "row": 7
+                  },
+                  "start_byte": 119
+                }
+              }
+            ],
+            "field": null,
+            "kind": "scene_header",
+            "range": {
+              "end": {
+                "column": 22,
+                "row": 7
+              },
+              "end_byte": 141,
+              "start": {
+                "column": 0,
+                "row": 7
+              },
+              "start_byte": 119
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 22,
+            "row": 7
+          },
+          "end_byte": 141,
+          "start": {
+            "column": 0,
+            "row": 7
+          },
+          "start_byte": 119
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 8
+          },
+          "end_byte": 142,
+          "start": {
+            "column": 22,
+            "row": 7
+          },
+          "start_byte": 141
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 9
+          },
+          "end_byte": 143,
+          "start": {
+            "column": 0,
+            "row": 8
+          },
+          "start_byte": 142
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "===",
+                "range": {
+                  "end": {
+                    "column": 3,
+                    "row": 9
+                  },
+                  "end_byte": 146,
+                  "start": {
+                    "column": 0,
+                    "row": 9
+                  },
+                  "start_byte": 143
+                }
+              }
+            ],
+            "field": null,
+            "kind": "cel_header",
+            "range": {
+              "end": {
+                "column": 24,
+                "row": 9
+              },
+              "end_byte": 167,
+              "start": {
+                "column": 0,
+                "row": 9
+              },
+              "start_byte": 143
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 24,
+            "row": 9
+          },
+          "end_byte": 167,
+          "start": {
+            "column": 0,
+            "row": 9
+          },
+          "start_byte": 143
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 48,
+                    "row": 9
+                  },
+                  "end_byte": 191,
+                  "start": {
+                    "column": 24,
+                    "row": 9
+                  },
+                  "start_byte": 167
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "open_paren",
+                    "range": {
+                      "end": {
+                        "column": 49,
+                        "row": 9
+                      },
+                      "end_byte": 192,
+                      "start": {
+                        "column": 48,
+                        "row": 9
+                      },
+                      "start_byte": 191
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "close_paren",
+                    "range": {
+                      "end": {
+                        "column": 53,
+                        "row": 9
+                      },
+                      "end_byte": 196,
+                      "start": {
+                        "column": 52,
+                        "row": 9
+                      },
+                      "start_byte": 195
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "parenthetical",
+                "range": {
+                  "end": {
+                    "column": 53,
+                    "row": 9
+                  },
+                  "end_byte": 196,
+                  "start": {
+                    "column": 48,
+                    "row": 9
+                  },
+                  "start_byte": 191
+                }
+              }
+            ],
+            "field": null,
+            "kind": "prose_line",
+            "range": {
+              "end": {
+                "column": 53,
+                "row": 9
+              },
+              "end_byte": 196,
+              "start": {
+                "column": 24,
+                "row": 9
+              },
+              "start_byte": 167
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 53,
+            "row": 9
+          },
+          "end_byte": 196,
+          "start": {
+            "column": 24,
+            "row": 9
+          },
+          "start_byte": 167
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 10
+          },
+          "end_byte": 197,
+          "start": {
+            "column": 53,
+            "row": 9
+          },
+          "start_byte": 196
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 11
+          },
+          "end_byte": 198,
+          "start": {
+            "column": 0,
+            "row": 10
+          },
+          "start_byte": 197
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "///",
+                "range": {
+                  "end": {
+                    "column": 3,
+                    "row": 11
+                  },
+                  "end_byte": 201,
+                  "start": {
+                    "column": 0,
+                    "row": 11
+                  },
+                  "start_byte": 198
+                }
+              }
+            ],
+            "field": null,
+            "kind": "content_type_beat",
+            "range": {
+              "end": {
+                "column": 8,
+                "row": 11
+              },
+              "end_byte": 206,
+              "start": {
+                "column": 0,
+                "row": 11
+              },
+              "start_byte": 198
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 8,
+            "row": 11
+          },
+          "end_byte": 206,
+          "start": {
+            "column": 0,
+            "row": 11
+          },
+          "start_byte": 198
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 12
+          },
+          "end_byte": 207,
+          "start": {
+            "column": 8,
+            "row": 11
+          },
+          "start_byte": 206
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "ref_open",
+                    "range": {
+                      "end": {
+                        "column": 1,
+                        "row": 12
+                      },
+                      "end_byte": 208,
+                      "start": {
+                        "column": 0,
+                        "row": 12
+                      },
+                      "start_byte": 207
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "ref_close",
+                    "range": {
+                      "end": {
+                        "column": 6,
+                        "row": 12
+                      },
+                      "end_byte": 213,
+                      "start": {
+                        "column": 5,
+                        "row": 12
+                      },
+                      "start_byte": 212
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_reference",
+                "range": {
+                  "end": {
+                    "column": 6,
+                    "row": 12
+                  },
+                  "end_byte": 213,
+                  "start": {
+                    "column": 0,
+                    "row": 12
+                  },
+                  "start_byte": 207
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 36,
+                    "row": 12
+                  },
+                  "end_byte": 243,
+                  "start": {
+                    "column": 6,
+                    "row": 12
+                  },
+                  "start_byte": 213
+                }
+              }
+            ],
+            "field": null,
+            "kind": "prose_line",
+            "range": {
+              "end": {
+                "column": 36,
+                "row": 12
+              },
+              "end_byte": 243,
+              "start": {
+                "column": 0,
+                "row": 12
+              },
+              "start_byte": 207
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 36,
+            "row": 12
+          },
+          "end_byte": 243,
+          "start": {
+            "column": 0,
+            "row": 12
+          },
+          "start_byte": 207
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 13
+          },
+          "end_byte": 244,
+          "start": {
+            "column": 36,
+            "row": 12
+          },
+          "start_byte": 243
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 14
+          },
+          "end_byte": 245,
+          "start": {
+            "column": 0,
+            "row": 13
+          },
+          "start_byte": 244
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "//",
+                "range": {
+                  "end": {
+                    "column": 2,
+                    "row": 14
+                  },
+                  "end_byte": 247,
+                  "start": {
+                    "column": 0,
+                    "row": 14
+                  },
+                  "start_byte": 245
+                }
+              }
+            ],
+            "field": null,
+            "kind": "content_type_treatment",
+            "range": {
+              "end": {
+                "column": 12,
+                "row": 14
+              },
+              "end_byte": 257,
+              "start": {
+                "column": 0,
+                "row": 14
+              },
+              "start_byte": 245
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 12,
+            "row": 14
+          },
+          "end_byte": 257,
+          "start": {
+            "column": 0,
+            "row": 14
+          },
+          "start_byte": 245
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 15
+          },
+          "end_byte": 258,
+          "start": {
+            "column": 12,
+            "row": 14
+          },
+          "start_byte": 257
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 51,
+                    "row": 15
+                  },
+                  "end_byte": 309,
+                  "start": {
+                    "column": 0,
+                    "row": 15
+                  },
+                  "start_byte": 258
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "ref_open",
+                    "range": {
+                      "end": {
+                        "column": 52,
+                        "row": 15
+                      },
+                      "end_byte": 310,
+                      "start": {
+                        "column": 51,
+                        "row": 15
+                      },
+                      "start_byte": 309
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "ref_close",
+                    "range": {
+                      "end": {
+                        "column": 57,
+                        "row": 15
+                      },
+                      "end_byte": 315,
+                      "start": {
+                        "column": 56,
+                        "row": 15
+                      },
+                      "start_byte": 314
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_reference",
+                "range": {
+                  "end": {
+                    "column": 57,
+                    "row": 15
+                  },
+                  "end_byte": 315,
+                  "start": {
+                    "column": 51,
+                    "row": 15
+                  },
+                  "start_byte": 309
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 89,
+                    "row": 15
+                  },
+                  "end_byte": 347,
+                  "start": {
+                    "column": 57,
+                    "row": 15
+                  },
+                  "start_byte": 315
+                }
+              }
+            ],
+            "field": null,
+            "kind": "prose_line",
+            "range": {
+              "end": {
+                "column": 89,
+                "row": 15
+              },
+              "end_byte": 347,
+              "start": {
+                "column": 0,
+                "row": 15
+              },
+              "start_byte": 258
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 89,
+            "row": 15
+          },
+          "end_byte": 347,
+          "start": {
+            "column": 0,
+            "row": 15
+          },
+          "start_byte": 258
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 16
+          },
+          "end_byte": 348,
+          "start": {
+            "column": 89,
+            "row": 15
+          },
+          "start_byte": 347
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 17
+          },
+          "end_byte": 349,
+          "start": {
+            "column": 0,
+            "row": 16
+          },
+          "start_byte": 348
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "/",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 17
+                  },
+                  "end_byte": 350,
+                  "start": {
+                    "column": 0,
+                    "row": 17
+                  },
+                  "start_byte": 349
+                }
+              }
+            ],
+            "field": null,
+            "kind": "content_type_narrative",
+            "range": {
+              "end": {
+                "column": 11,
+                "row": 17
+              },
+              "end_byte": 360,
+              "start": {
+                "column": 0,
+                "row": 17
+              },
+              "start_byte": 349
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 11,
+            "row": 17
+          },
+          "end_byte": 360,
+          "start": {
+            "column": 0,
+            "row": 17
+          },
+          "start_byte": 349
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 18
+          },
+          "end_byte": 361,
+          "start": {
+            "column": 11,
+            "row": 17
+          },
+          "start_byte": 360
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 20,
+                    "row": 18
+                  },
+                  "end_byte": 381,
+                  "start": {
+                    "column": 0,
+                    "row": 18
+                  },
+                  "start_byte": 361
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "ref_open",
+                    "range": {
+                      "end": {
+                        "column": 21,
+                        "row": 18
+                      },
+                      "end_byte": 382,
+                      "start": {
+                        "column": 20,
+                        "row": 18
+                      },
+                      "start_byte": 381
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "ref_close",
+                    "range": {
+                      "end": {
+                        "column": 26,
+                        "row": 18
+                      },
+                      "end_byte": 387,
+                      "start": {
+                        "column": 25,
+                        "row": 18
+                      },
+                      "start_byte": 386
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_reference",
+                "range": {
+                  "end": {
+                    "column": 26,
+                    "row": 18
+                  },
+                  "end_byte": 387,
+                  "start": {
+                    "column": 20,
+                    "row": 18
+                  },
+                  "start_byte": 381
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "prose_text",
+                "range": {
+                  "end": {
+                    "column": 71,
+                    "row": 18
+                  },
+                  "end_byte": 432,
+                  "start": {
+                    "column": 26,
+                    "row": 18
+                  },
+                  "start_byte": 387
+                }
+              }
+            ],
+            "field": null,
+            "kind": "prose_line",
+            "range": {
+              "end": {
+                "column": 71,
+                "row": 18
+              },
+              "end_byte": 432,
+              "start": {
+                "column": 0,
+                "row": 18
+              },
+              "start_byte": 361
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 71,
+            "row": 18
+          },
+          "end_byte": 432,
+          "start": {
+            "column": 0,
+            "row": 18
+          },
+          "start_byte": 361
+        }
+      }
+    ],
+    "field": null,
+    "kind": "source_file",
+    "range": {
+      "end": {
+        "column": 71,
+        "row": 18
+      },
+      "end_byte": 432,
+      "start": {
+        "column": 0,
+        "row": 0
+      },
+      "start_byte": 0
+    }
+  },
+  "diagnostics": []
+}

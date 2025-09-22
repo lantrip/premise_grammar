@@ -1,0 +1,46 @@
+---
+source: tests/symbol_snapshots.rs
+expression: analysis
+---
+{
+  "symbols": {
+    "entities": [
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 0,
+            "column": 0
+          },
+          "end": {
+            "row": 0,
+            "column": 28
+          },
+          "start_byte": 0,
+          "end_byte": 28
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 1,
+            "column": 0
+          },
+          "end": {
+            "row": 3,
+            "column": 1
+          },
+          "start_byte": 29,
+          "end_byte": 74
+        }
+      }
+    ],
+    "adapters": [],
+    "imports": [],
+    "metadata": []
+  },
+  "diagnostics": []
+}

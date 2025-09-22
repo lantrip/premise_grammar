@@ -1,0 +1,46 @@
+---
+source: tests/ir_snapshots.rs
+expression: analysis
+---
+{
+  "ir": {
+    "story": {
+      "acts": [],
+      "scenes": [],
+      "cels": []
+    },
+    "adapters": [
+      {
+        "name_or_path": "adapters/text_enhancement.yaml",
+        "range": {
+          "start": {
+            "row": 3,
+            "column": 10
+          },
+          "end": {
+            "row": 3,
+            "column": 40
+          },
+          "start_byte": 82,
+          "end_byte": 112
+        }
+      },
+      {
+        "name_or_path": "adapters/post_processing.yaml",
+        "range": {
+          "start": {
+            "row": 6,
+            "column": 10
+          },
+          "end": {
+            "row": 6,
+            "column": 39
+          },
+          "start_byte": 179,
+          "end_byte": 208
+        }
+      }
+    ]
+  },
+  "diagnostics": []
+}

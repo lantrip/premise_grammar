@@ -1,0 +1,11 @@
+# Build artifacts
+/target/
+/tmp/
+
+# macOS
+.DS_Store
+*.dSYM/
+
+# Optional: for library crates Cargo.lock is usually not committed
+# Uncomment if you want to ignore it here
+# Cargo.lock

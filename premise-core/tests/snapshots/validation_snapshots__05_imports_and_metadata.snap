@@ -1,0 +1,7 @@
+---
+source: tests/validation_snapshots.rs
+expression: report
+---
+{
+  "issues": []
+}

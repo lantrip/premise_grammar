@@ -23,7 +23,8 @@
       "Bash(tree-sitter parse:*)",
       "Bash(tree-sitter build:*)",
       "Bash(find:*)",
-      "Bash(tree-sitter test:*)"
+      "Bash(tree-sitter test:*)",
+      "Bash(./build.sh)"
     ],
     "deny": [],
     "ask": []

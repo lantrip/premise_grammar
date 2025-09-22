@@ -1,0 +1,49 @@
+---
+source: tests/ir_snapshots.rs
+expression: analysis
+---
+{
+  "ir": {
+    "story": {
+      "acts": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 0,
+              "column": 0
+            },
+            "end": {
+              "row": 0,
+              "column": 19
+            },
+            "start_byte": 0,
+            "end_byte": 19
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 3,
+              "column": 0
+            },
+            "end": {
+              "row": 3,
+              "column": 28
+            },
+            "start_byte": 39,
+            "end_byte": 67
+          }
+        }
+      ],
+      "cels": []
+    },
+    "adapters": []
+  },
+  "diagnostics": []
+}

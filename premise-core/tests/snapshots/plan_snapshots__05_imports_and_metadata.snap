@@ -1,0 +1,15 @@
+---
+source: tests/plan_snapshots.rs
+expression: plan
+---
+{
+  "plan": {
+    "steps": [
+      {
+        "adapter": "custom_adapter.yaml",
+        "index": 0
+      }
+    ]
+  },
+  "diagnostics": []
+}

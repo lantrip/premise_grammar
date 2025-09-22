@@ -1,0 +1,95 @@
+---
+source: tests/symbol_snapshots.rs
+expression: analysis
+---
+{
+  "symbols": {
+    "entities": [
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 7,
+            "column": 0
+          },
+          "end": {
+            "row": 7,
+            "column": 35
+          },
+          "start_byte": 94,
+          "end_byte": 129
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 8,
+            "column": 0
+          },
+          "end": {
+            "row": 8,
+            "column": 34
+          },
+          "start_byte": 130,
+          "end_byte": 164
+        }
+      }
+    ],
+    "adapters": [],
+    "imports": [],
+    "metadata": [
+      {
+        "kind": "Metadata",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 1,
+            "column": 0
+          },
+          "end": {
+            "row": 1,
+            "column": 17
+          },
+          "start_byte": 20,
+          "end_byte": 37
+        }
+      },
+      {
+        "kind": "Metadata",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 4,
+            "column": 0
+          },
+          "end": {
+            "row": 4,
+            "column": 15
+          },
+          "start_byte": 68,
+          "end_byte": 83
+        }
+      },
+      {
+        "kind": "Metadata",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 5,
+            "column": 0
+          },
+          "end": {
+            "row": 5,
+            "column": 8
+          },
+          "start_byte": 84,
+          "end_byte": 92
+        }
+      }
+    ]
+  },
+  "diagnostics": []
+}

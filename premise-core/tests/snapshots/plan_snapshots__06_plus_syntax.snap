@@ -1,0 +1,10 @@
+---
+source: tests/plan_snapshots.rs
+expression: plan
+---
+{
+  "plan": {
+    "steps": []
+  },
+  "diagnostics": []
+}

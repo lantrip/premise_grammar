@@ -2,6 +2,39 @@
 
 Tree-sitter grammar for the Premise language - a domain-specific language for story authoring with hierarchical content organization, entity definitions, and screenplay-style dialogue.
 
+## Overview
+
+This repo now includes:
+
+- Grammar and editor integrations (this root)
+- Rust core crate `premise-core` with a CLI and JSON outputs
+- Python bindings `premisecore` (PyO3/maturin)
+
+Read the quick start guide: [QUICKSTART.md](./QUICKSTART.md)
+
+### What we have now
+
+- Production-ready Tree-sitter grammar and queries
+- Editor extensions for VSCode/Cursor and Zed
+- Rust core (`premise-core`):
+  - `premise parse|validate|analyze|plan` with `--format json|pretty`
+  - JSON Schemas via `premise schema --type <...>`
+- Python package (`premisecore`): `Parser.parse_json`, `validate_json`, `analyze_json`, `plan_json`, and `schema()`
+
+### What's next (adapters)
+
+- Adapter registry and APIs (list/show, identity rules)
+- Deterministic execution engine (sequential), provenance
+- Hydration of domain models and artifact outputs
+- Hardening: limits/timeouts, caching, benchmarks, fuzzing
+
+### Roadmap concepts to be aware of
+
+- Deterministic ordering and reproducibility
+- Import resolution base paths and diagnostics
+- Adapter identity (IDs vs paths) and config format
+- Provenance and artifact naming/stability
+
 ## Quick Start
 
 ```bash
@@ -13,6 +46,30 @@ Tree-sitter grammar for the Premise language - a domain-specific language for st
 
 # Test on a file
 tree-sitter parse examples/theming_showcase.prem
+```
+
+Core CLI (premise-core)
+
+```bash
+cd premise-core
+cargo build
+cargo run -- --format json parse examples/theming_showcase.prem --ast --symbols --imports --resolved-imports
+cargo run -- schema --type all
+```
+
+Python (premisecore)
+
+```bash
+cd premisecore
+python -m venv .venv && source .venv/bin/activate
+pip install maturin
+maturin develop
+python - <<'PY'
+import premisecore as pc
+p = pc.Parser()
+print(pc.schema('parse'))
+print(p.parse_json('', False, False, False))
+PY
 ```
 
 ## Core Features
@@ -84,9 +141,11 @@ cd extensions/vscode && npm run compile && code --install-extension .
 
 - `grammar.js` - Grammar definition
 - `queries/` - Editor queries (highlights, brackets, indentation)
-- `examples/` - Reference `.cune` files for testing
+- `examples/` - Reference `.prem` files for testing
 - `scripts/` - Build and validation utilities
 - `src/` - Generated parser artifacts
+- `premise-core/` - Rust core with CLI (`premise`) and JSON outputs/schemas
+- `premisecore/` - Python bindings (PyO3/maturin)
 - `extensions/` - Editor extensions (Zed, VSCode)
   - `zed/` - Zed editor extension
   - `vscode/` - VSCode extension
@@ -106,7 +165,7 @@ cd extensions/vscode && npm run compile && code --install-extension .
 - Nested braces in entities (ambiguous)
 - Multi-line entity names (readability)
 
-See `examples/theming_showcase.cune` for comprehensive syntax demonstration.
+See `examples/theming_showcase.prem` for comprehensive syntax demonstration.
 
 ## Entity Block Highlighting: Core Fix Notes
 
@@ -173,7 +232,7 @@ See `extensions/README.md` for detailed extension development workflow.
 
 **VSCode Token Inspector** (Essential for debugging highlighting issues):
 
-1. Open a `.cune` file in VSCode
+1. Open a `.prem` file in VSCode
 2. Place cursor on the problematic text
 3. Press `Cmd+Shift+P` → "Developer: Inspect Editor Tokens and Scopes"
 4. Review the token information panel:
@@ -192,13 +251,13 @@ Tree-sitter debugging:
 
 ```bash
 # Parse file and show syntax tree
-tree-sitter parse examples/theming_showcase.cune
+tree-sitter parse examples/theming_showcase.prem
 
 # Test specific text
 echo '@adapter test: { }' | tree-sitter parse
 
 # Check for ERROR nodes (indicates grammar issues)
-tree-sitter parse file.cune | grep ERROR
+tree-sitter parse file.prem | grep ERROR
 ```
 
 ## Contributing

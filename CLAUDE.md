@@ -34,6 +34,40 @@ This is a Tree-sitter grammar for the Premise language - a domain-specific langu
 
 - **Node.js**: Built using binding.gyp with `node-gyp rebuild`
 - **Rust**: Built with `cargo build` - includes test for grammar loading
+- **Python (PyO3/maturin)**:
+  - Location: `premisecore/`
+  - Build locally:
+    ```bash
+    cd premisecore
+    python -m venv .venv && source .venv/bin/activate
+    pip install maturin
+    maturin develop
+    ```
+  - Usage:
+    ```python
+    import premisecore as pc
+    p = pc.Parser()
+    print(p.parse_json("", False, False, False))
+    print(pc.schema("all"))
+    ```
+
+## CLI Additions (premise-core)
+
+- Global flag: `--format json|pretty` (default pretty)
+- Subcommands:
+  - `parse <file> [--ast --symbols --imports --resolved-imports]`
+  - `validate <file>`
+  - `analyze <file>`
+  - `plan <file> [--graph-only]`
+  - `schema [--type parse|validate|analyze|plan|all] [--out path]`
+
+Examples:
+
+```bash
+premise --format json parse examples/theming_showcase.prem --ast --symbols --imports --resolved-imports
+premise --format json validate path/to/file.prem
+premise schema --type all
+```
 
 ## Premise Language Syntax
 
@@ -175,6 +209,7 @@ code --install-extension .
 **Simplified Workflow**: Always use GitHub repository with revision hash.
 
 **Testing Zed Extension Changes:**
+
 ```bash
 # 1. Make your grammar/query changes
 # 2. Commit and push changes
@@ -189,6 +224,7 @@ git push
 ```
 
 **Key Points:**
+
 - Extension always points to GitHub repository (no local file:// switching)
 - Grammar/query changes must be committed and pushed before testing
 - `./scripts/update-zed-rev.sh` updates the rev to current commit and cleans cache
@@ -227,14 +263,17 @@ When users report highlighting problems, use VSCode's **Token Inspector**:
 Common issues and fixes:
 
 - **"No theme selector" / only `source.premise`**: TextMate pattern not matching
+
   - Check pattern ordering in `syntaxes/premise.tmLanguage.json`
   - Earlier patterns win - move specific patterns before general ones
 
 - **Split token coloring** (e.g., `@adapt` different from `er`):
+
   - Semantic token conflict with TextMate
   - May need to disable semantic token in `semanticTokens.ts`
 
 - **Wrong color despite correct scope**:
+
   - Missing theme support - add scope to all theme files
   - Semantic token overriding - check precedence
 

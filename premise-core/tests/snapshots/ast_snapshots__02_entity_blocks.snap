@@ -1,0 +1,783 @@
+---
+source: tests/ast_snapshots.rs
+expression: value
+---
+{
+  "ast": {
+    "children": [
+      {
+        "children": [],
+        "field": null,
+        "kind": "line_comment",
+        "range": {
+          "end": {
+            "column": 30,
+            "row": 0
+          },
+          "end_byte": 30,
+          "start": {
+            "column": 0,
+            "row": 0
+          },
+          "start_byte": 0
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 1
+          },
+          "end_byte": 31,
+          "start": {
+            "column": 30,
+            "row": 0
+          },
+          "start_byte": 30
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "@",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 1
+                  },
+                  "end_byte": 32,
+                  "start": {
+                    "column": 0,
+                    "row": 1
+                  },
+                  "start_byte": 31
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 2
+                  },
+                  "end_byte": 45,
+                  "start": {
+                    "column": 13,
+                    "row": 1
+                  },
+                  "start_byte": 44
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": "entity_name",
+                    "kind": "entity_name",
+                    "range": {
+                      "end": {
+                        "column": 10,
+                        "row": 2
+                      },
+                      "end_byte": 55,
+                      "start": {
+                        "column": 6,
+                        "row": 2
+                      },
+                      "start_byte": 51
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": ":",
+                    "range": {
+                      "end": {
+                        "column": 11,
+                        "row": 2
+                      },
+                      "end_byte": 56,
+                      "start": {
+                        "column": 10,
+                        "row": 2
+                      },
+                      "start_byte": 55
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": "entity_desc",
+                    "kind": "entity_desc",
+                    "range": {
+                      "end": {
+                        "column": 30,
+                        "row": 2
+                      },
+                      "end_byte": 75,
+                      "start": {
+                        "column": 12,
+                        "row": 2
+                      },
+                      "start_byte": 57
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_line",
+                "range": {
+                  "end": {
+                    "column": 30,
+                    "row": 2
+                  },
+                  "end_byte": 75,
+                  "start": {
+                    "column": 0,
+                    "row": 2
+                  },
+                  "start_byte": 45
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 3
+                  },
+                  "end_byte": 76,
+                  "start": {
+                    "column": 30,
+                    "row": 2
+                  },
+                  "start_byte": 75
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": "entity_name",
+                    "kind": "entity_name",
+                    "range": {
+                      "end": {
+                        "column": 13,
+                        "row": 3
+                      },
+                      "end_byte": 89,
+                      "start": {
+                        "column": 6,
+                        "row": 3
+                      },
+                      "start_byte": 82
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": ":",
+                    "range": {
+                      "end": {
+                        "column": 14,
+                        "row": 3
+                      },
+                      "end_byte": 90,
+                      "start": {
+                        "column": 13,
+                        "row": 3
+                      },
+                      "start_byte": 89
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": "entity_desc",
+                    "kind": "entity_desc",
+                    "range": {
+                      "end": {
+                        "column": 28,
+                        "row": 3
+                      },
+                      "end_byte": 104,
+                      "start": {
+                        "column": 15,
+                        "row": 3
+                      },
+                      "start_byte": 91
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_line",
+                "range": {
+                  "end": {
+                    "column": 28,
+                    "row": 3
+                  },
+                  "end_byte": 104,
+                  "start": {
+                    "column": 0,
+                    "row": 3
+                  },
+                  "start_byte": 76
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 4
+                  },
+                  "end_byte": 105,
+                  "start": {
+                    "column": 28,
+                    "row": 3
+                  },
+                  "start_byte": 104
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": "entity_name",
+                    "kind": "entity_name",
+                    "range": {
+                      "end": {
+                        "column": 12,
+                        "row": 4
+                      },
+                      "end_byte": 117,
+                      "start": {
+                        "column": 6,
+                        "row": 4
+                      },
+                      "start_byte": 111
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": ":",
+                    "range": {
+                      "end": {
+                        "column": 13,
+                        "row": 4
+                      },
+                      "end_byte": 118,
+                      "start": {
+                        "column": 12,
+                        "row": 4
+                      },
+                      "start_byte": 117
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": "entity_desc",
+                    "kind": "entity_desc",
+                    "range": {
+                      "end": {
+                        "column": 24,
+                        "row": 4
+                      },
+                      "end_byte": 129,
+                      "start": {
+                        "column": 14,
+                        "row": 4
+                      },
+                      "start_byte": 119
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_line",
+                "range": {
+                  "end": {
+                    "column": 24,
+                    "row": 4
+                  },
+                  "end_byte": 129,
+                  "start": {
+                    "column": 0,
+                    "row": 4
+                  },
+                  "start_byte": 105
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 5
+                  },
+                  "end_byte": 130,
+                  "start": {
+                    "column": 24,
+                    "row": 4
+                  },
+                  "start_byte": 129
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "}",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 5
+                  },
+                  "end_byte": 131,
+                  "start": {
+                    "column": 0,
+                    "row": 5
+                  },
+                  "start_byte": 130
+                }
+              }
+            ],
+            "field": null,
+            "kind": "entity_block",
+            "range": {
+              "end": {
+                "column": 1,
+                "row": 5
+              },
+              "end_byte": 131,
+              "start": {
+                "column": 0,
+                "row": 1
+              },
+              "start_byte": 31
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 1,
+            "row": 5
+          },
+          "end_byte": 131,
+          "start": {
+            "column": 0,
+            "row": 1
+          },
+          "start_byte": 31
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 6
+          },
+          "end_byte": 132,
+          "start": {
+            "column": 1,
+            "row": 5
+          },
+          "start_byte": 131
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 7
+          },
+          "end_byte": 133,
+          "start": {
+            "column": 0,
+            "row": 6
+          },
+          "start_byte": 132
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "@",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 7
+                  },
+                  "end_byte": 134,
+                  "start": {
+                    "column": 0,
+                    "row": 7
+                  },
+                  "start_byte": 133
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 8
+                  },
+                  "end_byte": 146,
+                  "start": {
+                    "column": 12,
+                    "row": 7
+                  },
+                  "start_byte": 145
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": "entity_name",
+                    "kind": "entity_name",
+                    "range": {
+                      "end": {
+                        "column": 12,
+                        "row": 8
+                      },
+                      "end_byte": 158,
+                      "start": {
+                        "column": 6,
+                        "row": 8
+                      },
+                      "start_byte": 152
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": ":",
+                    "range": {
+                      "end": {
+                        "column": 13,
+                        "row": 8
+                      },
+                      "end_byte": 159,
+                      "start": {
+                        "column": 12,
+                        "row": 8
+                      },
+                      "start_byte": 158
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": "entity_desc",
+                    "kind": "entity_desc",
+                    "range": {
+                      "end": {
+                        "column": 30,
+                        "row": 8
+                      },
+                      "end_byte": 176,
+                      "start": {
+                        "column": 14,
+                        "row": 8
+                      },
+                      "start_byte": 160
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_line",
+                "range": {
+                  "end": {
+                    "column": 30,
+                    "row": 8
+                  },
+                  "end_byte": 176,
+                  "start": {
+                    "column": 0,
+                    "row": 8
+                  },
+                  "start_byte": 146
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 9
+                  },
+                  "end_byte": 177,
+                  "start": {
+                    "column": 30,
+                    "row": 8
+                  },
+                  "start_byte": 176
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": "entity_name",
+                    "kind": "entity_name",
+                    "range": {
+                      "end": {
+                        "column": 12,
+                        "row": 9
+                      },
+                      "end_byte": 189,
+                      "start": {
+                        "column": 6,
+                        "row": 9
+                      },
+                      "start_byte": 183
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": ":",
+                    "range": {
+                      "end": {
+                        "column": 13,
+                        "row": 9
+                      },
+                      "end_byte": 190,
+                      "start": {
+                        "column": 12,
+                        "row": 9
+                      },
+                      "start_byte": 189
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": "entity_desc",
+                    "kind": "entity_desc",
+                    "range": {
+                      "end": {
+                        "column": 24,
+                        "row": 9
+                      },
+                      "end_byte": 201,
+                      "start": {
+                        "column": 14,
+                        "row": 9
+                      },
+                      "start_byte": 191
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_line",
+                "range": {
+                  "end": {
+                    "column": 24,
+                    "row": 9
+                  },
+                  "end_byte": 201,
+                  "start": {
+                    "column": 0,
+                    "row": 9
+                  },
+                  "start_byte": 177
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 10
+                  },
+                  "end_byte": 202,
+                  "start": {
+                    "column": 24,
+                    "row": 9
+                  },
+                  "start_byte": 201
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": "entity_name",
+                    "kind": "entity_name",
+                    "range": {
+                      "end": {
+                        "column": 13,
+                        "row": 10
+                      },
+                      "end_byte": 215,
+                      "start": {
+                        "column": 6,
+                        "row": 10
+                      },
+                      "start_byte": 208
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": ":",
+                    "range": {
+                      "end": {
+                        "column": 14,
+                        "row": 10
+                      },
+                      "end_byte": 216,
+                      "start": {
+                        "column": 13,
+                        "row": 10
+                      },
+                      "start_byte": 215
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": "entity_desc",
+                    "kind": "entity_desc",
+                    "range": {
+                      "end": {
+                        "column": 34,
+                        "row": 10
+                      },
+                      "end_byte": 236,
+                      "start": {
+                        "column": 15,
+                        "row": 10
+                      },
+                      "start_byte": 217
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "entity_line",
+                "range": {
+                  "end": {
+                    "column": 34,
+                    "row": 10
+                  },
+                  "end_byte": 236,
+                  "start": {
+                    "column": 0,
+                    "row": 10
+                  },
+                  "start_byte": 202
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "newline",
+                "range": {
+                  "end": {
+                    "column": 0,
+                    "row": 11
+                  },
+                  "end_byte": 237,
+                  "start": {
+                    "column": 34,
+                    "row": 10
+                  },
+                  "start_byte": 236
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "}",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 11
+                  },
+                  "end_byte": 238,
+                  "start": {
+                    "column": 0,
+                    "row": 11
+                  },
+                  "start_byte": 237
+                }
+              }
+            ],
+            "field": null,
+            "kind": "entity_block",
+            "range": {
+              "end": {
+                "column": 1,
+                "row": 11
+              },
+              "end_byte": 238,
+              "start": {
+                "column": 0,
+                "row": 7
+              },
+              "start_byte": 133
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 1,
+            "row": 11
+          },
+          "end_byte": 238,
+          "start": {
+            "column": 0,
+            "row": 7
+          },
+          "start_byte": 133
+        }
+      }
+    ],
+    "field": null,
+    "kind": "source_file",
+    "range": {
+      "end": {
+        "column": 1,
+        "row": 11
+      },
+      "end_byte": 238,
+      "start": {
+        "column": 0,
+        "row": 0
+      },
+      "start_byte": 0
+    }
+  },
+  "diagnostics": []
+}

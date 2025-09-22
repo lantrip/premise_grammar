@@ -1,0 +1,601 @@
+---
+source: tests/ast_snapshots.rs
+expression: value
+---
+{
+  "ast": {
+    "children": [
+      {
+        "children": [],
+        "field": null,
+        "kind": "line_comment",
+        "range": {
+          "end": {
+            "column": 28,
+            "row": 0
+          },
+          "end_byte": 28,
+          "start": {
+            "column": 0,
+            "row": 0
+          },
+          "start_byte": 0
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 1
+          },
+          "end_byte": 29,
+          "start": {
+            "column": 28,
+            "row": 0
+          },
+          "start_byte": 28
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "@import",
+                "range": {
+                  "end": {
+                    "column": 7,
+                    "row": 1
+                  },
+                  "end_byte": 36,
+                  "start": {
+                    "column": 0,
+                    "row": 1
+                  },
+                  "start_byte": 29
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "\"",
+                "range": {
+                  "end": {
+                    "column": 9,
+                    "row": 1
+                  },
+                  "end_byte": 38,
+                  "start": {
+                    "column": 8,
+                    "row": 1
+                  },
+                  "start_byte": 37
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "\"",
+                "range": {
+                  "end": {
+                    "column": 30,
+                    "row": 1
+                  },
+                  "end_byte": 59,
+                  "start": {
+                    "column": 29,
+                    "row": 1
+                  },
+                  "start_byte": 58
+                }
+              }
+            ],
+            "field": null,
+            "kind": "import_statement",
+            "range": {
+              "end": {
+                "column": 30,
+                "row": 1
+              },
+              "end_byte": 59,
+              "start": {
+                "column": 0,
+                "row": 1
+              },
+              "start_byte": 29
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 30,
+            "row": 1
+          },
+          "end_byte": 59,
+          "start": {
+            "column": 0,
+            "row": 1
+          },
+          "start_byte": 29
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "line_comment",
+        "range": {
+          "end": {
+            "column": 52,
+            "row": 1
+          },
+          "end_byte": 81,
+          "start": {
+            "column": 30,
+            "row": 1
+          },
+          "start_byte": 59
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 2
+          },
+          "end_byte": 82,
+          "start": {
+            "column": 52,
+            "row": 1
+          },
+          "start_byte": 81
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "\"",
+                "range": {
+                  "end": {
+                    "column": 10,
+                    "row": 2
+                  },
+                  "end_byte": 92,
+                  "start": {
+                    "column": 9,
+                    "row": 2
+                  },
+                  "start_byte": 91
+                }
+              },
+              {
+                "children": [],
+                "field": "adapter_path",
+                "kind": "adapter_path",
+                "range": {
+                  "end": {
+                    "column": 29,
+                    "row": 2
+                  },
+                  "end_byte": 111,
+                  "start": {
+                    "column": 10,
+                    "row": 2
+                  },
+                  "start_byte": 92
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": "\"",
+                "range": {
+                  "end": {
+                    "column": 30,
+                    "row": 2
+                  },
+                  "end_byte": 112,
+                  "start": {
+                    "column": 29,
+                    "row": 2
+                  },
+                  "start_byte": 111
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "=",
+                    "range": {
+                      "end": {
+                        "column": 38,
+                        "row": 2
+                      },
+                      "end_byte": 120,
+                      "start": {
+                        "column": 37,
+                        "row": 2
+                      },
+                      "start_byte": 119
+                    }
+                  },
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "+",
+                    "range": {
+                      "end": {
+                        "column": 1,
+                        "row": 4
+                      },
+                      "end_byte": 126,
+                      "start": {
+                        "column": 0,
+                        "row": 4
+                      },
+                      "start_byte": 125
+                    }
+                  }
+                ],
+                "field": null,
+                "kind": "ERROR",
+                "range": {
+                  "end": {
+                    "column": 15,
+                    "row": 4
+                  },
+                  "end_byte": 140,
+                  "start": {
+                    "column": 31,
+                    "row": 2
+                  },
+                  "start_byte": 113
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": ":",
+                "range": {
+                  "end": {
+                    "column": 16,
+                    "row": 4
+                  },
+                  "end_byte": 141,
+                  "start": {
+                    "column": 15,
+                    "row": 4
+                  },
+                  "start_byte": 140
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "field": null,
+                    "kind": "simple_value",
+                    "range": {
+                      "end": {
+                        "column": 29,
+                        "row": 4
+                      },
+                      "end_byte": 154,
+                      "start": {
+                        "column": 17,
+                        "row": 4
+                      },
+                      "start_byte": 142
+                    }
+                  }
+                ],
+                "field": "adapter_spec",
+                "kind": "prop_value",
+                "range": {
+                  "end": {
+                    "column": 29,
+                    "row": 4
+                  },
+                  "end_byte": 154,
+                  "start": {
+                    "column": 17,
+                    "row": 4
+                  },
+                  "start_byte": 142
+                }
+              }
+            ],
+            "field": null,
+            "kind": "adapter_statement",
+            "range": {
+              "end": {
+                "column": 29,
+                "row": 4
+              },
+              "end_byte": 154,
+              "start": {
+                "column": 0,
+                "row": 2
+              },
+              "start_byte": 82
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 29,
+            "row": 4
+          },
+          "end_byte": 154,
+          "start": {
+            "column": 0,
+            "row": 2
+          },
+          "start_byte": 82
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 5
+          },
+          "end_byte": 155,
+          "start": {
+            "column": 29,
+            "row": 4
+          },
+          "start_byte": 154
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "+",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 5
+                  },
+                  "end_byte": 156,
+                  "start": {
+                    "column": 0,
+                    "row": 5
+                  },
+                  "start_byte": 155
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": ":",
+                "range": {
+                  "end": {
+                    "column": 15,
+                    "row": 5
+                  },
+                  "end_byte": 170,
+                  "start": {
+                    "column": 14,
+                    "row": 5
+                  },
+                  "start_byte": 169
+                }
+              }
+            ],
+            "field": null,
+            "kind": "metadata_line",
+            "range": {
+              "end": {
+                "column": 19,
+                "row": 5
+              },
+              "end_byte": 174,
+              "start": {
+                "column": 0,
+                "row": 5
+              },
+              "start_byte": 155
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 19,
+            "row": 5
+          },
+          "end_byte": 174,
+          "start": {
+            "column": 0,
+            "row": 5
+          },
+          "start_byte": 155
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 6
+          },
+          "end_byte": 175,
+          "start": {
+            "column": 19,
+            "row": 5
+          },
+          "start_byte": 174
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 7
+          },
+          "end_byte": 176,
+          "start": {
+            "column": 0,
+            "row": 6
+          },
+          "start_byte": 175
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "line_comment",
+        "range": {
+          "end": {
+            "column": 23,
+            "row": 7
+          },
+          "end_byte": 199,
+          "start": {
+            "column": 0,
+            "row": 7
+          },
+          "start_byte": 176
+        }
+      },
+      {
+        "children": [],
+        "field": null,
+        "kind": "newline",
+        "range": {
+          "end": {
+            "column": 0,
+            "row": 8
+          },
+          "end_byte": 200,
+          "start": {
+            "column": 23,
+            "row": 7
+          },
+          "start_byte": 199
+        }
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "field": null,
+                "kind": "+",
+                "range": {
+                  "end": {
+                    "column": 1,
+                    "row": 8
+                  },
+                  "end_byte": 201,
+                  "start": {
+                    "column": 0,
+                    "row": 8
+                  },
+                  "start_byte": 200
+                }
+              },
+              {
+                "children": [],
+                "field": null,
+                "kind": ":",
+                "range": {
+                  "end": {
+                    "column": 14,
+                    "row": 8
+                  },
+                  "end_byte": 214,
+                  "start": {
+                    "column": 13,
+                    "row": 8
+                  },
+                  "start_byte": 213
+                }
+              }
+            ],
+            "field": null,
+            "kind": "metadata_line",
+            "range": {
+              "end": {
+                "column": 25,
+                "row": 8
+              },
+              "end_byte": 225,
+              "start": {
+                "column": 0,
+                "row": 8
+              },
+              "start_byte": 200
+            }
+          }
+        ],
+        "field": null,
+        "kind": "line",
+        "range": {
+          "end": {
+            "column": 25,
+            "row": 8
+          },
+          "end_byte": 225,
+          "start": {
+            "column": 0,
+            "row": 8
+          },
+          "start_byte": 200
+        }
+      }
+    ],
+    "field": null,
+    "kind": "source_file",
+    "range": {
+      "end": {
+        "column": 25,
+        "row": 8
+      },
+      "end_byte": 225,
+      "start": {
+        "column": 0,
+        "row": 0
+      },
+      "start_byte": 0
+    }
+  },
+  "diagnostics": [
+    {
+      "message": "ERROR node encountered",
+      "severity": "Error"
+    }
+  ]
+}

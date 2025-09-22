@@ -1,0 +1,19 @@
+---
+source: tests/plan_snapshots.rs
+expression: plan
+---
+{
+  "plan": {
+    "steps": [
+      {
+        "adapter": "adapters/text_enhancement.yaml",
+        "index": 0
+      },
+      {
+        "adapter": "adapters/post_processing.yaml",
+        "index": 1
+      }
+    ]
+  },
+  "diagnostics": []
+}

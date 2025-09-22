@@ -1,0 +1,15 @@
+---
+source: tests/ir_snapshots.rs
+expression: analysis
+---
+{
+  "ir": {
+    "story": {
+      "acts": [],
+      "scenes": [],
+      "cels": []
+    },
+    "adapters": []
+  },
+  "diagnostics": []
+}

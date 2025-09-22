@@ -1,0 +1,80 @@
+---
+source: tests/symbol_snapshots.rs
+expression: analysis
+---
+{
+  "symbols": {
+    "entities": [],
+    "adapters": [
+      {
+        "kind": "AdapterPath",
+        "name": "custom_adapter.yaml",
+        "range": {
+          "start": {
+            "row": 2,
+            "column": 0
+          },
+          "end": {
+            "row": 4,
+            "column": 29
+          },
+          "start_byte": 82,
+          "end_byte": 154
+        }
+      }
+    ],
+    "imports": [
+      {
+        "kind": "Import",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 1,
+            "column": 0
+          },
+          "end": {
+            "row": 1,
+            "column": 30
+          },
+          "start_byte": 29,
+          "end_byte": 59
+        }
+      }
+    ],
+    "metadata": [
+      {
+        "kind": "Metadata",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 5,
+            "column": 0
+          },
+          "end": {
+            "row": 5,
+            "column": 19
+          },
+          "start_byte": 155,
+          "end_byte": 174
+        }
+      },
+      {
+        "kind": "Metadata",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 8,
+            "column": 0
+          },
+          "end": {
+            "row": 8,
+            "column": 25
+          },
+          "start_byte": 200,
+          "end_byte": 225
+        }
+      }
+    ]
+  },
+  "diagnostics": []
+}

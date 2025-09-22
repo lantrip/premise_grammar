@@ -1,0 +1,46 @@
+---
+source: tests/symbol_snapshots.rs
+expression: analysis
+---
+{
+  "symbols": {
+    "entities": [],
+    "adapters": [
+      {
+        "kind": "AdapterPath",
+        "name": "adapters/text_enhancement.yaml",
+        "range": {
+          "start": {
+            "row": 3,
+            "column": 0
+          },
+          "end": {
+            "row": 3,
+            "column": 59
+          },
+          "start_byte": 72,
+          "end_byte": 131
+        }
+      },
+      {
+        "kind": "AdapterPath",
+        "name": "adapters/post_processing.yaml",
+        "range": {
+          "start": {
+            "row": 6,
+            "column": 0
+          },
+          "end": {
+            "row": 10,
+            "column": 12
+          },
+          "start_byte": 169,
+          "end_byte": 330
+        }
+      }
+    ],
+    "imports": [],
+    "metadata": []
+  },
+  "diagnostics": []
+}

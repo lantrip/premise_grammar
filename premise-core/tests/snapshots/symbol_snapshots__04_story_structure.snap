@@ -1,0 +1,13 @@
+---
+source: tests/symbol_snapshots.rs
+expression: analysis
+---
+{
+  "symbols": {
+    "entities": [],
+    "adapters": [],
+    "imports": [],
+    "metadata": []
+  },
+  "diagnostics": []
+}

@@ -54,6 +54,11 @@
 (adapter_statement (adapter_name) @entity.name.definition.adapter)
 (adapter_statement (adapter_path) @string.path.adapter)
 
+; Adapter property keys and values (nested content)
+(prop_key) @property
+(prop_value) @string
+(simple_value) @string
+
 ; Canonical adapter path spec
 (adapter_statement (prop_value) @string.adapter)
 
@@ -62,7 +67,7 @@
 
 ; Import and adapter statements
 (import_statement) @keyword.import
-(adapter_statement) @keyword
+(adapter_statement) @keyword.adapter
 
 ; Metadata
 (metadata_line) @meta.property

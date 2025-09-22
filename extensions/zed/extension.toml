@@ -11,4 +11,4 @@ themes = ["themes/*.json"]
 # For production, change to: repository = "https://github.com/lantrip/premise_grammar"
 [grammars.premise]
 repository = "https://github.com/lantrip/premise_grammar"
-rev = "e6f0244aa416f8e165668aa00172eb1fba114195"
+rev = "5ea783324001f10d8231ebac3696a6adc4562877"
