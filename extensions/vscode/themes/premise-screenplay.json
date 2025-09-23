@@ -198,9 +198,15 @@
       }
     },
     {
+      "scope": "entity.name.reference.prose",
+      "settings": {
+        "foreground": "#2c3e50"
+      }
+    },
+    {
       "scope": "entity.name.character.screenplay.premise",
       "settings": {
-        "foreground": "#45b7d1",
+        "foreground": "#00798C",
         "fontStyle": "bold"
       }
     },
@@ -215,6 +221,19 @@
       "scope": "punctuation.separator.dialogue.premise",
       "settings": {
         "foreground": "#45b7d1"
+      }
+    },
+    {
+      "scope": [
+        "punctuation.definition.entity.reference.begin.premise",
+        "punctuation.definition.entity.reference.end.premise",
+        "punctuation.definition.entity.begin",
+        "punctuation.definition.entity.end",
+        "punctuation.definition.entity.begin.prose",
+        "punctuation.definition.entity.end.prose"
+      ],
+      "settings": {
+        "foreground": "#7f8c8d"
       }
     }
   ],

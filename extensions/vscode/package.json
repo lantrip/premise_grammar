@@ -35,6 +35,11 @@
         "configuration": "./language-configuration.json"
       }
     ],
+    "configurationDefaults": {
+      "[premise]": {
+        "editor.bracketPairColorization.enabled": false
+      }
+    },
     "grammars": [
       {
         "language": "premise",

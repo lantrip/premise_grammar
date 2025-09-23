@@ -15,67 +15,68 @@
       }
     },
     {
-      "scope": "markup.heading.1.premise",
+      "scope": [
+        "markup.heading.1.premise",
+        "markup.heading.2.premise",
+        "markup.heading.3.premise"
+      ],
       "settings": {
-        "foreground": "#00798C",
-        "fontStyle": "bold"
-      }
-    },
-    {
-      "scope": "markup.heading.2.premise",
-      "settings": {
-        "foreground": "#30638E",
-        "fontStyle": "bold"
-      }
-    },
-    {
-      "scope": "markup.heading.3.premise",
-      "settings": {
-        "foreground": "#003D5B",
+        "foreground": "#0e87d0",
         "fontStyle": "bold"
       }
     },
     {
       "scope": "keyword.control.content.beat.premise",
       "settings": {
-        "foreground": "#27AE60",
+        "foreground": "#b86798",
         "fontStyle": "bold"
       }
     },
     {
       "scope": "keyword.control.content.treatment.premise",
       "settings": {
-        "foreground": "#27AE60"
+        "foreground": "#b86798"
       }
     },
     {
       "scope": "keyword.control.content.narrative.premise",
       "settings": {
-        "foreground": "#27AE60"
+        "foreground": "#b86798"
       }
     },
     {
       "scope": "keyword.entity.premise",
       "settings": {
-        "foreground": "#EDAE49"
+        "foreground": "#D1495B"
       }
     },
     {
       "scope": "entity.name.type.premise",
       "settings": {
-        "foreground": "#30638E"
+        "foreground": "#7089b4"
       }
     },
     {
       "scope": "entity.name.reference.premise",
       "settings": {
-        "foreground": "#EDAE49"
+        "foreground": "#0079BC"
       }
     },
     {
       "scope": [
         "punctuation.definition.entity.reference.begin.premise",
         "punctuation.definition.entity.reference.end.premise"
+      ],
+      "settings": {
+        "foreground": "#4F6E86"
+      }
+    },
+    {
+      "scope": [
+        "punctuation.definition.entity.begin",
+        "punctuation.definition.entity.end",
+        "punctuation.definition.entity.begin.prose",
+        "punctuation.definition.entity.end.prose"
       ],
       "settings": {
         "foreground": "#4F6E86"
@@ -90,7 +91,13 @@
     {
       "scope": "entity.name.function.premise",
       "settings": {
-        "foreground": "#EDAE49"
+        "foreground": "#7089b4"
+      }
+    },
+    {
+      "scope": "entity.name.reference.prose",
+      "settings": {
+        "foreground": "#0079BC"
       }
     },
     {
@@ -108,8 +115,7 @@
     {
       "scope": "punctuation.definition.keyword.premise",
       "settings": {
-        "foreground": "#D1495B",
-        "fontStyle": "bold"
+        "foreground": "#DA6D7C"
       }
     },
     {
@@ -213,35 +219,35 @@
     "entity-reference": "#EDAE49",
     "string": "#003D5B",
     "story-act": {
-      "foreground": "#00798C",
+      "foreground": "#0e87d0",
       "fontStyle": "bold"
     },
     "story-scene": {
-      "foreground": "#30638E",
+      "foreground": "#0e87d0",
       "fontStyle": "bold"
     },
     "story-cel": {
-      "foreground": "#003D5B",
+      "foreground": "#0e87d0",
       "fontStyle": "bold"
     },
     "content-beat": {
-      "foreground": "#27AE60",
+      "foreground": "#b86798",
       "fontStyle": "bold"
     },
     "content-treatment": {
-      "foreground": "#27AE60"
+      "foreground": "#b86798"
     },
     "content-narrative": {
-      "foreground": "#27AE60"
+      "foreground": "#b86798"
     },
     "character-speaker": {
-      "foreground": "#00798C",
+      "foreground": "#0e87d0",
       "fontStyle": "bold"
     },
     "property": "#003D5B",
-    "keyword": "#EDAE49",
-    "file-header": "#30638E",
+    "keyword": "#7089b4",
+    "file-header": "#0e87d0",
     "metadata": "#6B7C93",
-    "import": "#30638E"
+    "import": "#0e87d0"
   }
 }

@@ -101,8 +101,9 @@ export class PremiseSemanticTokensProvider
       case "content_type_narrative":
         this.addToken(builder, node, "content-narrative", ["bold"], document);
         break;
+      // Disable semantic token coloring for entity references so TextMate
+      // scopes can precisely color braces and names separately.
       case "entity_reference":
-        this.addToken(builder, node, "entity-reference", [], document);
         break;
       case "dialogue_speaker":
         this.addToken(builder, node, "character-speaker", ["bold"], document);
@@ -143,8 +144,9 @@ export class PremiseSemanticTokensProvider
       case "block_scalar":
         this.addToken(builder, node, "string", [], document);
         break;
+      // Do not color whole narrative lines via semantic tokens; allow TextMate
+      // to style inline entity references and punctuation precisely.
       case "indented_text_line":
-        this.addToken(builder, node, "string", [], document);
         break;
       case "adapter_name":
         this.addToken(builder, node, "variable", ["readonly"], document);
@@ -155,9 +157,10 @@ export class PremiseSemanticTokensProvider
       case "adapter_timing":
         this.addToken(builder, node, "keyword", [], document);
         break;
+      // Avoid coloring braces via semantic tokens; TextMate handles specific
+      // scopes for entity-reference braces and other curly punctuation.
       case "open_brace":
       case "close_brace":
-        this.addToken(builder, node, "operator", [], document);
         break;
     }
 

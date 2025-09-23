@@ -20,6 +20,14 @@ This directory contains editor extensions that consume the Premise Tree-sitter g
 ./scripts/dev.sh zed          # Zed only
 ```
 
+### Brace Color Looks Wrong? Check Bracket Pair Colorization
+
+- If entity reference braces `{` `}` appear with unexpected colors (e.g., same blue as parentheses), editor-level Bracket Pair Colorization may be overriding theme scopes.
+- Fix: Disable for Premise files.
+  - We ship a default in the extension to turn it off for `[premise]`, but a user/workspace override can re-enable it.
+  - VS Code/Cursor → Settings → search: "Bracket Pair Colorization" → uncheck for Premise or remove overrides in `settings.json`.
+  - Premise relies on TextMate scopes `punctuation.definition.entity.*` for subtle brace coloring.
+
 ### Manual Steps
 
 #### 1. Build Grammar
