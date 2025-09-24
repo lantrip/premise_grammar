@@ -2,7 +2,7 @@
   "name": "premise",
   "displayName": "Premise Language Support",
   "description": "Syntax highlighting and theming for Premise story files",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "premise-lang",
   "engines": {
     "vscode": "^1.60.0"
@@ -37,7 +37,8 @@
     ],
     "configurationDefaults": {
       "[premise]": {
-        "editor.bracketPairColorization.enabled": false
+        "editor.bracketPairColorization.enabled": false,
+        "editor.fontFamily": "Courier Prime, Courier New, Menlo, Monaco, 'Courier', monospace"
       }
     },
     "grammars": [

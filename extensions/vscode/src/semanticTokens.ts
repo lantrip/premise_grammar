@@ -127,10 +127,12 @@ export class PremiseSemanticTokensProvider
         this.addToken(builder, node, "comment", ["italic"], document);
         break;
       case "parenthetical":
-        this.addToken(builder, node, "comment", ["italic"], document);
+        // Do not force italics on parentheticals; let TextMate theme style them.
+        // Parentheticals should not inherit dialogue italics.
+        this.addToken(builder, node, "comment", [], document);
         break;
       case "entity_name":
-        this.addToken(builder, node, "variable", ["readonly"], document);
+        // Let TextMate scope `entity.name.function.premise` style entity list item names.
         break;
       case "entity_desc":
         this.addToken(builder, node, "string", [], document);

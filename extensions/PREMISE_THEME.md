@@ -12,6 +12,8 @@
 
 - **VS Code theme file**: `extensions/vscode/themes/premise-prose.json`
 
+  - Default editor font for Premise files: Courier Prime (with fallbacks)
+
 - **Mapping overview**
 
   - **Hierarchy (Blue)**
@@ -28,33 +30,11 @@
     - `content-beat` → `#b86798` (bold)
     - `content-treatment` → `#b86798`
     - `content-narrative` → `#b86798`
+  - **Screenplay dialogue**
+    - Speaker name (`entity.name.character.screenplay.premise`) → `#00798C` (bold)
+    - Separator colon (`punctuation.separator.dialogue.premise`) → `#00798C`
+    - Dialogue text (`text.dialogue.screenplay.premise`) → `#003D5B` (italic)
+      - Includes indented continuation lines after the speaker line
+    - Parentheticals (`meta.screenplay.parenthetical.premise`) → `#003D5B` (not italic)
   - **General text**
-    - Editor fg → `#003D5B`, bg → `#ffffff`
-    - Strings and narrative bodies → `#003D5B`
-    - Punctuation/separators → `#003D5B`
-    - Comments → `#6B7C93` italic
-  - **Adapters/keywords/imports**
-    - Entity block keyword (`keyword.entity.premise`) → `#D1495B`
-    - `@` punctuation (`punctuation.definition.keyword.premise`) → lighter amaranth `#DA6D7C` (not bold)
-    - Adapter keywords/delimiters → `#D1495B` (bold)
-    - Adapter names/functions → `#00798C` (bold)
-    - Properties → `#003D5B`
-    - File header/import/meta → `#30638E`/`#6B7C93`
-
-- **Rationale**
-
-  - Keep prose legible with deep cool base (`#003D5B`) and restrained accenting.
-  - Entities are highlighted with yellow to stand out within narrative.
-  - Hierarchy uses a cool-to-deep progression for visual structure.
-  - Content markers are green for immediate visual parsing of layers.
-
-- **Tuning notes**
-
-  - If yellow reads too strong on some displays, consider `#E3A43F`.
-  - For higher contrast body text, test `#08334A` for `editor.foreground`.
-  - Cursor dark variant could invert base/accents while keeping the same mapping.
-
-- **Troubleshooting**
-  - If `{` `}` braces for entity references appear blue (like parentheses), bracket pair colorization is overriding theme scopes.
-  - Solution: Disable bracket pair colorization for Premise files. We set `"editor.bracketPairColorization.enabled": false` in `[premise]` via extension defaults, but local settings can override.
-  - Dialogue speaker names use `#00798C` bold via `entity.name.character.screenplay.premise`. Entity references in prose use `#003D5B` via `entity.name.reference.premise`.
+    - Editor fg → `

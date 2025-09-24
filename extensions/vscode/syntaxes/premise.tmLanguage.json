@@ -41,12 +41,41 @@
     },
     {
       "name": "meta.screenplay.dialogue.premise",
-      "match": "^\\s*([A-Z][A-Z0-9 ]*[A-Z])(:)\\s*(.*)$",
-      "captures": {
+      "begin": "^\\s*([A-Z][A-Z0-9 ]*[A-Z])(:)\\s*",
+      "beginCaptures": {
         "1": { "name": "entity.name.character.screenplay.premise" },
-        "2": { "name": "punctuation.separator.dialogue.premise" },
-        "3": { "name": "text.dialogue.screenplay.premise" }
-      }
+        "2": { "name": "punctuation.separator.dialogue.premise" }
+      },
+      "end": "^(?=\\S)|^\\s*$",
+      "contentName": "text.dialogue.screenplay.premise",
+      "patterns": [
+        {
+          "name": "meta.entity.reference.premise",
+          "begin": "\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.entity.reference.begin.premise"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.entity.reference.end.premise"
+            }
+          },
+          "patterns": [
+            { "name": "entity.name.reference.premise", "match": "[^{}\\n]+" }
+          ]
+        },
+        {
+          "name": "meta.screenplay.parenthetical.premise",
+          "match": "^\\s*\\([^)]*\\)\\s*$"
+        },
+        {
+          "name": "meta.screenplay.parenthetical.premise",
+          "match": "\\([^)]*\\)"
+        }
+      ]
     },
     {
       "name": "meta.adapter.inline.premise",

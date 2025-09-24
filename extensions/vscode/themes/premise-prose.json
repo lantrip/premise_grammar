@@ -15,6 +15,13 @@
       }
     },
     {
+      "scope": "meta.screenplay.parenthetical.premise",
+      "settings": {
+        "foreground": "#003D5B",
+        "fontStyle": ""
+      }
+    },
+    {
       "scope": [
         "markup.heading.1.premise",
         "markup.heading.2.premise",
