@@ -3,7 +3,28 @@
   "type": "light",
   "colors": {
     "editor.background": "#ffffff",
-    "editor.foreground": "#003D5B"
+    "editor.foreground": "#003D5B",
+
+    "activityBar.background": "#f5f7fa",
+    "activityBar.foreground": "#003D5B",
+    "activityBar.inactiveForeground": "#4F6E86",
+    "activityBar.activeBorder": "#0e87d0",
+    "activityBarBadge.background": "#0e87d0",
+    "activityBarBadge.foreground": "#ffffff",
+
+    "sideBar.background": "#ffffff",
+    "sideBar.foreground": "#003D5B",
+    "sideBar.border": "#e5e7eb",
+    "sideBarSectionHeader.background": "#f3f4f6",
+    "sideBarSectionHeader.foreground": "#003D5B",
+    "sideBarTitle.foreground": "#003D5B",
+
+    "list.activeSelectionBackground": "#e6f2fb",
+    "list.activeSelectionForeground": "#003D5B",
+    "list.inactiveSelectionBackground": "#f2f6fa",
+    "list.hoverBackground": "#f7fafc",
+    "list.focusBackground": "#e6f2fb",
+    "list.highlightForeground": "#0e87d0"
   },
   "semanticHighlighting": true,
   "tokenColors": [

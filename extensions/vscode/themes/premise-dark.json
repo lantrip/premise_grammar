@@ -183,8 +183,23 @@
     {
       "scope": "entity.name.reference.premise",
       "settings": {
-        "foreground": "#c586c0",
-        "fontStyle": "bold"
+        "foreground": "#c586c0"
+      }
+    },
+    {
+      "scope": [
+        "punctuation.definition.entity.reference.begin.premise",
+        "punctuation.definition.entity.reference.end.premise"
+      ],
+      "settings": {
+        "foreground": "#ffd700"
+      }
+    },
+    {
+      "scope": "meta.screenplay.parenthetical.premise",
+      "settings": {
+        "foreground": "#d4d4d4",
+        "fontStyle": ""
       }
     },
     {

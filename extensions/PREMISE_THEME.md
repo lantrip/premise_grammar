@@ -37,4 +37,25 @@
       - Includes indented continuation lines after the speaker line
     - Parentheticals (`meta.screenplay.parenthetical.premise`) → `#003D5B` (not italic)
   - **General text**
-    - Editor fg → `
+  - Editor fg → `#003D5B`, bg → `#ffffff`
+  - Strings and narrative bodies → `#003D5B`
+  - Punctuation/separators → `#003D5B`
+  - Comments → `#6B7C93` italic
+
+### Premise Dark Theme
+
+- **VS Code theme file**: `extensions/vscode/themes/premise-dark.json`
+
+- **Mapping overview**
+
+  - **Screenplay dialogue**
+    - Speaker name (`entity.name.character.screenplay.premise`) → `#9cdcfe` (bold)
+    - Separator colon (`punctuation.separator.dialogue.premise`) → `#9cdcfe`
+    - Dialogue text (`text.dialogue.screenplay.premise`) → `#d4d4d4` (italic)
+    - Parentheticals (`meta.screenplay.parenthetical.premise`) → `#d4d4d4` (not italic)
+  - **Entities**
+    - `entity.name.reference.premise` → `#c586c0`
+    - `punctuation.definition.entity.reference.begin/end.premise` → subtle `#ffd700`
+  - **General text**
+    - Editor fg → `#d4d4d4`, bg → `#1e1e1e`
+    - Comments → `#6a9955` italic
