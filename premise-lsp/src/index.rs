@@ -167,3 +167,68 @@ fn file_mtime_millis(path: &Path) -> Option<u128> {
 }
 
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast_utils;
+    use tower_lsp::lsp_types as lsp;
+
+    fn smoke_root() -> PathBuf {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("test-lsp-smoke")
+    }
+
+    fn story_file(name: &str) -> PathBuf {
+        smoke_root().join("story").join(name)
+    }
+
+    #[tokio::test]
+    async fn refs_and_beats_maya_chen() {
+        let root = smoke_root();
+        let story_root = root.clone();
+        let mut idx = EntityIndex::default();
+        idx.scan_root_from_disk(&story_root);
+
+        let refs = idx.get_refs_in_root(&story_root, "Maya Chen");
+        assert!(refs.len() > 0, "expected refs for Maya Chen");
+
+        // Ensure at least one reference reports a Beat context
+        let mut saw_beat = false;
+        for loc in refs {
+            let path = loc.uri.to_file_path().expect("valid file uri");
+            let text = std::fs::read_to_string(&path).expect("read file");
+            let mut parser = premise_core::Parser::new();
+            let (_, _, ast) = parser.parse_str(&text);
+            if let Some(ast) = ast {
+                let ctx = ast_utils::story_context_at(&ast, loc.range.start.line, 0, &text);
+                if ctx.beat.is_some() { saw_beat = true; break; }
+            }
+        }
+        assert!(saw_beat, "expected at least one beat context for Maya Chen");
+    }
+
+    #[tokio::test]
+    async fn refs_and_beats_keeper_aldrich() {
+        let root = smoke_root();
+        let story_root = root.clone();
+        let mut idx = EntityIndex::default();
+        idx.scan_root_from_disk(&story_root);
+
+        let refs = idx.get_refs_in_root(&story_root, "Keeper Aldrich");
+        assert!(refs.len() > 0, "expected refs for Keeper Aldrich");
+
+        let mut saw_beat = false;
+        for loc in refs {
+            let path = loc.uri.to_file_path().expect("valid file uri");
+            let text = std::fs::read_to_string(&path).expect("read file");
+            let mut parser = premise_core::Parser::new();
+            let (_, _, ast) = parser.parse_str(&text);
+            if let Some(ast) = ast {
+                let ctx = ast_utils::story_context_at(&ast, loc.range.start.line, 0, &text);
+                if ctx.beat.is_some() { saw_beat = true; break; }
+            }
+        }
+        assert!(saw_beat, "expected at least one beat context for Keeper Aldrich");
+    }
+}
+

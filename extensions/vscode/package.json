@@ -69,7 +69,26 @@
         "uiTheme": "vs",
         "path": "./themes/premise-prose.json"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "premise.showEntityBeats",
+        "title": "Premise: Show Beats for Entity Under Cursor"
+      },
+      {
+        "command": "premise.scanWorkspace",
+        "title": "Premise: Scan Workspace"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "premise.showEntityBeats",
+          "when": "editorLangId == premise && editorHasSelection",
+          "group": "navigation@9"
+        }
+      ]
+    }
   },
   "main": "./out/extension.js",
   "activationEvents": [

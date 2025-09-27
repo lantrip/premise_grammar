@@ -1,4 +1,5 @@
 use premise_core::ast::{AstNode, Range};
+use serde::Serialize;
 
 pub fn contains_position(range: &Range, line: u32, character: u32) -> bool {
     let (sl, sc) = (range.start.row as u32, range.start.column as u32);
@@ -53,9 +54,16 @@ pub fn reference_name_at(ast: &AstNode, line: u32, character: u32, text: &str) -
         find_ancestor_kind(ast, line, character, &["entity_reference", "dialogue_speaker"])?
     };
 
-    let field_name = if ref_node.kind == "dialogue_speaker" { "speaker" } else { "entity" };
-    let entity_child = extract_child_field(ref_node, field_name)?;
-    let raw = slice_text(text, &entity_child.range);
+    // Prefer explicit child field if grammar provides it; else trim braces from the node text
+    let raw = if let Some(entity_child) = extract_child_field(ref_node, if ref_node.kind == "dialogue_speaker" { "speaker" } else { "entity" }) {
+        slice_text(text, &entity_child.range)
+    } else {
+        let s = slice_text(text, &ref_node.range);
+        let t = s.trim();
+        let t = t.strip_prefix('{').unwrap_or(t);
+        let t = t.strip_suffix('}').unwrap_or(t);
+        t.trim().to_string()
+    };
     Some(normalize_name(&raw))
 }
 
@@ -137,16 +145,77 @@ pub fn collect_entity_references(ast: &AstNode, text: &str) -> Vec<(String, Rang
             if let Some(ent_node) = extract_child_field(n, "entity") {
                 let name = normalize_name(&slice_text(text, &ent_node.range));
                 refs.push((name, ent_node.range));
+            } else {
+                // Fallback: trim braces from the node text
+                let s = slice_text(text, &n.range);
+                if let Some(stripped) = s.strip_prefix('{').and_then(|t| t.strip_suffix('}')) {
+                    let name = normalize_name(stripped);
+                    if !name.is_empty() { refs.push((name, n.range)); }
+                } else {
+                    let name = normalize_name(&s);
+                    if !name.is_empty() { refs.push((name, n.range)); }
+                }
             }
         }
         if n.kind == "dialogue_speaker" {
             if let Some(speaker_node) = extract_child_field(n, "speaker") {
                 let name = normalize_name(&slice_text(text, &speaker_node.range));
                 refs.push((name, speaker_node.range));
+            } else {
+                // Fallback: speaker content is within braces at the start of the node
+                let s = slice_text(text, &n.range);
+                let t = s.trim();
+                let t = t.strip_prefix('{').unwrap_or(t);
+                let t = t.strip_suffix('}').unwrap_or(t);
+                let name = normalize_name(t);
+                if !name.is_empty() { refs.push((name, n.range)); }
             }
         }
     });
     refs
+}
+
+#[derive(Default, Clone, Debug, Serialize)]
+pub struct StoryContext {
+    pub act: Option<String>,
+    pub scene: Option<String>,
+    pub cel: Option<String>,
+    pub beat: Option<String>,
+}
+
+pub fn story_context_at(ast: &AstNode, line: u32, _character: u32, text: &str) -> StoryContext {
+    // Walk nodes in document order, tracking the latest section headers before the given line.
+    let mut ctx = StoryContext::default();
+    walk(ast, &mut |n| {
+        if (n.range.start.row as u32) > line { return; }
+        match n.kind.as_str() {
+            "act_header" => {
+                if let Some(t) = extract_child_field(n, "title") {
+                    ctx.act = Some(normalize_name(&slice_text(text, &t.range)));
+                }
+            }
+            "scene_header" => {
+                if let Some(t) = extract_child_field(n, "title") {
+                    ctx.scene = Some(normalize_name(&slice_text(text, &t.range)));
+                }
+            }
+            "cel_header" => {
+                if let Some(t) = extract_child_field(n, "title") {
+                    ctx.cel = Some(normalize_name(&slice_text(text, &t.range)));
+                }
+            }
+            "content_type_beat" => {
+                // Use the raw line content after the leading '///'
+                let raw = slice_text(text, &n.range);
+                let beat = raw.trim_start_matches('/').trim().to_string();
+                if !beat.is_empty() {
+                    ctx.beat = Some(beat);
+                }
+            }
+            _ => {}
+        }
+    });
+    ctx
 }
 
 

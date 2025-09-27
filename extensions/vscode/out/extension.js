@@ -31,6 +31,19 @@ const web_tree_sitter_1 = require("web-tree-sitter");
 const semanticTokens_1 = require("./semanticTokens");
 const node_1 = require("vscode-languageclient/node");
 let client;
+async function registerCommandOnce(context, id, handler) {
+    try {
+        const existing = await vscode.commands.getCommands(true);
+        if (existing.includes(id)) {
+            return;
+        }
+    }
+    catch {
+        // If querying commands fails, fall through and attempt registration
+    }
+    const disp = vscode.commands.registerCommand(id, handler);
+    context.subscriptions.push(disp);
+}
 async function activate(context) {
     console.log("Premise extension activating...");
     try {
@@ -85,6 +98,77 @@ async function activate(context) {
             await client.start();
             outputChannel.appendLine("LSP client start() returned");
             console.log("Premise LSP client started");
+            // Command: Show beats for entity under cursor
+            await registerCommandOnce(context, "premise.showEntityBeats", async () => {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor || !client) {
+                    return;
+                }
+                const doc = editor.document;
+                const sel = editor.selection;
+                // Prefer explicit selection text; else use word under cursor
+                let raw = sel && !sel.isEmpty ? doc.getText(sel) : "";
+                if (!raw) {
+                    const wordRange = doc.getWordRangeAtPosition(sel.active, /[^{}\s][^}]*?/);
+                    raw = wordRange ? doc.getText(wordRange) : "";
+                }
+                let name = raw.trim();
+                if (name.startsWith("{") && name.endsWith("}")) {
+                    name = name.slice(1, -1).trim();
+                }
+                if (!name) {
+                    vscode.window.showInformationMessage("Place cursor on an entity name.");
+                    return;
+                }
+                try {
+                    const res = await client.sendRequest("workspace/executeCommand", {
+                        command: "premise.entityBeats",
+                        arguments: [doc.uri.toString(), name],
+                    });
+                    if (!Array.isArray(res) || res.length === 0) {
+                        vscode.window.showInformationMessage(`No beats found for ${name}.`);
+                        return;
+                    }
+                    const items = res.map((r) => {
+                        const scene = r.scene ? `Scene: ${r.scene}` : undefined;
+                        const cel = r.cel ? `Cel: ${r.cel}` : undefined;
+                        const beat = r.beat ? `Beat: ${r.beat}` : undefined;
+                        const detail = [scene, cel, beat].filter(Boolean).join(" • ");
+                        return {
+                            label: detail || `${r.uri}`,
+                            description: r.uri.toString(),
+                            loc: r,
+                        };
+                    });
+                    const pick = await vscode.window.showQuickPick(items, {
+                        placeHolder: `Beats for ${name}`,
+                    });
+                    if (pick) {
+                        const u = vscode.Uri.parse(pick.loc.uri);
+                        const rng = new vscode.Range(new vscode.Position(pick.loc.range.start.line, pick.loc.range.start.character), new vscode.Position(pick.loc.range.end.line, pick.loc.range.end.character));
+                        const d = await vscode.workspace.openTextDocument(u);
+                        const e = await vscode.window.showTextDocument(d);
+                        e.revealRange(rng, vscode.TextEditorRevealType.InCenter);
+                        e.selection = new vscode.Selection(rng.start, rng.end);
+                    }
+                }
+                catch (err) {
+                    outputChannel.appendLine(`entityBeats error: ${String(err)}`);
+                }
+            });
+            // Command: Scan workspace/story roots to warm index
+            await registerCommandOnce(context, "premise.scanWorkspace", async () => {
+                try {
+                    await client.sendRequest("workspace/executeCommand", {
+                        command: "premise.scanWorkspace",
+                        arguments: [],
+                    });
+                    vscode.window.showInformationMessage("Premise: workspace scan complete.");
+                }
+                catch (err) {
+                    outputChannel.appendLine(`scanWorkspace error: ${String(err)}`);
+                }
+            });
         }
         else {
             vscode.window.showWarningMessage("Premise LSP server binary not found. Syntax highlighting will still work.");

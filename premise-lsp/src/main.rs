@@ -54,6 +54,7 @@ impl LanguageServer for PremiseServer {
             references_provider: Some(lsp::OneOf::Left(true)),
             hover_provider: Some(lsp::HoverProviderCapability::Simple(true)),
             completion_provider: Some(lsp::CompletionOptions::default()),
+            execute_command_provider: Some(lsp::ExecuteCommandOptions { commands: vec!["premise.entityBeats".into(), "premise.scanWorkspace".into()], work_done_progress_options: Default::default() }),
             ..Default::default()
         };
         Ok(lsp::InitializeResult { capabilities, server_info: None })
@@ -69,7 +70,49 @@ impl LanguageServer for PremiseServer {
         if let Some(text) = text {
             let mut parser = premise_core::Parser::new();
             let analysis = parser.analyze_symbols(&text);
-            let list = symbols::to_document_symbols(&analysis);
+            let mut list = symbols::to_document_symbols(&analysis);
+            let ir = parser.analyze_ir(&text);
+            // Compute global ordinals by alphanumeric order across the story root.
+            let offsets = {
+                // Find story root for this file
+                let uri = &params.text_document.uri;
+                let st = self.state.read().await;
+                let ord = if let Some(path) = uri.to_file_path().ok() {
+                    let parent = path.parent().unwrap_or(std::path::Path::new("."));
+                    let story_root = crate::scope::find_story_root(parent).unwrap_or_else(|| parent.to_path_buf());
+                    // Walk all files under story root, sort, accumulate counts until current file
+                    let mut files: Vec<std::path::PathBuf> = Vec::new();
+                    for entry in walkdir::WalkDir::new(&story_root).into_iter().filter_map(|e| e.ok()) {
+                        let p = entry.path();
+                        if p.is_file() && p.extension().and_then(|e| e.to_str()) == Some("prem") {
+                            files.push(p.to_path_buf());
+                        }
+                    }
+                    files.sort();
+                    let mut counts = symbols::OrdinalOffsets::default();
+                    for p in files {
+                        // Accumulate from text if open, else from disk
+                        let (t, is_current) = if let Ok(u) = lsp::Url::from_file_path(&p) {
+                            if let Some(doc) = st.docs.get(&u) { (Some(doc.text.clone()), u == *uri) } else {
+                                let txt = std::fs::read_to_string(&p).ok();
+                                (txt, u == *uri)
+                            }
+                        } else { (None, false) };
+                        if let Some(t) = t {
+                            let mut pparser = premise_core::Parser::new();
+                            let irx = pparser.analyze_ir(&t);
+                            if is_current { break; }
+                            counts.acts += irx.ir.story.acts.len();
+                            counts.scenes += irx.ir.story.scenes.len();
+                            counts.cels += irx.ir.story.cels.len();
+                        }
+                    }
+                    counts
+                } else { symbols::OrdinalOffsets::default() };
+                ord
+            };
+            let mut story_list = symbols::story_to_document_symbols(&ir, &params.text_document.uri, offsets);
+            list.append(&mut story_list);
             return Ok(Some(lsp::DocumentSymbolResponse::Nested(list)));
         }
         Ok(None)
@@ -101,6 +144,18 @@ impl LanguageServer for PremiseServer {
         );
         if let Some(path) = doc.uri.to_file_path().ok() {
             st.index.index_text(path, doc.uri.clone(), &text_for_index);
+            // Seed roots with the file's story root and run an initial scan
+            let story_root = {
+                let p = doc.uri.to_file_path().ok();
+                let parent = p.as_ref().and_then(|pp| pp.parent()).unwrap_or(std::path::Path::new("."));
+                scope::find_story_root(parent).unwrap_or_else(|| parent.to_path_buf())
+            };
+            let mut roots = st.index.list_roots();
+            if !roots.iter().any(|r| r == &story_root) {
+                roots.push(story_root.clone());
+                st.index.set_roots(roots);
+                st.index.scan_root_from_disk(&story_root);
+            }
         }
         drop(st);
         self.validate_and_publish(&doc.uri).await;
@@ -157,25 +212,15 @@ impl LanguageServer for PremiseServer {
             if let Some(name) = ast_utils::name_at(&ast, pos.line, pos.character, &text) {
                 tracing::info!(name = %name, "name under cursor for definition");
                 let current_uri = &params.text_document_position_params.text_document.uri;
-                if name.starts_with("local.@") {
-                    match scope::resolve_local_at_definition(&self.state, current_uri, &name).await {
-                        Ok(Some(loc)) => return Ok(Some(lsp::GotoDefinitionResponse::Scalar(loc))),
-                        Ok(None) => {},
-                        Err(err) => {
-                            tracing::warn!("local.@ definition resolution error: {}", err);
-                        }
-                    }
-                } else {
-                    // Prefer index-backed global search
-                    if let Ok(Some(loc)) = scope::resolve_global_definition(&self.state, current_uri, &name).await {
+                // Prefer index-backed global search
+                if let Ok(Some(loc)) = scope::resolve_global_definition(&self.state, current_uri, &name).await {
+                    return Ok(Some(lsp::GotoDefinitionResponse::Scalar(loc)));
+                }
+                let defs = ast_utils::collect_entity_definitions(&ast, &text);
+                for (def_name, range) in defs {
+                    if def_name == name {
+                        let loc = lsp::Location { uri: current_uri.clone(), range: diagnostics::to_lsp_range(range) };
                         return Ok(Some(lsp::GotoDefinitionResponse::Scalar(loc)));
-                    }
-                    let defs = ast_utils::collect_entity_definitions(&ast, &text);
-                    for (def_name, range) in defs {
-                        if def_name == name {
-                            let loc = lsp::Location { uri: current_uri.clone(), range: diagnostics::to_lsp_range(range) };
-                            return Ok(Some(lsp::GotoDefinitionResponse::Scalar(loc)));
-                        }
                     }
                 }
             }
@@ -200,27 +245,17 @@ impl LanguageServer for PremiseServer {
             if let Some(name) = ast_utils::name_at(&ast, pos.line, pos.character, &text) {
                 tracing::info!(name = %name, "name under cursor for references");
                 let current_uri = &params.text_document_position.text_document.uri;
-                if name.starts_with("local.@") {
-                    match scope::resolve_local_at_references(&self.state, current_uri, &name).await {
-                        Ok(out) if !out.is_empty() => return Ok(Some(out)),
-                        Ok(_) => {},
-                        Err(err) => {
-                            tracing::warn!("local.@ references resolution error: {}", err);
-                        }
+                if let Ok(out) = scope::resolve_global_references(&self.state, current_uri, &name).await {
+                    if !out.is_empty() { return Ok(Some(out)); }
+                }
+                let defs = ast_utils::collect_entity_definitions(&ast, &text);
+                let refs = ast_utils::collect_entity_references(&ast, &text);
+                if defs.iter().any(|(n, _)| n == &name) {
+                    let mut out = Vec::new();
+                    for (_n, r) in refs.into_iter().filter(|(n, _)| n == &name) {
+                        out.push(lsp::Location { uri: current_uri.clone(), range: diagnostics::to_lsp_range(r) });
                     }
-                } else {
-                    if let Ok(out) = scope::resolve_global_references(&self.state, current_uri, &name).await {
-                        if !out.is_empty() { return Ok(Some(out)); }
-                    }
-                    let defs = ast_utils::collect_entity_definitions(&ast, &text);
-                    let refs = ast_utils::collect_entity_references(&ast, &text);
-                    if defs.iter().any(|(n, _)| n == &name) {
-                        let mut out = Vec::new();
-                        for (_n, r) in refs.into_iter().filter(|(n, _)| n == &name) {
-                            out.push(lsp::Location { uri: current_uri.clone(), range: diagnostics::to_lsp_range(r) });
-                        }
-                        return Ok(Some(out));
-                    }
+                    return Ok(Some(out));
                 }
             }
         }
@@ -246,11 +281,7 @@ impl LanguageServer for PremiseServer {
                 let mut contents = format!("Entity: {}", name);
                 // Try to include file path if resolved globally
                 let uri = &params.text_document_position_params.text_document.uri;
-                if name.starts_with("local.@") {
-                    if let Ok(Some(loc)) = scope::resolve_local_at_definition(&self.state, uri, &name).await {
-                        contents.push_str(&format!("\nDefined in: {}", loc.uri));
-                    }
-                } else if let Ok(Some(loc)) = scope::resolve_global_definition(&self.state, uri, &name).await {
+                if let Ok(Some(loc)) = scope::resolve_global_definition(&self.state, uri, &name).await {
                     contents.push_str(&format!("\nDefined in: {}", loc.uri));
                 }
                 let hover = lsp::Hover { contents: lsp::HoverContents::Scalar(lsp::MarkedString::String(contents)), range: None };
@@ -293,7 +324,71 @@ impl LanguageServer for PremiseServer {
         Ok(None)
     }
 
-    // workspace/symbol not implemented for this tower-lsp version
+    async fn execute_command(&self, params: lsp::ExecuteCommandParams) -> LspResult<Option<serde_json::Value>> {
+        if params.command == "premise.scanWorkspace" {
+            // Force a full rescan of all known roots
+            let mut st = self.state.write().await;
+            let roots = st.index.list_roots();
+            for root in roots { st.index.scan_root_from_disk(&root); }
+            return Ok(Some(serde_json::json!({ "ok": true })));
+        }
+        if params.command != "premise.entityBeats" { return Ok(None); }
+        // Expect args: [uri: string, entityName: string]
+        let args = params.arguments;
+        if args.len() < 2 {
+            return Ok(Some(serde_json::json!({ "error": "Expected [uri, entityName]" })));
+        }
+        let uri_str = args[0].as_str().unwrap_or("");
+        let name_str = args[1].as_str().unwrap_or("");
+        if uri_str.is_empty() || name_str.is_empty() {
+            return Ok(Some(serde_json::json!({ "error": "Expected non-empty [uri, entityName]" })));
+        }
+        let (uri, name) = (lsp::Url::parse(uri_str).unwrap_or_else(|_| lsp::Url::parse("file:///" ).unwrap()), name_str.to_string());
+
+        // Gather refs via existing global logic
+        let mut hits = match scope::resolve_global_references(&self.state, &uri, &name).await { Ok(v) => v, Err(_) => Vec::new() };
+        // Deterministic ordering: by uri path (alphanumeric), then start line/character
+        hits.sort_by(|a, b| {
+            let ap = a.uri.to_string();
+            let bp = b.uri.to_string();
+            ap.cmp(&bp).then_with(|| a.range.start.line.cmp(&b.range.start.line)).then_with(|| a.range.start.character.cmp(&b.range.start.character))
+        });
+
+        let mut out: Vec<serde_json::Value> = Vec::new();
+        for loc in hits {
+            // Acquire text and ast for the file of this reference
+            let (text, ast) = {
+                let st = self.state.read().await;
+                if let Some(doc) = st.docs.get(&loc.uri) {
+                    let mut p = premise_core::Parser::new();
+                    let (_, _, ast) = p.parse_str(&doc.text);
+                    (Some(doc.text.clone()), ast)
+                } else if let Ok(path) = loc.uri.to_file_path() {
+                    match std::fs::read_to_string(&path) {
+                        Ok(t) => {
+                            let mut p = premise_core::Parser::new();
+                            let (_, _, ast) = p.parse_str(&t);
+                            (Some(t), ast)
+                        }
+                        Err(_) => (None, None)
+                    }
+                } else { (None, None) }
+            };
+            if let (Some(text), Some(ast)) = (text, ast) {
+                let line = loc.range.start.line;
+                let ctx = crate::ast_utils::story_context_at(&ast, line, 0, &text);
+                out.push(serde_json::json!({
+                    "uri": loc.uri,
+                    "range": loc.range,
+                    "act": ctx.act,
+                    "scene": ctx.scene,
+                    "cel": ctx.cel,
+                    "beat": ctx.beat,
+                }));
+            }
+        }
+        Ok(Some(serde_json::Value::Array(out)))
+    }
 }
 
 impl PremiseServer {
@@ -313,8 +408,10 @@ impl PremiseServer {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Plain logs without ANSI to avoid noisy control codes in clients
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .with_ansi(false)
         .with_writer(std::io::stderr)
         .init();
 

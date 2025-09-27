@@ -137,7 +137,11 @@ cd extensions/vscode && npm run compile && code --install-extension .
 - Always run `./test_queries.sh` after changing `queries/*.scm`
 - Use `./scripts/sync-extensions.sh` to copy updates to extensions
 - Use `./scripts/update-zed-rev.sh` to point Zed to latest commit
-- See `CLAUDE.md` for detailed extension development workflow
+- VSCode/Cursor extension now includes an LSP client that supports diagnostics, document symbols (with story hierarchy), hover/definition/references, completion, and commands:
+  - Command Palette: “Premise: Show Beats for Entity Under Cursor”
+  - Context menu: right-click with a selection in a `.prem` file
+  - “Premise: Scan Workspace” to force a full rescan
+- See `LSP_Roadmap.md` for detailed status and next steps
 
 ## Repository Structure
 

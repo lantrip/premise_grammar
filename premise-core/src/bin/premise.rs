@@ -113,9 +113,12 @@ fn main() {
                 out.resolved_imports = Some(res);
             }
 
-            match cli.globals.format {
-                Format::Json => println!("{}", serde_json::to_string_pretty(&out).unwrap()),
-                Format::Pretty => println!("{}", out.cst.root_sexpr),
+            // If --json is passed for parse command, force JSON output regardless of global format
+            let emit_json = json || cli.globals.format.is_json();
+            if emit_json {
+                println!("{}", serde_json::to_string_pretty(&out).unwrap());
+            } else {
+                println!("{}", out.cst.root_sexpr);
             }
         }
         Commands::Validate { file } => {

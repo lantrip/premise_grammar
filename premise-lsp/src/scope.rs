@@ -28,8 +28,9 @@ pub fn find_story_root_for_uri(uri: &lsp::Url) -> Option<PathBuf> {
     url_to_path(uri).and_then(|p| p.parent().map(|d| d.to_path_buf())).and_then(|d| find_story_root(&d))
 }
 
+#[allow(dead_code)]
 pub async fn resolve_local_at_definition(state: &Arc<RwLock<WorldState>>, current_uri: &lsp::Url, name: &str) -> Result<Option<lsp::Location>> {
-    let name = name.trim_start_matches("local.@").trim();
+    let name = name.trim();
     let path = match url_to_path(current_uri) { Some(p) => p, None => return Ok(None) };
     let start_dir = path.parent().unwrap_or(Path::new("."));
     let story_root = find_story_root(start_dir).unwrap_or_else(|| start_dir.to_path_buf());
@@ -75,8 +76,9 @@ pub async fn resolve_local_at_definition(state: &Arc<RwLock<WorldState>>, curren
     Ok(None)
 }
 
+#[allow(dead_code)]
 pub async fn resolve_local_at_references(state: &Arc<RwLock<WorldState>>, current_uri: &lsp::Url, name: &str) -> Result<Vec<lsp::Location>> {
-    let name = name.trim_start_matches("local.@").trim();
+    let name = name.trim();
     let path = match url_to_path(current_uri) { Some(p) => p, None => return Ok(Vec::new()) };
     let start_dir = path.parent().unwrap_or(Path::new("."));
     let story_root = find_story_root(start_dir).unwrap_or_else(|| start_dir.to_path_buf());
@@ -87,11 +89,41 @@ pub async fn resolve_local_at_references(state: &Arc<RwLock<WorldState>>, curren
         if !refs.is_empty() { return Ok(refs); }
     }
 
-    let mut out = Vec::new();
+    // Fallback scan: first confirm the name is defined somewhere in the root, then collect all refs across all files
+    let mut has_def_in_root = false;
     for entry in WalkDir::new(&story_root).into_iter().filter_map(|e| e.ok()) {
         let p = entry.path();
         if p.is_file() && p.extension().and_then(|e| e.to_str()) == Some("prem") {
             // Acquire text
+            let (text, uri) = {
+                let st = state.read().await;
+                let uri = lsp::Url::from_file_path(p).ok();
+                if let Some(uri) = uri.clone() {
+                    if let Some(doc) = st.docs.get(&uri) {
+                        (Some(doc.text.clone()), Some(uri))
+                    } else {
+                        (None, Some(uri))
+                    }
+                } else { (None, None) }
+            };
+            let (content, _uri2) = if let Some(t) = text { (t, uri.clone().unwrap()) } else {
+                let t = match std::fs::read_to_string(p) { Ok(s) => s, Err(_) => continue };
+                (t, lsp::Url::from_file_path(p).unwrap())
+            };
+            let mut parser = premise_core::Parser::new();
+            let (_, _, ast) = parser.parse_str(&content);
+            if let Some(ast) = ast {
+                let defs = ast_utils::collect_entity_definitions(&ast, &content);
+                if defs.iter().any(|(n, _)| n == name) { has_def_in_root = true; break; }
+            }
+        }
+    }
+    if !has_def_in_root { return Ok(Vec::new()); }
+
+    let mut out = Vec::new();
+    for entry in WalkDir::new(&story_root).into_iter().filter_map(|e| e.ok()) {
+        let p = entry.path();
+        if p.is_file() && p.extension().and_then(|e| e.to_str()) == Some("prem") {
             let (text, uri) = {
                 let st = state.read().await;
                 let uri = lsp::Url::from_file_path(p).ok();
@@ -110,11 +142,8 @@ pub async fn resolve_local_at_references(state: &Arc<RwLock<WorldState>>, curren
             let mut parser = premise_core::Parser::new();
             let (_, _, ast) = parser.parse_str(&content);
             if let Some(ast) = ast {
-                let defs = ast_utils::collect_entity_definitions(&ast, &content);
-                if defs.iter().any(|(n, _)| n == name) {
-                    for (_n, r) in ast_utils::collect_entity_references(&ast, &content).into_iter().filter(|(n, _)| n == name) {
-                        out.push(lsp::Location { uri: uri.clone(), range: to_lsp_range(r) });
-                    }
+                for (_n, r) in ast_utils::collect_entity_references(&ast, &content).into_iter().filter(|(n, _)| n == name) {
+                    out.push(lsp::Location { uri: uri.clone(), range: to_lsp_range(r) });
                 }
             }
         }
@@ -172,6 +201,32 @@ pub async fn resolve_global_references(state: &Arc<RwLock<WorldState>>, current_
         let refs = st.index.get_refs_in_root(&story_root, target);
         if !refs.is_empty() { return Ok(refs); }
     }
+    // Fallback: verify name is defined somewhere, then collect refs across all files
+    let mut has_def_in_root = false;
+    for entry in WalkDir::new(&story_root).into_iter().filter_map(|e| e.ok()) {
+        let p = entry.path();
+        if p.is_file() && p.extension().and_then(|e| e.to_str()) == Some("prem") {
+            let (text, uri) = {
+                let st = state.read().await;
+                let uri = lsp::Url::from_file_path(p).ok();
+                if let Some(uri) = uri.clone() {
+                    if let Some(doc) = st.docs.get(&uri) { (Some(doc.text.clone()), Some(uri)) } else { (None, Some(uri)) }
+                } else { (None, None) }
+            };
+            let (content, _uri2) = if let Some(t) = text { (t, uri.clone().unwrap()) } else {
+                let t = match std::fs::read_to_string(p) { Ok(s) => s, Err(_) => continue };
+                (t, lsp::Url::from_file_path(p).unwrap())
+            };
+            let mut parser = premise_core::Parser::new();
+            let (_, _, ast) = parser.parse_str(&content);
+            if let Some(ast) = ast {
+                let defs = ast_utils::collect_entity_definitions(&ast, &content);
+                if defs.iter().any(|(n, _)| n == target) { has_def_in_root = true; break; }
+            }
+        }
+    }
+    if !has_def_in_root { return Ok(Vec::new()); }
+
     let mut out = Vec::new();
     for entry in WalkDir::new(&story_root).into_iter().filter_map(|e| e.ok()) {
         let p = entry.path();
@@ -190,11 +245,8 @@ pub async fn resolve_global_references(state: &Arc<RwLock<WorldState>>, current_
             let mut parser = premise_core::Parser::new();
             let (_, _, ast) = parser.parse_str(&content);
             if let Some(ast) = ast {
-                let defs = ast_utils::collect_entity_definitions(&ast, &content);
-                if defs.iter().any(|(n, _)| n == target) {
-                    for (_n, r) in ast_utils::collect_entity_references(&ast, &content).into_iter().filter(|(n, _)| n == target) {
-                        out.push(lsp::Location { uri: uri.clone(), range: to_lsp_range(r) });
-                    }
+                for (_n, r) in ast_utils::collect_entity_references(&ast, &content).into_iter().filter(|(n, _)| n == target) {
+                    out.push(lsp::Location { uri: uri.clone(), range: to_lsp_range(r) });
                 }
             }
         }

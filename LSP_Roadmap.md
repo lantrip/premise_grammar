@@ -6,15 +6,13 @@ This roadmap tracks the incremental implementation of a Language Server for Prem
 
 - Diagnostics from `premise_core::validate`
 - Document symbols (entities/imports/metadata)
-- Definition/References (start intra-file, then cross-file)
+- Definition/References (intra-file and cross-file)
 - Hover and Completion
-- Story-root–scoped resolution for `local.@` references
 
-## Story Root Semantics (local.@)
+## Story Root Semantics
 
-- Definition: story root is the nearest ancestor directory containing `story/` (or itself named `story`).
+- Story root is the nearest ancestor directory containing `story/` (or itself named `story`).
 - Resolution scope: current file, then other files within the story root and its ancestors up to workspace root.
-- Behavior: `local.@Name` resolves only within that scope. Configurable via `premise.localScope = storyRoot`.
 
 ## Phases
 
@@ -99,27 +97,30 @@ This roadmap tracks the incremental implementation of a Language Server for Prem
 
 ## Progress (to date)
 
-- Server: scaffolded `premise-lsp` (tower-lsp); text sync; diagnostics; document symbols re-enabled; logs routed to stderr; request tracing added in handlers.
-- Navigation: intra-file hover/definition/references working for entity names; cross-file resolution currently not returning results; `local.@Name` path recognized but needs grammar-aligned handling.
-- VSCode/Cursor: language client integrated; server starts via stdio; server binary packaged inside the extension; dedicated Output and Trace channels; `RUST_LOG` forwarded; syntax/semantic tokens preserved.
+- Server: `premise-lsp` (tower-lsp) with incremental text sync, diagnostics, rich document symbols (entities/imports/metadata + story hierarchy: Acts/Scenes/Cels), plain logs (no ANSI), and request tracing.
+- Index: workspace/story-root entity index with background warm-up on initialize and live updates on open/change; global cross-file resolution prefers the index and falls back to walkdir.
+- Navigation: intra-file and cross-file hover/definition/references for entity names backed by the index. Global ordinal fallback for untitled Acts/Scenes/Cels in symbols.
+- Commands: `workspace/executeCommand` handlers:
+  - `premise.entityBeats` → lists usages grouped with Act/Scene/Cel/Beat context
+  - `premise.scanWorkspace` → forces full index rescan of known roots
+- Completion: entity-name suggestions based on story-root index in reference contexts (initial version).
+- VSCode/Cursor: client integrated; server launches via stdio; packaged dev binary; Output and Trace channels; context menu item to run “Show Beats for Entity” (also in palette).
 - Zed: grammar/themes working; LSP command registration still pending.
 
 ## Next Steps
 
-- Cross-file defs/refs: fix reconciliation path. Verify story-root detection and fallback scan scope; normalize names consistently; add targeted tests in `test-lsp-story/`.
-- `local.@` semantics: align tokenization with grammar (ensure the prefix is captured/normalized), then plumb through resolvers; add end-to-end tests.
-- Workspace entity index: background build of entity map for fast cross-file navigation; expose `workspace/symbol` backed by the index.
-- Hover: include short definition snippet and path relative to story root; for imports, show resolved path/existence.
-- Completion: entity suggestions in reference contexts; smart `local.@` completions from story-root index.
-- VSCode/Cursor: keep Output/Trace channels; optionally add setting to control server verbosity.
-- Zed integration: register LSP command in `extensions/zed/extension.toml` and verify parity.
+- Workspace symbol search: implement `workspace/symbol` backed by the index.
+- Hover improvements: include short definition snippet and path relative to story root; for imports, show resolved path/existence.
+- Completion improvements: commit characters and preselect best match; rank by proximity (same file > same folder > story root).
+- File watching: implement `workspace/didChangeWatchedFiles` and/or OS watchers to auto-refresh index on create/delete/rename.
+- Zed integration: register the LSP command in `extensions/zed/extension.toml` and verify parity with VSCode.
 - Packaging: optional bootstrap to download per-OS server binaries when missing.
 
 ### Known issues (as of 2025-09-27)
 
-- Cross-file goto-definition/references not returning results yet.
-- `local.@` references parse but aren’t resolving consistently with grammar rules.
-- LSP warns about unimplemented notifications (`didSave`, `workspace/didChangeWatchedFiles`) — low priority for now.
+- Unimplemented notifications: `didSave`, `workspace/didChangeWatchedFiles`.
+- `workspace/symbol` not implemented yet.
+- Global ordinal fallback for Act/Scene/Cel names uses alphanumeric file order; may differ from custom ordering schemes.
 
 ## Notes for Next Implementer
 
@@ -129,12 +130,13 @@ This roadmap tracks the incremental implementation of a Language Server for Prem
 - For multi-root workspaces, prefer the root containing the current file when building the search scope.
 - The VSCode client allows overriding server path via `PREMISE_LSP_PATH` env var.
 
-## Testing Strategy (initial)
+## Testing Strategy
 
-- Manual smoke: open files in the new `test-lsp-smoke/` project; verify diagnostics, symbols, goto-definition/references (including `local.@`).
-- Scenario tests (Rust): add a test harness that spins the LSP in-process and runs LSP requests against in-memory documents (e.g., using `tower_lsp::LspService` directly) to validate definition/ref/hover.
-- Golden outputs: add CLI-based checks via `premise-core` binaries for `parse`, `validate`, and symbol lists against fixture files.
-- Performance guardrails: seed a larger folder and measure first-response latency; target <200ms for intra-file, <800ms for cross-file before indexing; enforce via bench tests later.
+- Manual smoke: open files in `test-lsp-smoke/`; verify diagnostics, symbols (with story hierarchy), goto-definition/references, hover, completion, and beats command.
+- Unit tests (Rust): added tests in `premise-lsp` that scan `test-lsp-smoke/` and assert entity references include Beat context for sample entities.
+- Scenario tests: future — in-process LSP harness with `tower_lsp::LspService` to validate definition/ref/hover/completion/commands.
+- Golden outputs: future — CLI-based checks via `premise-core` for parse/validate/symbols against fixtures.
+- Performance guardrails: future — latency targets <200ms intra-file, <800ms cross-file pre-index; enforce via benches.
 
 ## Next Agent Handoff — Concrete Steps
 
@@ -213,13 +215,14 @@ code ../../test-lsp-smoke
 ```
 
 - In `test-lsp-smoke/story/scene1.prem`:
-  - Hover on `{local.@Keeper Aldrich}` shows definition path
+  - Hover on `{Keeper Aldrich}`, `{Burned District}`, `{Maya Chen}` shows definition path
   - Go to definition jumps to `characters_locations.prem`
   - References highlights usages across files
-  - Completion suggests `local.@Keeper Aldrich` and `local.@Burned District`
+  - Completion suggests known entity names from the story root
+  - Command: “Premise: Show Beats for Entity Under Cursor” lists usages with Act/Scene/Cel/Beat context; context menu enabled when text is selected
 
 Acceptance criteria for this phase
 
 - Cross-file defs/refs/hover/completion are index-backed and <250ms after warm-up.
-- `workspace/symbol` returns entities from the story root.
-- VSCode and Zed both start the server and show diagnostics/symbols/defs/refs/hover/completion.
+- `workspace/symbol` (pending) returns entities from the story root.
+- VSCode and Zed both start the server and show diagnostics/symbols/defs/refs/hover/completion; VSCode also supports the entity-beats command and context menu.
