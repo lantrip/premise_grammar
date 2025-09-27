@@ -1,0 +1,16 @@
+TITLE: Smoke Test Entities
+WORLD: Smoke Test
+FORMAT: entities
+
+@characters {
+  - Maya Chen: Protagonist librarian who communes with book spirits.
+  - Keeper Aldrich: Guardian of the Last Library, master of rituals.
+}
+
+@locations {
+  - Last Library - Memory Garden: A chamber where book spirits reside.
+  - Burned District: The ruins surrounding the former main library.
+  - House: House of things
+}
+
+  

@@ -63,6 +63,41 @@ echo -e "${BLUE}🔄 Syncing to extensions...${NC}"
 ./scripts/sync-extensions.sh > /dev/null 2>&1
 echo -e "${GREEN}✅ Extensions synced${NC}"
 
+# Build Premise LSP server and bundle into VSCode extension (for dev/local install)
+echo -e "${BLUE}🛠 Building Premise LSP server...${NC}"
+cargo build -p premise-lsp > /dev/null 2>&1 || {
+    echo -e "${RED}❌ Failed to build premise-lsp binary${NC}"
+    exit 1
+}
+
+BIN_NAME="premise-lsp"
+if [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* || "$(uname -s)" == *"CYGWIN"* ]]; then
+    BIN_NAME="premise-lsp.exe"
+fi
+
+BIN_PATH_DEBUG="premise-lsp/target/debug/$BIN_NAME"
+BIN_PATH_RELEASE="premise-lsp/target/release/$BIN_NAME"
+# Also check workspace-level target directory (Cargo workspace layout)
+BIN_PATH_WS_DEBUG="target/debug/$BIN_NAME"
+BIN_PATH_WS_RELEASE="target/release/$BIN_NAME"
+if [ -f "$BIN_PATH_DEBUG" ]; then
+    BIN_SRC="$BIN_PATH_DEBUG"
+elif [ -f "$BIN_PATH_RELEASE" ]; then
+    BIN_SRC="$BIN_PATH_RELEASE"
+elif [ -f "$BIN_PATH_WS_DEBUG" ]; then
+    BIN_SRC="$BIN_PATH_WS_DEBUG"
+elif [ -f "$BIN_PATH_WS_RELEASE" ]; then
+    BIN_SRC="$BIN_PATH_WS_RELEASE"
+else
+    echo -e "${RED}❌ Built binary not found in target directories${NC}"
+    exit 1
+fi
+
+mkdir -p extensions/vscode/server
+cp "$BIN_SRC" "extensions/vscode/server/$BIN_NAME"
+chmod +x "extensions/vscode/server/$BIN_NAME" || true
+echo -e "${GREEN}✅ Packaged LSP server into VSCode extension (server/$BIN_NAME)${NC}"
+
 # Function to install VSCode/Cursor extension
 install_vscode_extension() {
     local editor_cmd=$1

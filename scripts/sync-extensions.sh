@@ -20,12 +20,10 @@ echo "🦓 Syncing to Zed extension..."
 cp -r queries/* extensions/zed/languages/premise/
 echo "   ✅ Copied query files to Zed"
 
-# Sync to VSCode extension
+# Sync to VSCode extension (WASM only; VSCode extension does not read query .scm files)
 echo "📘 Syncing to VSCode extension..."
-mkdir -p extensions/vscode/queries
 cp tree-sitter-premise.wasm extensions/vscode/
-cp -r queries/* extensions/vscode/queries/
-echo "   ✅ Copied WASM and queries to VSCode"
+echo "   ✅ Copied WASM to VSCode"
 
 # Copy example files for testing
 echo "📋 Copying example files..."

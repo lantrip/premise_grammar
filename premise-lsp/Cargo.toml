@@ -1,0 +1,23 @@
+[package]
+name = "premise-lsp"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Language Server Protocol (LSP) server for Premise"
+
+[dependencies]
+tower-lsp = "0.20"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "io-std"] }
+premise-core = { path = "../premise-core" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+walkdir = "2.5"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = true
+

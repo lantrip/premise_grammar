@@ -55,7 +55,7 @@ pub struct IrAnalysis {
 pub fn build_ir(root: &Node, source: &str) -> IrAnalysis {
     let mut story = StoryGraph::default();
     let mut adapters: Vec<AdapterRef> = Vec::new();
-    let mut diagnostics = Vec::new();
+    let diagnostics = Vec::new();
 
     walk(root, &mut |node| {
         match node.kind() {

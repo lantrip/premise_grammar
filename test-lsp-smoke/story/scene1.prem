@@ -1,0 +1,19 @@
+TITLE: Smoke Test Story
+WORLD: Smoke Test
+FORMAT: story
+
+= Act One: Beginnings
+
+== Scene 1: First Signs
++setting: Last Library - Memory Garden
++time: Morning
+
+/// Beat - A whisper from the stacks
+{Maya Chen} walks through the {Last Library - Memory Garden} and hears the {local.@Keeper Aldrich} chanting near the {local.@Burned District}.
+
+// Treatment - A quiet start
+The air hums softly with latent magic as {Maya Chen} pauses. The {local.@Burned District} still bears scars from the Great Burning.
+
+/ Narrative - A choice ahead
+{Maya Chen} grips a page etched with spirit runes and wonders if the {local.@Keeper Aldrich} will support her plan.
+
