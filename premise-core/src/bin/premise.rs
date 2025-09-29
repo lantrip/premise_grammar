@@ -1,9 +1,9 @@
 use std::fs;
 use std::path::PathBuf;
 
-use clap::{Parser as ClapParser, Subcommand, ValueEnum, Args};
+use clap::{Args, Parser as ClapParser, Subcommand, ValueEnum};
 
-use premise_core::{Parser, api};
+use premise_core::{api, Parser};
 use schemars::schema::RootSchema;
 
 #[derive(Copy, Clone, Debug, ValueEnum)]
@@ -13,7 +13,9 @@ enum Format {
 }
 
 impl Format {
-    fn is_json(&self) -> bool { matches!(self, Format::Json) }
+    fn is_json(&self) -> bool {
+        matches!(self, Format::Json)
+    }
 }
 
 #[derive(Args, Debug)]
@@ -24,7 +26,7 @@ struct GlobalOpts {
 }
 
 #[derive(ClapParser)]
-#[command(name = "premise", version, about = "Premise core CLI")] 
+#[command(name = "premise", version, about = "Premise core CLI")]
 struct Cli {
     #[command(flatten)]
     globals: GlobalOpts,
@@ -80,19 +82,29 @@ enum Commands {
         /// Write to file instead of stdout
         #[arg(long)]
         out: Option<PathBuf>,
-    }
+    },
 }
 
 fn main() {
     let cli = Cli::parse();
     match cli.command {
-        Commands::Parse { file, json, ast, symbols, imports, resolved_imports } => {
+        Commands::Parse {
+            file,
+            json,
+            ast,
+            symbols,
+            imports,
+            resolved_imports,
+        } => {
             let content = fs::read_to_string(&file).expect("failed to read file");
             let mut parser = Parser::new();
             let (cst, diagnostics, ast_value) = parser.parse_str(&content);
 
             let mut out = api::ParseOutput {
-                cst: premise_core::cst::Cst { root_sexpr: cst.root_sexpr, range: cst.range },
+                cst: premise_core::cst::Cst {
+                    root_sexpr: cst.root_sexpr,
+                    range: cst.range,
+                },
                 diagnostics,
                 ast: if ast { ast_value } else { None },
                 symbols: None,
@@ -126,7 +138,10 @@ fn main() {
             let mut parser = Parser::new();
             let report = parser.validate(&content);
             match cli.globals.format {
-                Format::Json => println!("{}", serde_json::to_string_pretty(&api::ValidateOutput { report }).unwrap()),
+                Format::Json => println!(
+                    "{}",
+                    serde_json::to_string_pretty(&api::ValidateOutput { report }).unwrap()
+                ),
                 Format::Pretty => {
                     for issue in report.issues {
                         println!("{:?}: {}", issue.code, issue.message);
@@ -139,8 +154,14 @@ fn main() {
             let mut parser = Parser::new();
             let ir = parser.analyze_ir(&content);
             match cli.globals.format {
-                Format::Json => println!("{}", serde_json::to_string_pretty(&api::AnalyzeOutput { ir }).unwrap()),
-                Format::Pretty => println!("{}", serde_json::to_string_pretty(&api::AnalyzeOutput { ir }).unwrap()),
+                Format::Json => println!(
+                    "{}",
+                    serde_json::to_string_pretty(&api::AnalyzeOutput { ir }).unwrap()
+                ),
+                Format::Pretty => println!(
+                    "{}",
+                    serde_json::to_string_pretty(&api::AnalyzeOutput { ir }).unwrap()
+                ),
             }
         }
         Commands::Plan { file, graph_only } => {
@@ -163,14 +184,34 @@ fn main() {
         Commands::Schema { r#type, out } => {
             let mut schemas: Vec<(String, RootSchema)> = Vec::new();
             match r#type.as_str() {
-                "parse" => schemas.push(("ParseOutput".into(), schemars::schema_for!(api::ParseOutput))),
-                "validate" => schemas.push(("ValidateOutput".into(), schemars::schema_for!(api::ValidateOutput))),
-                "analyze" => schemas.push(("AnalyzeOutput".into(), schemars::schema_for!(api::AnalyzeOutput))),
-                "plan" => schemas.push(("PlanOutput".into(), schemars::schema_for!(api::PlanOutput))),
+                "parse" => schemas.push((
+                    "ParseOutput".into(),
+                    schemars::schema_for!(api::ParseOutput),
+                )),
+                "validate" => schemas.push((
+                    "ValidateOutput".into(),
+                    schemars::schema_for!(api::ValidateOutput),
+                )),
+                "analyze" => schemas.push((
+                    "AnalyzeOutput".into(),
+                    schemars::schema_for!(api::AnalyzeOutput),
+                )),
+                "plan" => {
+                    schemas.push(("PlanOutput".into(), schemars::schema_for!(api::PlanOutput)))
+                }
                 _ => {
-                    schemas.push(("ParseOutput".into(), schemars::schema_for!(api::ParseOutput)));
-                    schemas.push(("ValidateOutput".into(), schemars::schema_for!(api::ValidateOutput)));
-                    schemas.push(("AnalyzeOutput".into(), schemars::schema_for!(api::AnalyzeOutput)));
+                    schemas.push((
+                        "ParseOutput".into(),
+                        schemars::schema_for!(api::ParseOutput),
+                    ));
+                    schemas.push((
+                        "ValidateOutput".into(),
+                        schemars::schema_for!(api::ValidateOutput),
+                    ));
+                    schemas.push((
+                        "AnalyzeOutput".into(),
+                        schemars::schema_for!(api::AnalyzeOutput),
+                    ));
                     schemas.push(("PlanOutput".into(), schemars::schema_for!(api::PlanOutput)));
                 }
             }
@@ -178,15 +219,16 @@ fn main() {
             let value = if schemas.len() == 1 {
                 serde_json::to_value(&schemas[0].1).unwrap()
             } else {
-                serde_json::json!(schemas.into_iter().map(|(name, schema)| (name, schema)).collect::<std::collections::BTreeMap<_, _>>())
+                serde_json::json!(schemas
+                    .into_iter()
+                    .collect::<std::collections::BTreeMap<_, _>>())
             };
             if let Some(path) = out {
-                std::fs::write(path, serde_json::to_string_pretty(&value).unwrap()).expect("failed to write schema file");
+                std::fs::write(path, serde_json::to_string_pretty(&value).unwrap())
+                    .expect("failed to write schema file");
             } else {
                 println!("{}", serde_json::to_string_pretty(&value).unwrap());
             }
         }
     }
 }
-
-

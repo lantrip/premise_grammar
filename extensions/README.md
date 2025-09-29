@@ -82,3 +82,19 @@ This directory contains editor extensions that consume the Premise Tree-sitter g
 - Zed references committed git repository with rev/commit hash
 - VSCode bundles pre-built artifacts
 - Requires stable, committed grammar changes
+
+## AI Features (Preview)
+
+- VSCode commands:
+  - “Premise: Generate Beats…” — adds `///` beats with `{Entity}` references.
+  - “Premise: Update Entity Descriptions…” — updates `@entity` lines.
+- Scopes: current file, story root, uncommitted (file/root).
+- Chunking: per-run picker (section/file) and default setting `premise.ai.chunkingMode`.
+- Settings: `premise.ai.provider` (OpenRouter), `premise.ai.model`, `premise.ai.apiKey`, `premise.ai.endpoint`, `premise.ai.beatInsertPosition`, `premise.ai.entityUpdatesChangedOnly`, `premise.ai.rateLimitPerMinute`.
+- Notes: Edits apply directly; use VCS to review/commit changes.
+
+### Behavior
+
+- Beats insert at section anchors (Cel > Scene > Act), deduplicated within the section, and entity mentions are validated against canonical names.
+- Entity updates are coalesced per file (last description wins). When `premise.ai.entityUpdatesChangedOnly` is true, updates are limited to changed ranges in uncommitted scopes.
+- Uncommitted scopes prefer diff hunks; if no hunks intersect sections, the extension falls back to whole-file chunking.

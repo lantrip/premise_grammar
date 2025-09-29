@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 use tree_sitter::Node;
 
 use crate::ast::Range;
@@ -30,14 +30,22 @@ pub struct SymbolTable {
 }
 
 impl SymbolTable {
-    pub fn collect_from_root(root: &Node, source: &str) -> (Self, Vec<crate::diagnostics::Diagnostic>) {
+    pub fn collect_from_root(
+        root: &Node,
+        source: &str,
+    ) -> (Self, Vec<crate::diagnostics::Diagnostic>) {
         let mut table = SymbolTable::default();
         let mut diagnostics = Vec::new();
         Self::walk(root, source, &mut table, &mut diagnostics);
         (table, diagnostics)
     }
 
-    fn walk(node: &Node, source: &str, table: &mut SymbolTable, diagnostics: &mut Vec<crate::diagnostics::Diagnostic>) {
+    fn walk(
+        node: &Node,
+        source: &str,
+        table: &mut SymbolTable,
+        _diagnostics: &mut Vec<crate::diagnostics::Diagnostic>,
+    ) {
         let kind = node.kind();
         match kind {
             "entity_construct" => {
@@ -45,17 +53,29 @@ impl SymbolTable {
                 let name = node
                     .child_by_field_name("entity_name")
                     .map(|n| Self::slice_text(&n, source));
-                table.entities.push(Symbol { kind: SymbolKind::EntityConstruct, name, range });
+                table.entities.push(Symbol {
+                    kind: SymbolKind::EntityConstruct,
+                    name,
+                    range,
+                });
             }
             "entity_block" => {
-                table.entities.push(Symbol { kind: SymbolKind::EntityBlock, name: None, range: Range::from_node(node) });
+                table.entities.push(Symbol {
+                    kind: SymbolKind::EntityBlock,
+                    name: None,
+                    range: Range::from_node(node),
+                });
             }
             "import_statement" => {
                 let range = Range::from_node(node);
                 let path_text = node
                     .child_by_field_name("path")
                     .map(|n| Self::slice_text(&n, source));
-                table.imports.push(Symbol { kind: SymbolKind::Import, name: path_text, range });
+                table.imports.push(Symbol {
+                    kind: SymbolKind::Import,
+                    name: path_text,
+                    range,
+                });
             }
             "adapter_statement" => {
                 let range = Range::from_node(node);
@@ -63,18 +83,26 @@ impl SymbolTable {
                     .child_by_field_name("adapter_path")
                     .or_else(|| node.child_by_field_name("adapter_name"))
                     .map(|n| Self::slice_text(&n, source));
-                table.adapters.push(Symbol { kind: SymbolKind::AdapterPath, name, range });
+                table.adapters.push(Symbol {
+                    kind: SymbolKind::AdapterPath,
+                    name,
+                    range,
+                });
             }
             "metadata_line" => {
                 let range = Range::from_node(node);
-                table.metadata.push(Symbol { kind: SymbolKind::Metadata, name: None, range });
+                table.metadata.push(Symbol {
+                    kind: SymbolKind::Metadata,
+                    name: None,
+                    range,
+                });
             }
             _ => {}
         }
 
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
-            Self::walk(&child, source, table, diagnostics);
+            Self::walk(&child, source, table, _diagnostics);
         }
     }
 
@@ -93,7 +121,8 @@ pub struct Analysis {
 
 pub fn analyze_tree(root: &Node, source: &str) -> Analysis {
     let (symbols, diagnostics) = SymbolTable::collect_from_root(root, source);
-    Analysis { symbols, diagnostics }
+    Analysis {
+        symbols,
+        diagnostics,
+    }
 }
-
-

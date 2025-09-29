@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use tree_sitter::Node;
 
@@ -61,16 +61,28 @@ fn add_duplicate_entity_issues(names: &[(String, Range)], issues: &mut Vec<Issue
         if !seen.insert(k) {
             // duplicate
             let message = format!("Duplicate entity name: {}", name);
-            issues.push(Issue { code: IssueCode::DuplicateEntity, message, range: *range, related_text: Some(name.clone()) });
+            issues.push(Issue {
+                code: IssueCode::DuplicateEntity,
+                message,
+                range: *range,
+                related_text: Some(name.clone()),
+            });
         } else {
             first_seen.entry(k).or_insert(range);
         }
     }
 }
 
-fn collect_unknown_reference_issues(root: &Node, source: &str, names: &[(String, Range)], issues: &mut Vec<Issue>) {
+fn collect_unknown_reference_issues(
+    root: &Node,
+    source: &str,
+    names: &[(String, Range)],
+    issues: &mut Vec<Issue>,
+) {
     let mut name_set: HashSet<&str> = HashSet::new();
-    for (n, _) in names.iter() { name_set.insert(n.as_str()); }
+    for (n, _) in names.iter() {
+        name_set.insert(n.as_str());
+    }
 
     walk(root, &mut |node| {
         if node.kind() == "entity_reference" {
@@ -78,7 +90,12 @@ fn collect_unknown_reference_issues(root: &Node, source: &str, names: &[(String,
                 let ref_name = slice_text(&entity_tok, source).trim().to_string();
                 if !ref_name.is_empty() && !name_set.contains(ref_name.as_str()) {
                     let message = format!("Unknown entity reference: {}", ref_name);
-                    issues.push(Issue { code: IssueCode::UnknownEntityReference, message, range: Range::from_node(&entity_tok), related_text: Some(ref_name) });
+                    issues.push(Issue {
+                        code: IssueCode::UnknownEntityReference,
+                        message,
+                        range: Range::from_node(&entity_tok),
+                        related_text: Some(ref_name),
+                    });
                 }
             }
         }
@@ -106,7 +123,12 @@ fn detect_import_cycles(root: &Node, source: &str, issues: &mut Vec<Issue>) {
         let cleaned = p.trim_matches(['"', '\'']);
         if cleaned == "." || cleaned.ends_with("#self") {
             let message = format!("Import cycle detected involving {}", cleaned);
-            issues.push(Issue { code: IssueCode::ImportCycle, message, range: *r, related_text: Some(cleaned.to_string()) });
+            issues.push(Issue {
+                code: IssueCode::ImportCycle,
+                message,
+                range: *r,
+                related_text: Some(cleaned.to_string()),
+            });
         }
     }
 }
@@ -124,5 +146,3 @@ fn slice_text(node: &Node, source: &str) -> String {
     let end = node.end_byte();
     source.get(start..end).unwrap_or("").to_string()
 }
-
-

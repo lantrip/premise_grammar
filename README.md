@@ -143,6 +143,16 @@ cd extensions/vscode && npm run compile && code --install-extension .
   - “Premise: Scan Workspace” to force a full rescan
 - See `LSP_Roadmap.md` for detailed status and next steps
 
+### AI-assisted Workflows (Preview)
+
+- Commands:
+  - “Premise: Generate Beats…” inserts `///` beats with `{Entity}` references, anchored to Cel/Scene/Act.
+  - “Premise: Update Entity Descriptions…” updates `@entity` descriptions based on story changes.
+- Scopes: current file, story root, uncommitted (file/root).
+- Chunking: per-run override to chunk by file or by section; default via `premise.ai.chunkingMode`.
+- Provider: OpenRouter. Configure in Settings → `premise.ai.*` (model, apiKey, endpoint).
+- Edits apply directly to files (review via normal VCS changes).
+
 ## Repository Structure
 
 - `grammar.js` - Grammar definition

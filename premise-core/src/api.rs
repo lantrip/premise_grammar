@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -32,5 +32,3 @@ pub struct AnalyzeOutput {
 pub struct PlanOutput {
     pub plan: crate::planning::PlanAnalysis,
 }
-
-

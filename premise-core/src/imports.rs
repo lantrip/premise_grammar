@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
-use tree_sitter::Node;
-use std::path::{Path, PathBuf};
+use serde::{Deserialize, Serialize};
 use std::fs;
+use std::path::{Path, PathBuf};
+use tree_sitter::Node;
 
 use crate::ast::Range;
 
@@ -31,10 +31,18 @@ pub fn analyze_imports(root: &Node, source: &str) -> ImportAnalysis {
 
     walk(root, source, &mut imports, &mut diagnostics);
 
-    ImportAnalysis { imports: ImportList { imports }, diagnostics }
+    ImportAnalysis {
+        imports: ImportList { imports },
+        diagnostics,
+    }
 }
 
-fn walk(node: &Node, source: &str, imports: &mut Vec<Import>, diagnostics: &mut Vec<crate::diagnostics::Diagnostic>) {
+fn walk(
+    node: &Node,
+    source: &str,
+    imports: &mut Vec<Import>,
+    diagnostics: &mut Vec<crate::diagnostics::Diagnostic>,
+) {
     if node.kind() == "import_statement" {
         let range = Range::from_node(node);
         let path_text = node
@@ -48,7 +56,12 @@ fn walk(node: &Node, source: &str, imports: &mut Vec<Import>, diagnostics: &mut 
             .map(|n| slice_text(&n, source));
 
         if let Some(path) = path_text {
-            imports.push(Import { path, alias: alias_text, selector: selector_text, range });
+            imports.push(Import {
+                path,
+                alias: alias_text,
+                selector: selector_text,
+                range,
+            });
         } else {
             diagnostics.push(crate::diagnostics::Diagnostic::error("Import missing path"));
         }
@@ -65,7 +78,6 @@ fn slice_text(node: &Node, source: &str) -> String {
     let end = node.end_byte();
     source.get(start..end).unwrap_or("").to_string()
 }
-
 
 // --- Import Resolution (Phase 2) ---
 
@@ -109,11 +121,18 @@ pub fn resolve_imports_relative(base_dir: &Path, imports: &ImportList) -> Import
     for imp in &imports.imports {
         let cleaned = clean_import_path(&imp.path);
         let candidate = PathBuf::from(&cleaned);
-        let full = if candidate.is_absolute() { candidate } else { base_dir.join(&cleaned) };
+        let full = if candidate.is_absolute() {
+            candidate
+        } else {
+            base_dir.join(&cleaned)
+        };
         let exists = full.exists();
         let resolved_path = full.to_str().map(|s| s.to_string());
         if !exists {
-            diagnostics.push(crate::diagnostics::Diagnostic::error(format!("Import not found: {}", cleaned)));
+            diagnostics.push(crate::diagnostics::Diagnostic::error(format!(
+                "Import not found: {}",
+                cleaned
+            )));
         }
         resolved.push(ResolvedImport {
             import: imp.clone(),
@@ -122,7 +141,8 @@ pub fn resolve_imports_relative(base_dir: &Path, imports: &ImportList) -> Import
         });
     }
 
-    ImportResolution { resolved, diagnostics }
+    ImportResolution {
+        resolved,
+        diagnostics,
+    }
 }
-
-

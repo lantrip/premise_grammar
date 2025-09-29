@@ -30,11 +30,17 @@ pub struct EntityIndex {
 
 impl EntityIndex {
     #[allow(dead_code)]
-    pub fn new() -> Self { Self::default() }
+    pub fn new() -> Self {
+        Self::default()
+    }
 
-    pub fn set_roots(&mut self, roots: Vec<PathBuf>) { self.roots = roots; }
+    pub fn set_roots(&mut self, roots: Vec<PathBuf>) {
+        self.roots = roots;
+    }
 
-    pub fn list_roots(&self) -> Vec<PathBuf> { self.roots.clone() }
+    pub fn list_roots(&self) -> Vec<PathBuf> {
+        self.roots.clone()
+    }
 
     pub fn index_text(&mut self, path: PathBuf, uri: lsp::Url, text: &str) {
         let story_root = self.story_root_for_path(&path);
@@ -52,10 +58,19 @@ impl EntityIndex {
     }
 
     pub fn index_path_from_disk(&mut self, path: &Path) {
-        if !path.is_file() { return; }
-        if path.extension().and_then(|e| e.to_str()) != Some("prem") { return; }
-        let Ok(text) = std::fs::read_to_string(path) else { return; };
-        let uri = match lsp::Url::from_file_path(path) { Ok(u) => u, Err(_) => return };
+        if !path.is_file() {
+            return;
+        }
+        if path.extension().and_then(|e| e.to_str()) != Some("prem") {
+            return;
+        }
+        let Ok(text) = std::fs::read_to_string(path) else {
+            return;
+        };
+        let uri = match lsp::Url::from_file_path(path) {
+            Ok(u) => u,
+            Err(_) => return,
+        };
         let modified_millis = file_mtime_millis(path);
         let story_root = self.story_root_for_path(path);
         let (defs, refs) = parse_defs_refs(&uri, &text);
@@ -109,7 +124,9 @@ impl EntityIndex {
             .and_then(|m| m.get(name))
             .map(|v| !v.is_empty())
             .unwrap_or(false);
-        if !has_defs { return Vec::new(); }
+        if !has_defs {
+            return Vec::new();
+        }
         self.refs_by_root
             .get(story_root)
             .and_then(|m| m.get(name))
@@ -140,17 +157,31 @@ impl EntityIndex {
     }
 }
 
-fn parse_defs_refs(uri: &lsp::Url, text: &str) -> (Vec<(String, lsp::Location)>, Vec<(String, lsp::Location)>) {
+type EntityLocations = Vec<(String, lsp::Location)>;
+
+fn parse_defs_refs(uri: &lsp::Url, text: &str) -> (EntityLocations, EntityLocations) {
     let mut parser = premise_core::Parser::new();
     let (_, _, ast_opt) = parser.parse_str(text);
     if let Some(ast) = ast_opt {
         let mut defs_out: Vec<(String, lsp::Location)> = Vec::new();
         for (name, range) in ast_utils::collect_entity_definitions(&ast, text) {
-            defs_out.push((name, lsp::Location { uri: uri.clone(), range: to_lsp_range(range) }));
+            defs_out.push((
+                name,
+                lsp::Location {
+                    uri: uri.clone(),
+                    range: to_lsp_range(range),
+                },
+            ));
         }
         let mut refs_out: Vec<(String, lsp::Location)> = Vec::new();
         for (name, range) in ast_utils::collect_entity_references(&ast, text) {
-            refs_out.push((name, lsp::Location { uri: uri.clone(), range: to_lsp_range(range) }));
+            refs_out.push((
+                name,
+                lsp::Location {
+                    uri: uri.clone(),
+                    range: to_lsp_range(range),
+                },
+            ));
         }
         (defs_out, refs_out)
     } else {
@@ -166,8 +197,6 @@ fn file_mtime_millis(path: &Path) -> Option<u128> {
         .map(|d| d.as_millis())
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -175,7 +204,9 @@ mod tests {
     use tower_lsp::lsp_types as lsp;
 
     fn smoke_root() -> PathBuf {
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("test-lsp-smoke")
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("test-lsp-smoke")
     }
 
     fn story_file(name: &str) -> PathBuf {
@@ -201,7 +232,10 @@ mod tests {
             let (_, _, ast) = parser.parse_str(&text);
             if let Some(ast) = ast {
                 let ctx = ast_utils::story_context_at(&ast, loc.range.start.line, 0, &text);
-                if ctx.beat.is_some() { saw_beat = true; break; }
+                if ctx.beat.is_some() {
+                    saw_beat = true;
+                    break;
+                }
             }
         }
         assert!(saw_beat, "expected at least one beat context for Maya Chen");
@@ -225,10 +259,15 @@ mod tests {
             let (_, _, ast) = parser.parse_str(&text);
             if let Some(ast) = ast {
                 let ctx = ast_utils::story_context_at(&ast, loc.range.start.line, 0, &text);
-                if ctx.beat.is_some() { saw_beat = true; break; }
+                if ctx.beat.is_some() {
+                    saw_beat = true;
+                    break;
+                }
             }
         }
-        assert!(saw_beat, "expected at least one beat context for Keeper Aldrich");
+        assert!(
+            saw_beat,
+            "expected at least one beat context for Keeper Aldrich"
+        );
     }
 }
-

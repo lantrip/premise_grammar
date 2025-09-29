@@ -18,7 +18,10 @@ fn main() {
     if let Ok(ts_include) = env::var("DEP_TREE_SITTER_INCLUDE") {
         build.include(&ts_include);
         println!("cargo:rerun-if-env-changed=DEP_TREE_SITTER_INCLUDE");
-        println!("cargo:warning=Using tree-sitter include path: {}", ts_include);
+        println!(
+            "cargo:warning=Using tree-sitter include path: {}",
+            ts_include
+        );
     }
 
     build.define("TREE_SITTER_BUILD", None);
@@ -34,7 +37,10 @@ fn main() {
     );
 }
 
-fn resolve_paths(manifest_dir: &Path, override_path: Option<&Path>) -> (PathBuf, PathBuf, &'static str) {
+fn resolve_paths(
+    manifest_dir: &Path,
+    override_path: Option<&Path>,
+) -> (PathBuf, PathBuf, &'static str) {
     if let Some(path) = override_path {
         let include_from_override = manifest_dir.join("vendor/tree-sitter/include/tree_sitter");
         return (path.to_pathbuf(), include_from_override, "ENV_OVERRIDE");
@@ -64,7 +70,7 @@ trait ToPathBuf {
 }
 
 impl ToPathBuf for &Path {
-    fn to_pathbuf(&self) -> PathBuf { self.to_path_buf() }
+    fn to_pathbuf(&self) -> PathBuf {
+        self.to_path_buf()
+    }
 }
-
-

@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub enum Severity {
@@ -16,8 +16,9 @@ pub struct Diagnostic {
 
 impl Diagnostic {
     pub fn error(message: impl Into<String>) -> Self {
-        Self { severity: Severity::Error, message: message.into() }
+        Self {
+            severity: Severity::Error,
+            message: message.into(),
+        }
     }
 }
-
-

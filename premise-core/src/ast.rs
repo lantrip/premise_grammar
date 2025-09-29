@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 use tree_sitter::Node;
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, JsonSchema)]
@@ -21,8 +21,14 @@ impl Range {
         let sp = node.start_position();
         let ep = node.end_position();
         Self {
-            start: Position { row: sp.row, column: sp.column },
-            end: Position { row: ep.row, column: ep.column },
+            start: Position {
+                row: sp.row,
+                column: sp.column,
+            },
+            end: Position {
+                row: ep.row,
+                column: ep.column,
+            },
             start_byte: node.start_byte(),
             end_byte: node.end_byte(),
         }
@@ -38,12 +44,20 @@ pub struct AstNode {
 }
 
 impl AstNode {
-    pub fn build(node: &Node, field: Option<String>, diagnostics: &mut Vec<crate::diagnostics::Diagnostic>) -> Self {
+    pub fn build(
+        node: &Node,
+        field: Option<String>,
+        diagnostics: &mut Vec<crate::diagnostics::Diagnostic>,
+    ) -> Self {
         if node.is_error() {
-            diagnostics.push(crate::diagnostics::Diagnostic::error("ERROR node encountered"));
+            diagnostics.push(crate::diagnostics::Diagnostic::error(
+                "ERROR node encountered",
+            ));
         }
         if node.is_missing() {
-            diagnostics.push(crate::diagnostics::Diagnostic::error("Missing node encountered"));
+            diagnostics.push(crate::diagnostics::Diagnostic::error(
+                "Missing node encountered",
+            ));
         }
 
         let mut children: Vec<AstNode> = Vec::new();
@@ -62,5 +76,3 @@ impl AstNode {
         }
     }
 }
-
-

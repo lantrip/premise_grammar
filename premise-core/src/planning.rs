@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 use crate::{diagnostics::Diagnostic, ir};
 
@@ -46,17 +46,27 @@ pub fn plan_from_ir(ir: &ir::Ir) -> PlanAnalysis {
     let mut nodes: Vec<AdapterGraphNode> = Vec::new();
     for (i, a) in ir.adapters.iter().enumerate() {
         if seen.insert(a.name_or_path.clone()) {
-            steps.push(PlanStep { adapter: a.name_or_path.clone(), index: i });
-            nodes.push(AdapterGraphNode { id: a.name_or_path.clone(), index: i });
+            steps.push(PlanStep {
+                adapter: a.name_or_path.clone(),
+                index: i,
+            });
+            nodes.push(AdapterGraphNode {
+                id: a.name_or_path.clone(),
+                index: i,
+            });
         }
     }
     // For now, linear edges in the chosen order
     let mut edges: Vec<AdapterGraphEdge> = Vec::new();
     for w in 1..nodes.len() {
-        edges.push(AdapterGraphEdge { from: nodes[w - 1].index, to: nodes[w].index });
+        edges.push(AdapterGraphEdge {
+            from: nodes[w - 1].index,
+            to: nodes[w].index,
+        });
     }
-    PlanAnalysis { plan: AdapterPlan { steps }, graph: AdapterGraph { nodes, edges }, diagnostics: Vec::new() }
+    PlanAnalysis {
+        plan: AdapterPlan { steps },
+        graph: AdapterGraph { nodes, edges },
+        diagnostics: Vec::new(),
+    }
 }
-
-
-

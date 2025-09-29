@@ -249,6 +249,37 @@ vsce package
 vsce publish
 ```
 
+## AI Integration Notes
+
+- LSP helpers via `workspace/executeCommand`:
+  - `premise.getStoryRoot`: story root for a file
+  - `premise.listEntityNames`: canonical entity names for grounding
+  - `premise.collectStructure`: Acts/Scenes/Cels with ranges for anchoring
+- VSCode client performs LLM calls (OpenRouter) — keep secrets client-side only.
+- Extension settings (see `AI_ROADMAP.md` for details):
+  - `premise.ai.provider`, `premise.ai.model`, `premise.ai.apiKey`, `premise.ai.endpoint`
+  - `premise.ai.chunkingMode` (section/file)
+  - `premise.ai.beatInsertPosition` (append/prepend)
+  - `premise.ai.entityUpdatesChangedOnly` (boolean)
+  - `premise.ai.rateLimitPerMinute` (number)
+- Commands: “Premise: Generate Beats…”, “Premise: Update Entity Descriptions…”.
+- Behavior:
+  - Beats: anchored by section, deduplicated, insert position configurable, `{Entity}` validation.
+  - Entities: updates coalesced per file; optional changed-ranges-only in uncommitted scopes.
+- Scopes: current file, story root, uncommitted (file/root). Chunking: per-run picker (section/file), default from settings.
+- Prompt rules: strict JSON; use only canonical entity names.
+- Edits apply directly and are validated by LSP/index; rely on VCS for review.
+
+### Roadmaps
+
+- Consolidated roadmap: `AI_ROADMAP.md` (covers AI features and LSP). The previous `LSP_Roadmap.md` has been removed.
+
+### VSCode Extension Tests
+
+- Location: `extensions/vscode/src/test/`
+- Run: from `extensions/vscode/` → `npm run compile && npm test`
+- Includes basic activation, chunking/anchors, insertion/dedupe, prepend + validation tests.
+
 ## Debugging Syntax Highlighting Issues
 
 When users report highlighting problems, use VSCode's **Token Inspector**:

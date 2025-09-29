@@ -4,10 +4,16 @@ use serde::Serialize;
 pub fn contains_position(range: &Range, line: u32, character: u32) -> bool {
     let (sl, sc) = (range.start.row as u32, range.start.column as u32);
     let (el, ec) = (range.end.row as u32, range.end.column as u32);
-    if line < sl || line > el { return false; }
-    if line == sl && character < sc { return false; }
+    if line < sl || line > el {
+        return false;
+    }
+    if line == sl && character < sc {
+        return false;
+    }
     // Use exclusive end boundary for the column on the end line
-    if line == el && character >= ec { return false; }
+    if line == el && character >= ec {
+        return false;
+    }
     true
 }
 
@@ -18,7 +24,7 @@ pub fn walk<'a, F: FnMut(&'a AstNode)>(node: &'a AstNode, f: &mut F) {
     }
 }
 
-pub fn find_deepest_at<'a>(node: &'a AstNode, line: u32, character: u32) -> Option<&'a AstNode> {
+pub fn find_deepest_at(node: &AstNode, line: u32, character: u32) -> Option<&AstNode> {
     if !contains_position(&node.range, line, character) {
         return None;
     }
@@ -36,11 +42,17 @@ pub fn slice_text(text: &str, range: &Range) -> String {
 }
 
 pub fn normalize_name(s: &str) -> String {
-    s.trim().replace("\n", " ").split_whitespace().collect::<Vec<_>>().join(" ")
+    s.trim()
+        .replace("\n", " ")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 pub fn extract_child_field<'a>(node: &'a AstNode, field: &str) -> Option<&'a AstNode> {
-    node.children.iter().find(|c| matches!(c.field.as_deref(), Some(f) if f == field))
+    node.children
+        .iter()
+        .find(|c| matches!(c.field.as_deref(), Some(f) if f == field))
 }
 
 pub fn reference_name_at(ast: &AstNode, line: u32, character: u32, text: &str) -> Option<String> {
@@ -51,11 +63,23 @@ pub fn reference_name_at(ast: &AstNode, line: u32, character: u32, text: &str) -
     } else {
         // find nearest ancestor of those kinds by simple upward scan using a stack we build along the way
         // Since AstNode lacks parent pointers, re-find path from root
-        find_ancestor_kind(ast, line, character, &["entity_reference", "dialogue_speaker"])?
+        find_ancestor_kind(
+            ast,
+            line,
+            character,
+            &["entity_reference", "dialogue_speaker"],
+        )?
     };
 
     // Prefer explicit child field if grammar provides it; else trim braces from the node text
-    let raw = if let Some(entity_child) = extract_child_field(ref_node, if ref_node.kind == "dialogue_speaker" { "speaker" } else { "entity" }) {
+    let raw = if let Some(entity_child) = extract_child_field(
+        ref_node,
+        if ref_node.kind == "dialogue_speaker" {
+            "speaker"
+        } else {
+            "entity"
+        },
+    ) {
         slice_text(text, &entity_child.range)
     } else {
         let s = slice_text(text, &ref_node.range);
@@ -101,9 +125,23 @@ pub fn name_at(ast: &AstNode, line: u32, character: u32, text: &str) -> Option<S
         .or_else(|| definition_name_at(ast, line, character, text))
 }
 
-fn find_ancestor_kind<'a>(node: &'a AstNode, line: u32, character: u32, kinds: &[&str]) -> Option<&'a AstNode> {
-    fn helper<'a>(node: &'a AstNode, line: u32, character: u32, kinds: &[&str], stack: &mut Vec<&'a AstNode>, out: &mut Option<&'a AstNode>) {
-        if !contains_position(&node.range, line, character) { return; }
+fn find_ancestor_kind<'a>(
+    node: &'a AstNode,
+    line: u32,
+    character: u32,
+    kinds: &[&str],
+) -> Option<&'a AstNode> {
+    fn helper<'a>(
+        node: &'a AstNode,
+        line: u32,
+        character: u32,
+        kinds: &[&str],
+        stack: &mut Vec<&'a AstNode>,
+        out: &mut Option<&'a AstNode>,
+    ) {
+        if !contains_position(&node.range, line, character) {
+            return;
+        }
         stack.push(node);
         for child in &node.children {
             helper(child, line, character, kinds, stack, out);
@@ -150,10 +188,14 @@ pub fn collect_entity_references(ast: &AstNode, text: &str) -> Vec<(String, Rang
                 let s = slice_text(text, &n.range);
                 if let Some(stripped) = s.strip_prefix('{').and_then(|t| t.strip_suffix('}')) {
                     let name = normalize_name(stripped);
-                    if !name.is_empty() { refs.push((name, n.range)); }
+                    if !name.is_empty() {
+                        refs.push((name, n.range));
+                    }
                 } else {
                     let name = normalize_name(&s);
-                    if !name.is_empty() { refs.push((name, n.range)); }
+                    if !name.is_empty() {
+                        refs.push((name, n.range));
+                    }
                 }
             }
         }
@@ -168,7 +210,9 @@ pub fn collect_entity_references(ast: &AstNode, text: &str) -> Vec<(String, Rang
                 let t = t.strip_prefix('{').unwrap_or(t);
                 let t = t.strip_suffix('}').unwrap_or(t);
                 let name = normalize_name(t);
-                if !name.is_empty() { refs.push((name, n.range)); }
+                if !name.is_empty() {
+                    refs.push((name, n.range));
+                }
             }
         }
     });
@@ -187,7 +231,9 @@ pub fn story_context_at(ast: &AstNode, line: u32, _character: u32, text: &str) -
     // Walk nodes in document order, tracking the latest section headers before the given line.
     let mut ctx = StoryContext::default();
     walk(ast, &mut |n| {
-        if (n.range.start.row as u32) > line { return; }
+        if (n.range.start.row as u32) > line {
+            return;
+        }
         match n.kind.as_str() {
             "act_header" => {
                 if let Some(t) = extract_child_field(n, "title") {
@@ -217,5 +263,3 @@ pub fn story_context_at(ast: &AstNode, line: u32, _character: u32, text: &str) -
     });
     ctx
 }
-
-

@@ -187,11 +187,15 @@ class PremiseSemanticTokensProvider {
             console.warn(`Unknown token type: ${tokenType}`);
             return;
         }
-        const length = endPos.character - startPos.character;
+        // Clamp to line length to avoid VSCode errors when tokens extend beyond line
+        const maxChar = document.lineAt(startPos.line).range.end.character;
+        const safeStartChar = Math.min(startPos.character, maxChar);
+        const safeEndChar = Math.min(endPos.character, maxChar);
+        const length = safeEndChar - safeStartChar;
         if (length <= 0) {
             return;
         }
-        builder.push(startPos.line, startPos.character, length, tokenTypeIndex, this.encodeModifiers(modifiers));
+        builder.push(startPos.line, safeStartChar, length, tokenTypeIndex, this.encodeModifiers(modifiers));
     }
     encodeModifiers(modifiers) {
         let result = 0;

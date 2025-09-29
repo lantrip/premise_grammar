@@ -45,7 +45,6 @@ pub fn to_document_symbols(analysis: &premise_core::symbols::Analysis) -> Vec<ls
     out
 }
 
-
 #[allow(deprecated)]
 #[derive(Clone, Copy, Debug, Default)]
 pub struct OrdinalOffsets {
@@ -55,12 +54,20 @@ pub struct OrdinalOffsets {
 }
 
 #[allow(deprecated)]
-pub fn story_to_document_symbols(ir: &premise_core::ir::IrAnalysis, uri: &lsp::Url, offsets: OrdinalOffsets) -> Vec<lsp::DocumentSymbol> {
+pub fn story_to_document_symbols(
+    ir: &premise_core::ir::IrAnalysis,
+    uri: &lsp::Url,
+    offsets: OrdinalOffsets,
+) -> Vec<lsp::DocumentSymbol> {
     let mut out: Vec<lsp::DocumentSymbol> = Vec::new();
 
     fn name_or<'a>(s: &'a str, fallback: &'a str) -> String {
         let t = s.trim();
-        if t.is_empty() { fallback.to_string() } else { t.to_string() }
+        if t.is_empty() {
+            fallback.to_string()
+        } else {
+            t.to_string()
+        }
     }
 
     // Best-effort file name for fallback context
@@ -72,7 +79,11 @@ pub fn story_to_document_symbols(ir: &premise_core::ir::IrAnalysis, uri: &lsp::U
 
     for (i, a) in ir.ir.story.acts.iter().enumerate() {
         let has_title = !a.title.trim().is_empty();
-        let title = if has_title { a.title.clone() } else { format!("Act {} — {}", offsets.acts + i + 1, file_name) };
+        let title = if has_title {
+            a.title.clone()
+        } else {
+            format!("Act {} — {}", offsets.acts + i + 1, file_name)
+        };
         out.push(lsp::DocumentSymbol {
             name: name_or(&title, "Act"),
             detail: a.proportion.clone(),
@@ -86,7 +97,11 @@ pub fn story_to_document_symbols(ir: &premise_core::ir::IrAnalysis, uri: &lsp::U
     }
     for (i, s) in ir.ir.story.scenes.iter().enumerate() {
         let has_title = !s.title.trim().is_empty();
-        let title = if has_title { s.title.clone() } else { format!("Scene {} — {}", offsets.scenes + i + 1, file_name) };
+        let title = if has_title {
+            s.title.clone()
+        } else {
+            format!("Scene {} — {}", offsets.scenes + i + 1, file_name)
+        };
         out.push(lsp::DocumentSymbol {
             name: name_or(&title, "Scene"),
             detail: s.proportion.clone(),
@@ -100,10 +115,18 @@ pub fn story_to_document_symbols(ir: &premise_core::ir::IrAnalysis, uri: &lsp::U
     }
     for (i, c) in ir.ir.story.cels.iter().enumerate() {
         let has_title = !c.title.trim().is_empty();
-        let title = if has_title { c.title.clone() } else { format!("Cel {} — {}", offsets.cels + i + 1, file_name) };
+        let title = if has_title {
+            c.title.clone()
+        } else {
+            format!("Cel {} — {}", offsets.cels + i + 1, file_name)
+        };
         out.push(lsp::DocumentSymbol {
             name: name_or(&title, "Cel"),
-            detail: c.time.clone().or(c.location_type.clone()).or(c.proportion.clone()),
+            detail: c
+                .time
+                .clone()
+                .or(c.location_type.clone())
+                .or(c.proportion.clone()),
             kind: lsp::SymbolKind::STRING,
             tags: None,
             deprecated: None,
@@ -115,4 +138,3 @@ pub fn story_to_document_symbols(ir: &premise_core::ir::IrAnalysis, uri: &lsp::U
 
     out
 }
-

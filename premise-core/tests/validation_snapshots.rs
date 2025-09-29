@@ -5,7 +5,10 @@ use insta::assert_json_snapshot;
 
 #[test]
 fn snapshot_validation_for_cases() {
-    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_path_buf();
+    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .to_path_buf();
     let cases_dir = repo_root.join("tests/cases");
     let entries = fs::read_dir(&cases_dir).expect("read cases");
 
@@ -21,5 +24,3 @@ fn snapshot_validation_for_cases() {
         assert_json_snapshot!(name, report);
     }
 }
-
-

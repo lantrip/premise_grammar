@@ -1,0 +1,22 @@
+TITLE: Smoke Test Story
+WORLD: Smoke Test
+FORMAT: story
+
+== 
++setting: Old Quay
++time: Evening
+
+=== 
+///
+Barnacled posts groan as the tide turns.
+A warded lantern sputters, then steadies.
+{Maya Chen} reads the water’s pattern.
+The sigils point upstream, toward the lockworks.
+
+// Treatment - Water, wood, and warding
+Barnacled posts groan as the tide turns. A warded lantern sputters, then steadies.
+
+/ Narrative - Path forward
+{Maya Chen} reads the water’s pattern and realizes the sigils point upstream, toward the lockworks.
+
+

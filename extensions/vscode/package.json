@@ -78,14 +78,90 @@
       {
         "command": "premise.scanWorkspace",
         "title": "Premise: Scan Workspace"
+      },
+      {
+        "command": "premise.generateBeats",
+        "title": "Premise: Generate Beats…"
+      },
+      {
+        "command": "premise.updateEntityDescriptions",
+        "title": "Premise: Update Entity Descriptions…"
       }
     ],
+    "configuration": {
+      "title": "Premise",
+      "properties": {
+        "premise.ai.provider": {
+          "type": "string",
+          "enum": [
+            "openrouter",
+            "custom"
+          ],
+          "default": "openrouter",
+          "markdownDescription": "AI provider to use for generation (initially OpenRouter)."
+        },
+        "premise.ai.model": {
+          "type": "string",
+          "default": "openai/gpt-4o-mini",
+          "markdownDescription": "Model identifier for the AI provider (e.g. openai/gpt-4o-mini for OpenRouter)."
+        },
+        "premise.ai.apiKey": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "API key for the AI provider. For OpenRouter, you can also set OPENROUTER_API_KEY in your environment."
+        },
+        "premise.ai.endpoint": {
+          "type": "string",
+          "default": "https://openrouter.ai/api/v1/chat/completions",
+          "markdownDescription": "Override the chat completions endpoint."
+        },
+        "premise.ai.chunkingMode": {
+          "type": "string",
+          "enum": [
+            "section",
+            "file"
+          ],
+          "default": "section",
+          "markdownDescription": "Chunking mode for prompts: per section (Cel/Scene/Act) or per file."
+        },
+        "premise.ai.beatInsertPosition": {
+          "type": "string",
+          "enum": [
+            "append",
+            "prepend"
+          ],
+          "default": "append",
+          "markdownDescription": "Where to insert generated beats within a section: end (append) or top (prepend)."
+        },
+        "premise.ai.entityUpdatesChangedOnly": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "If true, only apply entity description updates for changed ranges in uncommitted scopes."
+        },
+        "premise.ai.rateLimitPerMinute": {
+          "type": "number",
+          "default": 60,
+          "minimum": 1,
+          "markdownDescription": "Max AI requests per minute. Applies to root scopes; requests are processed sequentially."
+        }
+      }
+    },
     "menus": {
       "editor/context": [
         {
           "command": "premise.showEntityBeats",
-          "when": "editorLangId == premise && editorHasSelection",
+          "when": "editorLangId == premise",
           "group": "navigation@9"
+        },
+        {
+          "command": "premise.generateBeats",
+          "when": "editorLangId == premise",
+          "group": "navigation@10"
+        },
+        {
+          "command": "premise.updateEntityDescriptions",
+          "when": "editorLangId == premise",
+          "group": "navigation@11"
         }
       ]
     }
@@ -96,12 +172,19 @@
   ],
   "scripts": {
     "compile": "tsc -p ./ --listEmittedFiles false",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/emscripten": "^1.41.2",
     "@types/node": "^16.0.0",
     "@types/vscode": "^1.60.0",
+    "@types/glob": "^8.1.0",
+    "mocha": "^10.4.0",
+    "@types/mocha": "^10.0.1",
+    "@vscode/test-electron": "^2.3.6",
+    "glob": "^7.2.3",
     "typescript": "^4.4.0"
   },
   "dependencies": {

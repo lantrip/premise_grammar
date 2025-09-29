@@ -16,8 +16,4 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
 walkdir = "2.5"
 
-[profile.release]
-opt-level = 3
-codegen-units = 1
-lto = true
 
