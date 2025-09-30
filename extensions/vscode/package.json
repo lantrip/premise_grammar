@@ -143,6 +143,41 @@
           "default": 60,
           "minimum": 1,
           "markdownDescription": "Max AI requests per minute. Applies to root scopes; requests are processed sequentially."
+        },
+        "premise.ai.beatGenerationMode": {
+          "type": "string",
+          "enum": [
+            "add-new",
+            "update-fix",
+            "recreate-all"
+          ],
+          "default": "add-new",
+          "markdownDescription": "Default mode for beat generation: 'add-new' (current behavior), 'update-fix' (improve existing beats), 'recreate-all' (replace all beats)."
+        },
+        "premise.ai.beatQualityLevel": {
+          "type": "string",
+          "enum": [
+            "concise",
+            "detailed",
+            "comprehensive"
+          ],
+          "default": "concise",
+          "markdownDescription": "Level of detail for generated beats: 'concise' (short summaries), 'detailed' (more context), 'comprehensive' (full descriptions)."
+        },
+        "premise.ai.enablePreviewMode": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show preview dialog with diff before applying beat changes."
+        },
+        "premise.ai.entityUpdateScope": {
+          "type": "string",
+          "enum": [
+            "descriptions-only",
+            "relationships",
+            "comprehensive"
+          ],
+          "default": "descriptions-only",
+          "markdownDescription": "Scope of entity updates: 'descriptions-only' (basic descriptions), 'relationships' (include interactions), 'comprehensive' (full analysis)."
         }
       }
     },

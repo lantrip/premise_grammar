@@ -266,6 +266,9 @@ async function activate(context) {
                 const scope = await pickScope();
                 if (!scope)
                     return;
+                const mode = await pickBeatGenerationMode();
+                if (!mode)
+                    return;
                 const cfg = vscode.workspace.getConfiguration("premise");
                 const provider = cfg.get("ai.provider", "openrouter");
                 const model = cfg.get("ai.model", "openai/gpt-4o-mini");
@@ -285,8 +288,11 @@ async function activate(context) {
                 const structure = await collectStructureForUris([
                     doc.uri.toString(),
                 ]).catch(() => ({ sections: [] }));
-                const system = "You generate concise JSON for adding Premise beats. Return ONLY strict JSON with the schema provided. The beat text must be exactly what a user would type after the '/// ' prefix.";
-                const schema = "Schema: {\\n  beats: [ { beat: string } ]\\n}\\nRules: Do not include explanations. Do not use markdown. Keep each beat short (<= 120 chars). Use only the provided entity names, and wrap each entity mention in curly braces exactly like {Hero}. Do NOT invent new entities. If ChangedRanges are provided, limit beats to those regions' context. The 'beat' string should be the literal content after '/// '.";
+                const cfg_ai = vscode.workspace.getConfiguration("premise.ai");
+                const qualityLevel = cfg_ai.get("beatQualityLevel", "concise");
+                const enablePreview = cfg_ai.get("enablePreviewMode", true);
+                const system = getBeatSystemPrompt(mode, qualityLevel);
+                const schema = getBeatSchemaPrompt(mode, qualityLevel);
                 let extra = "";
                 let textToProcess = fileText;
                 let structureToProcess = structure;
@@ -449,7 +455,7 @@ async function activate(context) {
                                     startLine: singleSectionRegion.start,
                                     endLine: singleSectionRegion.end,
                                 },
-                            ], entityNames, insertPos);
+                            ], entityNames, insertPos, mode);
                         }
                         // Single-section handled; stop here
                         console.log("✅ current-section flow completed");
@@ -647,10 +653,10 @@ async function activate(context) {
                                     }
                                 }
                                 if (uri.toString() === doc.uri.toString()) {
-                                    await insertBeatsAnchored(editor, beats, perStructure, changedRangeForSection, entityNames, insertPos);
+                                    await insertBeatsAnchored(editor, beats, perStructure, changedRangeForSection, entityNames, insertPos, mode);
                                 }
                                 else {
-                                    await insertBeatsAnchoredIntoDocument(d, beats, perStructure, changedRangeForSection, entityNames, insertPos);
+                                    await insertBeatsAnchoredIntoDocument(d, beats, perStructure, changedRangeForSection, entityNames, insertPos, mode);
                                 }
                             }
                             processed += 1;
@@ -761,10 +767,13 @@ async function activate(context) {
                     }
                 }
                 let totalEntities = 0;
-                const systemFile = "You analyze a Premise file and produce JSON updates to entity descriptions defined with @entity lines. Return ONLY strict JSON.";
-                const schemaFile = "Schema: { entities: [ { name: string, description: string } ] }\\nRules: Only include entities already defined in the file. Keep descriptions concise and consistent with the file. Use only provided entity names.";
-                const systemSection = "You analyze a Premise section and produce JSON updates to entity descriptions defined with @entity lines in the same file. Return ONLY strict JSON.";
-                const schemaSection = "Schema: { entities: [ { name: string, description: string } ] }\\nRules: Only include entities already defined in the file. Keep descriptions concise and consistent with the section. Use only provided entity names.";
+                // Get entity update scope from configuration
+                const cfg_ai = vscode.workspace.getConfiguration("premise.ai");
+                const entityUpdateScope = cfg_ai.get("entityUpdateScope", "descriptions-only");
+                const systemFile = getEntitySystemPrompt(entityUpdateScope, true);
+                const schemaFile = getEntitySchemaPrompt(entityUpdateScope);
+                const systemSection = getEntitySystemPrompt(entityUpdateScope, false);
+                const schemaSection = getEntitySchemaPrompt(entityUpdateScope);
                 for (const t of targets) {
                     const d = t.uri.toString() === doc.uri.toString()
                         ? doc
@@ -931,6 +940,251 @@ async function pickScope() {
     });
     return pick?.val;
 }
+async function pickBeatGenerationMode() {
+    const cfg = vscode.workspace.getConfiguration("premise.ai");
+    const defaultMode = cfg.get("beatGenerationMode", "add-new");
+    const items = [
+        {
+            label: "Add New Beats",
+            val: "add-new",
+            detail: "Generate new beats without changing existing ones (default behavior)",
+            picked: defaultMode === "add-new"
+        },
+        {
+            label: "Update/Fix Beats",
+            val: "update-fix",
+            detail: "Analyze and improve existing beats based on current narrative",
+            picked: defaultMode === "update-fix"
+        },
+        {
+            label: "Recreate All Beats",
+            val: "recreate-all",
+            detail: "Replace all existing beats with completely new ones",
+            picked: defaultMode === "recreate-all"
+        },
+    ];
+    const pick = await vscode.window.showQuickPick(items, {
+        placeHolder: "Select beat generation mode",
+        matchOnDetail: true,
+    });
+    return pick?.val;
+}
+function getBeatSystemPrompt(mode, qualityLevel) {
+    const basePrompt = `You are a story analyst creating beats for a Premise story. Beats are MAJOR STORY MILESTONES, not every detail.
+
+IMPORTANT: Generate 3-8 beats maximum per section. Focus on KEY TURNING POINTS only.
+
+For SHORT sections (< 500 words): 3-5 simple, direct beats
+For MEDIUM sections (500-1500 words): 5-7 beats with more nuance
+For LONG sections (> 1500 words): 6-8 comprehensive beats
+
+WRONG (too many details): Every small action and description
+RIGHT (key events only): Major character decisions, plot turns, revelations
+
+Examples:
+WRONG: "Mist clings to robes" + "Traces markings" + "Fingers tremble" (too granular)
+RIGHT: "{Character} investigates ancient markings" (combines related actions)
+
+NEVER copy text. Summarize ONLY the most important story events. Return ONLY strict JSON.`;
+    switch (mode) {
+        case "add-new":
+            return `${basePrompt} Add ONLY major events not already covered. Maximum 5 new beats.`;
+        case "update-fix":
+            return `${basePrompt} Improve existing beats to better capture KEY story moments. Keep total under 8.`;
+        case "recreate-all":
+            return `${basePrompt} Create 3-8 beats covering ONLY the most significant story events.`;
+        default:
+            return basePrompt;
+    }
+}
+function getBeatSchemaPrompt(mode, qualityLevel) {
+    const lengthConstraint = qualityLevel === "concise" ? "10-50" :
+        qualityLevel === "detailed" ? "30-80" :
+            "50-120";
+    const baseSchema = `Schema: { "beats": [ string, string, ... ] }
+
+CRITICAL RULES:
+1. Generate 3-8 beats maximum - focus on SIGNIFICANCE not quantity
+2. Each beat must be ${lengthConstraint} chars
+3. Combine related minor actions into single important beats
+4. Ask yourself: "Is this a turning point, decision, or revelation?"
+5. Use format: "{Character} does action" or "Major event happens"
+
+Examples of SIGNIFICANT beats (GOOD):
+   - "{Maya Chen} discovers forbidden knowledge"
+   - "{Character} makes dangerous choice"
+   - "Ancient power awakens"
+   - "Alliance forms between enemies"
+
+Examples of INSIGNIFICANT details (AVOID):
+   - "Mist appears" (atmospheric detail)
+   - "Character walks somewhere" (unless crucial)
+   - "Lantern flickers" (minor description)
+
+Only include beats that would matter to someone outlining the key story moments.`;
+    switch (mode) {
+        case "add-new":
+            return `${baseSchema}\\nAdd ONLY major events not covered. Maximum 3-5 new beats total.`;
+        case "update-fix":
+            return `${baseSchema}\\nImprove to focus on KEY moments. Final total should be 3-8 beats maximum.`;
+        case "recreate-all":
+            return `${baseSchema}\\nCreate 3-8 beats covering ONLY the most crucial story developments.`;
+        default:
+            return baseSchema;
+    }
+}
+async function applyBeatsToSection(editor, beats, regionStart, regionEnd, entityNames, insertPosition = "append", mode = "add-new", sectionInfo = {}, showPreview = true) {
+    const doc = editor.document;
+    // Collect existing beats in region
+    const existingSet = new Set();
+    const existingBeats = [];
+    let firstBeatLine;
+    let lastBeatLine;
+    for (let i = regionStart; i <= regionEnd && i < doc.lineCount; i++) {
+        const lineText = doc.lineAt(i).text;
+        if (lineText.trimStart().startsWith("///")) {
+            const beatText = lineText.replace(/^\s*\/\/\//, "").trim();
+            const normalized = normalizeBeat(beatText);
+            if (normalized) {
+                existingSet.add(normalized);
+                existingBeats.push(beatText);
+            }
+            if (firstBeatLine === undefined)
+                firstBeatLine = i;
+            lastBeatLine = i;
+        }
+    }
+    const canon = Array.isArray(entityNames) ? new Set(entityNames) : undefined;
+    // Filter and validate beats first
+    const validatedBeats = beats
+        .map((b) => normalizeBeat(b))
+        .filter((b) => !!b)
+        .filter((b) => {
+        if (!canon)
+            return true;
+        const tokens = extractEntityTokens(b);
+        return tokens.every((t) => canon.has(t));
+    })
+        .filter((b, idx, arr) => arr.indexOf(b) === idx);
+    if (validatedBeats.length === 0)
+        return;
+    // Show preview if enabled
+    if (showPreview) {
+        const previewResult = await showBeatPreview(validatedBeats, mode, sectionInfo, existingBeats);
+        if (previewResult === "cancel")
+            return;
+        if (previewResult === "skip")
+            return;
+        // "apply" and "apply-all" continue
+    }
+    // Mode-specific beat processing
+    let filteredBeats;
+    if (mode === "recreate-all") {
+        // Replace all existing beats
+        filteredBeats = validatedBeats;
+        // Clear existing beats in the region
+        if (firstBeatLine !== undefined && lastBeatLine !== undefined) {
+            const edit = new vscode.WorkspaceEdit();
+            const startPos = new vscode.Position(firstBeatLine, 0);
+            const endPos = new vscode.Position(lastBeatLine + 1, 0);
+            edit.delete(doc.uri, new vscode.Range(startPos, endPos));
+            await vscode.workspace.applyEdit(edit);
+            firstBeatLine = undefined;
+            lastBeatLine = undefined;
+        }
+    }
+    else if (mode === "update-fix") {
+        // Include all beats (both improved and new)
+        filteredBeats = validatedBeats;
+        // Clear existing beats since we're replacing with improved versions
+        if (firstBeatLine !== undefined && lastBeatLine !== undefined) {
+            const edit = new vscode.WorkspaceEdit();
+            const startPos = new vscode.Position(firstBeatLine, 0);
+            const endPos = new vscode.Position(lastBeatLine + 1, 0);
+            edit.delete(doc.uri, new vscode.Range(startPos, endPos));
+            await vscode.workspace.applyEdit(edit);
+            firstBeatLine = undefined;
+            lastBeatLine = undefined;
+        }
+    }
+    else {
+        // "add-new" mode - only add non-duplicate beats
+        filteredBeats = validatedBeats.filter((b) => !existingSet.has(b));
+    }
+    if (filteredBeats.length === 0)
+        return;
+    // Insert beats
+    let needsHeader = firstBeatLine === undefined;
+    let insertLine = regionStart;
+    let insertText = "";
+    if (needsHeader) {
+        insertText = "///\n" + filteredBeats.join("\n") + "\n";
+        insertLine = regionStart;
+    }
+    else {
+        if (insertPosition === "append") {
+            insertLine = lastBeatLine !== undefined ? lastBeatLine + 1 : regionStart;
+        }
+        else {
+            insertLine = firstBeatLine !== undefined ? firstBeatLine : regionStart;
+        }
+        insertText = filteredBeats.join("\n") + "\n";
+    }
+    const pos = new vscode.Position(insertLine, 0);
+    await editor.edit((builder) => {
+        builder.insert(pos, insertText);
+    });
+}
+async function showBeatPreview(beats, mode, sectionInfo, existingBeats = []) {
+    const newBeatsText = beats.join("\n");
+    const existingBeatsText = existingBeats.length > 0
+        ? existingBeats.map(b => `/// ${b}`).join("\n")
+        : "(No existing beats)";
+    let previewText = "";
+    if (mode === "add-new") {
+        previewText = `**Adding ${beats.length} new beat(s):**\n\n${newBeatsText}`;
+    }
+    else if (mode === "update-fix") {
+        previewText = `**Existing beats:**\n${existingBeatsText}\n\n**Updated/improved beats:**\n${newBeatsText}`;
+    }
+    else if (mode === "recreate-all") {
+        previewText = `**Current beats:**\n${existingBeatsText}\n\n**Replacing with ${beats.length} new beat(s):**\n${newBeatsText}`;
+    }
+    const sectionTitle = sectionInfo.title ? ` (${sectionInfo.title})` : "";
+    const message = `Apply ${mode} mode to ${sectionInfo.kind || "section"}${sectionTitle}?`;
+    const choice = await vscode.window.showInformationMessage(message, {
+        modal: true,
+        detail: previewText
+    }, "Apply", "Skip", "Apply All", "Cancel");
+    switch (choice) {
+        case "Apply": return "apply";
+        case "Skip": return "skip";
+        case "Apply All": return "apply-all";
+        default: return "cancel";
+    }
+}
+function getEntitySystemPrompt(updateScope, isFile) {
+    const basePrompt = `You analyze Premise ${isFile ? "file" : "section"} and produce JSON updates to entity descriptions defined with @entity lines. Return ONLY strict JSON.`;
+    switch (updateScope) {
+        case "relationships":
+            return `${basePrompt} Focus on character relationships, interactions, and how entities relate to each other. Update descriptions to reflect current story dynamics.`;
+        case "comprehensive":
+            return `${basePrompt} Provide comprehensive analysis including character development, relationships, story role, and any significant changes. Create detailed, rich descriptions.`;
+        default: // "descriptions-only"
+            return `${basePrompt} Focus on basic entity descriptions, keeping them concise and consistent with the story content.`;
+    }
+}
+function getEntitySchemaPrompt(updateScope) {
+    const baseSchema = "Schema: { entities: [ { name: string, description: string } ] }\\nRules: Only include entities already defined in the file. Use only provided entity names.";
+    switch (updateScope) {
+        case "relationships":
+            return `${baseSchema} Include relationship dynamics and character interactions. Descriptions should reflect how entities relate to others in the story.`;
+        case "comprehensive":
+            return `${baseSchema} Provide detailed descriptions including character motivations, relationships, story significance, and development. Length can be 2-3 sentences for important entities.`;
+        default: // "descriptions-only"
+            return `${baseSchema} Keep descriptions concise and consistent with the content. Focus on essential characteristics and current story role.`;
+    }
+}
 function findCurrentSection(structure, cursorLine) {
     if (!structure?.sections || !Array.isArray(structure.sections)) {
         console.log("❌ No sections in structure or not an array");
@@ -1092,7 +1346,7 @@ async function listUncommittedPremFilesUnderRoot(rootPath) {
         return [];
     }
 }
-async function insertBeatsAnchoredIntoDocument(doc, beats, structure, changedRanges, entityNames, insertPosition = "append") {
+async function insertBeatsAnchoredIntoDocument(doc, beats, structure, changedRanges, entityNames, insertPosition = "append", mode = "add-new") {
     const headers = [];
     const secs = Array.isArray(structure?.sections)
         ? structure.sections
@@ -1155,58 +1409,14 @@ async function insertBeatsAnchoredIntoDocument(doc, beats, structure, changedRan
     const regionEnd = next
         ? Math.max(next.start - 1, regionStart)
         : doc.lineCount - 1;
-    // Build set of existing beats and determine insertion line per insertPosition
-    const existingSet = new Set();
-    let firstBeatLine;
-    let lastBeatLine;
-    for (let i = regionStart; i <= regionEnd && i < doc.lineCount; i++) {
-        const lineText = doc.lineAt(i).text;
-        if (lineText.trimStart().startsWith("///")) {
-            const normalized = normalizeBeat(lineText.replace(/^\s*\/\/\//, "").trim());
-            if (normalized)
-                existingSet.add(normalized);
-            if (firstBeatLine === undefined)
-                firstBeatLine = i;
-            lastBeatLine = i;
-        }
-    }
-    const canon = Array.isArray(entityNames) ? new Set(entityNames) : undefined;
-    const filteredBeats = beats
-        .map((b) => normalizeBeat(b))
-        .filter((b) => !!b)
-        .filter((b) => {
-        if (!canon)
-            return true;
-        const tokens = extractEntityTokens(b);
-        return tokens.every((t) => canon.has(t));
-    })
-        .filter((b, idx, arr) => arr.indexOf(b) === idx)
-        .filter((b) => !existingSet.has(b));
-    if (filteredBeats.length === 0)
-        return;
-    // Check if we need to add a /// section header
-    let needsHeader = firstBeatLine === undefined; // No existing beats in this section
-    let insertLine = regionStart;
-    let insertText = "";
-    if (needsHeader) {
-        // Add /// header before the beats
-        insertText = "///\n" + filteredBeats.join("\n") + "\n";
-        insertLine = regionStart;
-    }
-    else {
-        // Insert beats after existing beats
-        if (insertPosition === "append") {
-            insertLine = lastBeatLine !== undefined ? lastBeatLine + 1 : regionStart;
-        }
-        else {
-            insertLine = firstBeatLine !== undefined ? firstBeatLine : regionStart;
-        }
-        insertText = filteredBeats.join("\n") + "\n";
-    }
-    const pos = new vscode.Position(insertLine, 0);
-    const edit = new vscode.WorkspaceEdit();
-    edit.insert(doc.uri, pos, insertText);
-    await vscode.workspace.applyEdit(edit);
+    // Use the new helper function for mode-specific beat processing
+    // Convert to editor-like interface for the helper function
+    const editor = await vscode.window.showTextDocument(doc);
+    // Get section info for preview
+    const sectionInfo = { title: "Document Section", kind: "section" };
+    const cfg = vscode.workspace.getConfiguration("premise.ai");
+    const enablePreview = cfg.get("enablePreviewMode", true);
+    await applyBeatsToSection(editor, beats, regionStart, regionEnd, entityNames, insertPosition, mode, sectionInfo, enablePreview);
 }
 exports.insertBeatsAnchoredIntoDocument = insertBeatsAnchoredIntoDocument;
 function getSectionRegionsForStructure(structure, doc) {
@@ -1303,21 +1513,29 @@ function extractBeats(content) {
         if (Array.isArray(parsed?.beats)) {
             return parsed.beats
                 .map((b) => {
-                if (typeof b?.beat === "string") {
-                    // Remove /// prefix if AI included it, also handle multiple ///
-                    let beat = b.beat.trim();
-                    // Remove any leading /// patterns
-                    beat = beat.replace(/^(\/\/\/\s*)+/, "");
-                    console.log("🔧 Processed beat:", JSON.stringify(b.beat), "->", JSON.stringify(beat));
-                    return beat;
+                // Handle both formats: plain string or object with beat property
+                let beatText = "";
+                if (typeof b === "string") {
+                    // Direct string format (new simplified format)
+                    beatText = b.trim();
+                }
+                else if (typeof b?.beat === "string") {
+                    // Object format with beat property (old format)
+                    beatText = b.beat.trim();
+                }
+                if (beatText) {
+                    // Remove /// prefix if AI included it
+                    beatText = beatText.replace(/^(\/\/\/\s*)+/, "");
+                    console.log("🔧 Processed beat:", JSON.stringify(b), "->", JSON.stringify(beatText));
+                    return beatText;
                 }
                 return "";
             })
                 .filter((s) => !!s);
         }
     }
-    catch {
-        // ignore
+    catch (err) {
+        console.log("❌ Failed to extract beats:", err);
     }
     return [];
 }
@@ -1351,7 +1569,7 @@ async function insertBeatsAtEnd(editor, beats) {
         builder.insert(lastLine, insertText);
     });
 }
-async function insertBeatsAnchored(editor, beats, structure, changedRanges, entityNames, insertPosition = "append") {
+async function insertBeatsAnchored(editor, beats, structure, changedRanges, entityNames, insertPosition = "append", mode = "add-new") {
     const doc = editor.document;
     const headers = [];
     const secs = Array.isArray(structure?.sections)
