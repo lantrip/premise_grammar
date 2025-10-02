@@ -1,9 +1,11 @@
+pub mod adapters;
 pub mod api;
 pub mod ast;
 pub mod cst;
 pub mod diagnostics;
 pub mod imports;
 pub mod ir;
+pub mod notes;
 pub mod planning;
 pub mod symbols;
 pub mod validation;
@@ -17,7 +19,7 @@ extern "C" {
 }
 
 pub struct Parser {
-    internal: TsParser,
+    pub internal: TsParser,
 }
 
 impl Default for Parser {

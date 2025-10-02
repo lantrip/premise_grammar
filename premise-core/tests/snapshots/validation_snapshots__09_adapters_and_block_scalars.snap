@@ -1,5 +1,5 @@
 ---
-source: tests/validation_snapshots.rs
+source: premise-core/tests/validation_snapshots.rs
 expression: report
 ---
 {

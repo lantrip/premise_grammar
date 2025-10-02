@@ -1,0 +1,47 @@
+---
+source: premise-core/tests/notes_snapshots.rs
+expression: normalize_facts(facts)
+---
+[
+  {
+    "type": "trait",
+    "source": "imported",
+    "entity": "Hero",
+    "category": "description",
+    "fact": "A brave warrior with a mysterious past",
+    "evidence": [
+      "test.prem:2"
+    ],
+    "confidence": 1.0
+  },
+  {
+    "type": "relationship",
+    "source": "imported",
+    "entities": [
+      "Hero",
+      "Mentor"
+    ],
+    "category": "co-occurrence",
+    "fact": "Hero and Mentor appear together in scene 'The Beginning'",
+    "evidence": [
+      "test.prem:11"
+    ],
+    "confidence": 0.7,
+    "status": "developing"
+  },
+  {
+    "type": "relationship",
+    "source": "imported",
+    "entities": [
+      "Hero",
+      "Villain"
+    ],
+    "category": "co-occurrence",
+    "fact": "Hero and Villain appear together in scene 'The Confrontation'",
+    "evidence": [
+      "test.prem:14"
+    ],
+    "confidence": 0.7,
+    "status": "developing"
+  }
+]

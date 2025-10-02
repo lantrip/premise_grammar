@@ -23,12 +23,18 @@ Read the quick start guide: [QUICKSTART.md](./QUICKSTART.md)
   - JSON Schemas via `premise schema --type <...>`
 - Python package (`premisecore`): `Parser.parse_json`, `validate_json`, `analyze_json`, `plan_json`, and `schema()`
 
-### What's next (adapters)
+### Adapter Framework (Foundation Complete ✅)
 
-- Adapter registry and APIs (list/show, identity rules)
-- Deterministic execution engine (sequential), provenance
-- Hydration of domain models and artifact outputs
-- Hardening: limits/timeouts, caching, benchmarks, fuzzing
+**Domain-agnostic content transformation** - Same `.prem` file works as story, sales call, or architecture doc.
+
+- ✅ Adapter registry with auto-discovery (`premise adapters list/show`)
+- ✅ Domain abstraction (Narrative/Sales/Architecture mappers)
+- ✅ Notes Context API (adapters query story knowledge)
+- ✅ Example adapters for 3 domains
+
+**What's next**: Execution engine, provenance tracking, adapter writes to notes
+
+📖 **Full guide**: [ADAPTERS.md](./ADAPTERS.md)
 
 ### Roadmap concepts to be aware of
 
@@ -143,15 +149,51 @@ cd extensions/vscode && npm run compile && code --install-extension .
   - “Premise: Scan Workspace” to force a full rescan
 - See `LSP_Roadmap.md` for detailed status and next steps
 
-### AI-assisted Workflows (Preview)
+### AI Features
 
-- Commands:
-  - “Premise: Generate Beats…” inserts `///` beats with `{Entity}` references, anchored to Cel/Scene/Act.
-  - “Premise: Update Entity Descriptions…” updates `@entity` descriptions based on story changes.
-- Scopes: current file, story root, uncommitted (file/root).
-- Chunking: per-run override to chunk by file or by section; default via `premise.ai.chunkingMode`.
-- Provider: OpenRouter. Configure in Settings → `premise.ai.*` (model, apiKey, endpoint).
-- Edits apply directly to files (review via normal VCS changes).
+**Beat & Entity Generation**:
+- `Premise: Generate Beats…` - AI-generated `///` beats anchored to sections
+- `Premise: Update Entity Descriptions…` - Update `@entity` descriptions from story
+- Provider: OpenRouter (Settings → `premise.ai.*`)
+
+**Story Notes System** (`.premise-notes/`) - **Production Ready**:
+
+Structured story knowledge base with intelligent extraction and CLI-first architecture.
+
+**Key Features**:
+- ✅ **Entity trait extraction**: Auto-detect from `@character Name: Description` (confidence: 1.0)
+- ✅ **Co-occurrence relationships**: Discover entity interactions in scenes/dialogue (confidence: 0.7)
+- ✅ **Section context**: Track act/scene/cel metadata for all facts
+- ✅ **JSONL format**: Append-friendly, merge-friendly, tool-friendly
+- ✅ **Comprehensive testing**: 9 snapshot tests with deterministic output
+- ✅ **Error handling**: Clear error messages with actionable guidance
+
+**CLI Commands** (all production-ready):
+```bash
+# Initialize notes directory
+premise notes init . --title "My Story"
+
+# Extract facts (traits + co-occurrence relationships)
+premise notes extract-facts story.prem
+# Output: Extracted 10 facts from story.prem
+
+# Query by entity
+premise notes query --entity Hero .
+
+# Rebuild index
+premise notes rebuild-index .
+# Output: Beats: 47 | Facts: 123 | Entities: 15
+
+# Advanced queries with standard tools
+grep '"Hero"' .premise-notes/facts.jsonl | jq 'select(.type=="trait")'
+jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
+```
+
+**VSCode Commands**:
+- `Premise: Extract Facts to Notes…` (AI-enhanced extraction)
+- `Premise: Export Beats to Notes` (structural extraction)
+
+📖 **Full documentation**: [NOTES_SYSTEM.md](./NOTES_SYSTEM.md) | **Roadmap**: [AI_ROADMAP.md](./AI_ROADMAP.md)
 
 ## Repository Structure
 

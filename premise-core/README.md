@@ -27,8 +27,9 @@ Build a production-grade Rust core that parses Premise source using the existing
 - Symbols & Imports: symbol tables, import analysis, and resolution
 - Validation: duplicates, unknown references, basic cycle detection
 - IR & Planning: story graph (acts/scenes/cels), adapter refs, deterministic plan
-- CLI: `parse`, `validate`, `analyze`, `plan` with global `--format json|pretty`
-- JSON Schemas: `premise schema --type parse|validate|analyze|plan|all`
+- Notes System: JSONL-based story knowledge base (beats, facts, timeline, consistency)
+- CLI: `parse`, `validate`, `analyze`, `plan`, `notes` with global `--format json|pretty`
+- JSON Schemas: `premise schema --type parse|validate|analyze|plan|notes|all`
 - Python bindings: `premisecore.Parser` with `parse_json`/`validate_json`/`analyze_json`/`plan_json` and `schema()`
 
 ## Roadmap & Phases
@@ -160,14 +161,23 @@ premise --format json plan path/to/file.prem --graph-only
 premise schema --type all
 premise schema --type parse --out schema.parse.json
 
+# Story Notes Management
+premise notes init --title "My Story"
+premise notes export-beats story/chapter1.prem
+premise notes extract-facts story/chapter1.prem
+premise notes extract-timeline story/chapter1.prem
+premise notes query --entity "Hero"
+premise notes rebuild-index
+premise notes status
+
+# One-pass analysis with notes extraction
+premise analyze story/chapter1.prem --extract-notes
+
 # (Phase 4) Run adapters and hydrate
 premise adapters list
 premise adapters show <id>
 premise run path/to/file.prem --json --provenance
-premise hydrate path/to/file.prem --json --artifacts-out out/
-
-# (Phase 4+) Hydration TBD
-# premise hydrate path/to/file.prem --out hydrated.json
+premise hydrate path/to/file.prem --json --artifacts-out out/ --with-notes .premise-notes/
 ```
 
 Python (via wheels)

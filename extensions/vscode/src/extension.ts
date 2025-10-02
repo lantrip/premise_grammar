@@ -5,6 +5,9 @@ import * as https from "https";
 import * as cp from "child_process";
 import { Parser, Language } from "web-tree-sitter";
 import { PremiseSemanticTokensProvider } from "./semanticTokens";
+// Notes system now uses CLI instead of TypeScript implementation
+import { promisify } from "util";
+const execAsync = promisify(cp.exec);
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -13,6 +16,114 @@ import {
 } from "vscode-languageclient/node";
 
 let client: LanguageClient | undefined;
+
+// ============================================================================
+// CLI Helper Functions - Notes system via premise CLI
+// ============================================================================
+
+/**
+ * Find the premise CLI binary
+ */
+function findPremiseCli(): string {
+  // Try workspace root first (for development)
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    const rootPath = workspaceFolders[0].uri.fsPath;
+    const devBinary = path.join(rootPath, "target", "debug", "premise");
+    if (fs.existsSync(devBinary)) {
+      return devBinary;
+    }
+    const releaseBinary = path.join(rootPath, "target", "release", "premise");
+    if (fs.existsSync(releaseBinary)) {
+      return releaseBinary;
+    }
+  }
+  // Fall back to PATH
+  return "premise";
+}
+
+/**
+ * Execute a premise CLI command
+ */
+async function execPremiseCli(args: string[], cwd?: string): Promise<string> {
+  const cli = findPremiseCli();
+  const command = `${cli} ${args.join(" ")}`;
+  try {
+    const { stdout } = await execAsync(command, { cwd, maxBuffer: 10 * 1024 * 1024 });
+    return stdout;
+  } catch (err: any) {
+    throw new Error(`CLI command failed: ${command}\n${err.message}`);
+  }
+}
+
+/**
+ * Initialize notes directory
+ */
+async function initializeNotes(storyRoot: string, title?: string): Promise<void> {
+  const args = ["notes", "init"];
+  if (title) {
+    args.push("--title", title);
+  }
+  await execPremiseCli(args, storyRoot);
+}
+
+/**
+ * Get notes status
+ */
+async function getNotesStatus(storyRoot: string): Promise<{ exists: boolean; initialized: boolean }> {
+  try {
+    const output = await execPremiseCli(["--format", "json", "notes", "status"], storyRoot);
+    return JSON.parse(output);
+  } catch {
+    return { exists: false, initialized: false };
+  }
+}
+
+/**
+ * Rebuild notes index
+ */
+async function rebuildIndex(storyRoot: string): Promise<void> {
+  await execPremiseCli(["notes", "rebuild-index"], storyRoot);
+}
+
+/**
+ * Export beats from a file
+ */
+async function exportBeats(filePath: string, storyRoot: string): Promise<void> {
+  const relativePath = path.relative(storyRoot, filePath);
+  await execPremiseCli(["notes", "export-beats", relativePath], storyRoot);
+}
+
+/**
+ * Extract facts from a file (structural only, no AI)
+ */
+async function extractFactsStructural(filePath: string, storyRoot: string): Promise<void> {
+  const relativePath = path.relative(storyRoot, filePath);
+  await execPremiseCli(["notes", "extract-facts", relativePath], storyRoot);
+}
+
+/**
+ * Append facts to notes (for AI-extracted facts)
+ */
+async function appendFacts(storyRoot: string, facts: any[]): Promise<void> {
+  // Write facts to temp file and append them
+  const factsPath = path.join(storyRoot, ".premise-notes", "facts.jsonl");
+  const lines = facts.map((f) => JSON.stringify(f)).join("\n") + "\n";
+  await fs.promises.appendFile(factsPath, lines, "utf8");
+}
+
+/**
+ * Generate unique ID for notes records
+ */
+function generateId(prefix: string): string {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 7);
+  return `${prefix}${timestamp}${random}`;
+}
+
+// ============================================================================
+// End CLI Helper Functions
+// ============================================================================
 
 async function safeOpenTextDocument(
   uri: vscode.Uri
@@ -1128,6 +1239,170 @@ export async function activate(context: vscode.ExtensionContext) {
           }
         }
       );
+
+      // Command: Extract facts from story
+      await registerCommandOnce(
+        context,
+        "premise.extractFacts",
+        async () => {
+          const editor = vscode.window.activeTextEditor;
+          if (!editor) return;
+          const doc = editor.document;
+          if (doc.languageId !== "premise") return;
+
+          const scope = await pickScope();
+          if (!scope) return;
+
+          // Get story root for notes directory
+          const storyRoot = await getStoryRootPathForUri(doc.uri);
+          if (!storyRoot) {
+            vscode.window.showErrorMessage("Could not determine story root.");
+            return;
+          }
+
+          // Check if notes are initialized
+          const notesStatus = await getNotesStatus(storyRoot);
+          if (!notesStatus.initialized) {
+            const choice = await vscode.window.showInformationMessage(
+              "Notes system not initialized. Initialize now?",
+              "Initialize",
+              "Cancel"
+            );
+            if (choice !== "Initialize") return;
+            await initializeNotes(storyRoot);
+          }
+
+          const cfg = vscode.workspace.getConfiguration("premise");
+          const provider = cfg.get<string>("ai.provider", "openrouter");
+          const model = cfg.get<string>("ai.model", "openai/gpt-4o-mini");
+          const endpoint = cfg.get<string>(
+            "ai.endpoint",
+            "https://openrouter.ai/api/v1/chat/completions"
+          );
+          const apiKey =
+            cfg.get<string>("ai.apiKey") ||
+            process.env.OPENROUTER_API_KEY ||
+            "";
+          if (provider !== "openrouter") {
+            vscode.window.showWarningMessage(
+              "Only OpenRouter is supported in this preview."
+            );
+            return;
+          }
+          if (!apiKey) {
+            vscode.window.showErrorMessage(
+              "Set OpenRouter API key in settings (premise.ai.apiKey) or OPENROUTER_API_KEY."
+            );
+            return;
+          }
+
+          const entityNames = await listEntityNamesForUri(doc.uri).catch(
+            () => [] as string[]
+          );
+          const structure = await collectStructureForUris([
+            doc.uri.toString(),
+          ]).catch(() => ({ sections: [] }));
+
+          // Get fact categories from settings
+          const cfg_notes = vscode.workspace.getConfiguration("premise.notes");
+          const factCategories = cfg_notes.get<string[]>(
+            "factCategories",
+            ["trait", "relationship", "knowledge", "event"]
+          );
+
+          const system = getFactExtractionSystemPrompt(factCategories);
+          const schema = getFactExtractionSchemaPrompt(factCategories);
+
+          let textToProcess = doc.getText();
+          let extra = "";
+
+          if (scope === "uncommitted-file") {
+            const ranges = await getUncommittedChangedRangesForFile(
+              doc.uri.fsPath
+            );
+            extra = `\\nChangedRanges: ${JSON.stringify(ranges)}`;
+          }
+
+          const user = `File: ${doc.uri.fsPath}\\nEntities: ${JSON.stringify(
+            entityNames
+          )}\\nStructure: ${JSON.stringify(
+            structure
+          )}${extra}\\n---\\n${textToProcess}\\n---\\n${schema}`;
+
+          try {
+            const content = await openRouterChat({
+              endpoint,
+              apiKey,
+              model,
+              messages: [
+                { role: "system", content: system },
+                { role: "user", content: user },
+              ],
+            });
+
+            const extractedFacts = extractFacts(content, doc.uri.fsPath, storyRoot);
+            if (extractedFacts.length === 0) {
+              vscode.window.showInformationMessage("No facts extracted.");
+              return;
+            }
+
+            // Append facts to notes
+            await appendFacts(storyRoot, extractedFacts);
+            await rebuildIndex(storyRoot);
+
+            vscode.window.showInformationMessage(
+              `Extracted ${extractedFacts.length} fact(s) to .premise-notes/facts.jsonl`
+            );
+          } catch (err) {
+            vscode.window.showErrorMessage(
+              `Extract facts failed: ${String(err)}`
+            );
+          }
+        }
+      );
+
+      // Command: Export current beats to notes
+      await registerCommandOnce(
+        context,
+        "premise.exportBeats",
+        async () => {
+          const editor = vscode.window.activeTextEditor;
+          if (!editor) return;
+          const doc = editor.document;
+          if (doc.languageId !== "premise") return;
+
+          const storyRoot = await getStoryRootPathForUri(doc.uri);
+          if (!storyRoot) {
+            vscode.window.showErrorMessage("Could not determine story root.");
+            return;
+          }
+
+          // Check if notes are initialized
+          const notesStatus = await getNotesStatus(storyRoot);
+          if (!notesStatus.initialized) {
+            const choice = await vscode.window.showInformationMessage(
+              "Notes system not initialized. Initialize now?",
+              "Initialize",
+              "Cancel"
+            );
+            if (choice !== "Initialize") return;
+            await initializeNotes(storyRoot);
+          }
+
+          // Export beats via CLI
+          try {
+            await exportBeats(doc.uri.fsPath, storyRoot);
+            await rebuildIndex(storyRoot);
+            vscode.window.showInformationMessage(
+              "Beats exported to .premise-notes/beats.jsonl"
+            );
+          } catch (err) {
+            vscode.window.showErrorMessage(
+              `Export beats failed: ${String(err)}`
+            );
+          }
+        }
+      );
     } else {
       vscode.window.showWarningMessage(
         "Premise LSP server binary not found. Syntax highlighting will still work."
@@ -2196,6 +2471,100 @@ function extractEntityUpdates(
   }
   return [];
 }
+
+function getFactExtractionSystemPrompt(categories: string[]): string {
+  return `You analyze Premise story content and extract structured facts about entities, events, and world state. Return ONLY strict JSON.
+
+Extract facts in these categories: ${categories.join(", ")}
+
+- trait: Character personality traits, physical descriptions, abilities
+- relationship: How entities relate to each other (allies, enemies, family, etc.)
+- knowledge: What entities know or have learned
+- event: Significant events that happened (past, present, or future)
+- state: Current state of locations, objects, or world conditions
+
+Be precise and cite evidence. Return ONLY JSON.`;
+}
+
+function getFactExtractionSchemaPrompt(categories: string[]): string {
+  return `Schema: {
+  "facts": [
+    {
+      "type": "trait" | "relationship" | "knowledge" | "event" | "state",
+      "entity": "EntityName",  // for single-entity facts
+      "entities": ["Entity1", "Entity2"],  // for multi-entity facts (relationships)
+      "category": "string",  // sub-category (e.g., "personality", "appearance")
+      "fact": "Concise fact statement",
+      "evidence": "file.prem:line",
+      "confidence": 0.0-1.0,
+      "timeline": "past" | "present" | "future",  // for events
+      "status": "established" | "developing" | "uncertain"  // for relationships
+    }
+  ]
+}
+
+Rules:
+- Only extract facts with clear evidence in the text
+- Use only entity names from the provided canonical list
+- Provide file:line evidence for every fact
+- Confidence: 1.0 = explicitly stated, 0.5-0.9 = strongly implied, <0.5 = speculative
+- Keep fact statements concise and precise`;
+}
+
+function extractFacts(
+  content: string,
+  sourceFile: string,
+  storyRoot: string
+): any[] {
+  try {
+    const parsed = JSON.parse(content);
+    if (!Array.isArray(parsed?.facts)) return [];
+
+    const now = new Date().toISOString();
+    const relPath = path.relative(storyRoot, sourceFile);
+
+    return parsed.facts
+      .map((f: any) => {
+        const fact: any = {
+          type: f.type || "event",
+          id: generateId("f"),
+          entity: f.entity?.trim(),
+          entities: Array.isArray(f.entities)
+            ? f.entities.map((e: any) => String(e).trim()).filter(Boolean)
+            : undefined,
+          category: f.category?.trim(),
+          fact: String(f.fact || "").trim(),
+          evidence: Array.isArray(f.evidence)
+            ? f.evidence.map((e: any) => String(e).trim()).filter(Boolean)
+            : [f.evidence?.trim()].filter(Boolean),
+          confidence: typeof f.confidence === "number" ? f.confidence : 0.8,
+          added: now,
+          status: f.status?.trim(),
+          timeline: f.timeline?.trim(),
+          source: "llm-generated",
+          metadata: {
+            model: "openrouter",
+            prompt_version: "1.0",
+          },
+        };
+
+        // Clean up undefined fields
+        if (!fact.entity) delete fact.entity;
+        if (!fact.entities || fact.entities.length === 0) delete fact.entities;
+        if (!fact.category) delete fact.category;
+        if (!fact.status) delete fact.status;
+        if (!fact.timeline) delete fact.timeline;
+
+        return fact;
+      })
+      .filter((f: any) => f.fact && f.evidence.length > 0);
+  } catch (err) {
+    console.log("❌ Failed to extract facts:", err);
+    return [];
+  }
+}
+
+// Removed: extractBeatsFromDocument - now handled by CLI
 
 async function applyEntityDescriptionUpdatesInCurrentFile(
   editor: vscode.TextEditor,

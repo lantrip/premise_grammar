@@ -1,10 +1,14 @@
 ---
-source: tests/plan_snapshots.rs
+source: premise-core/tests/plan_snapshots.rs
 expression: plan
 ---
 {
   "plan": {
     "steps": []
+  },
+  "graph": {
+    "nodes": [],
+    "edges": []
   },
   "diagnostics": []
 }

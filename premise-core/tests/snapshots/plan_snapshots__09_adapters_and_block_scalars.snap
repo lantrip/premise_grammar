@@ -1,5 +1,5 @@
 ---
-source: tests/plan_snapshots.rs
+source: premise-core/tests/plan_snapshots.rs
 expression: plan
 ---
 {
@@ -12,6 +12,24 @@ expression: plan
       {
         "adapter": "adapters/post_processing.yaml",
         "index": 1
+      }
+    ]
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "adapters/text_enhancement.yaml",
+        "index": 0
+      },
+      {
+        "id": "adapters/post_processing.yaml",
+        "index": 1
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1
       }
     ]
   },

@@ -1,0 +1,21 @@
+---
+source: premise-core/tests/notes_snapshots.rs
+expression: normalize_facts(facts)
+---
+[
+  {
+    "type": "relationship",
+    "source": "imported",
+    "entities": [
+      "Hero",
+      "Mentor"
+    ],
+    "category": "co-occurrence",
+    "fact": "Hero and Mentor appear together in cel 'Cel One'",
+    "evidence": [
+      "test.prem:12"
+    ],
+    "confidence": 0.7,
+    "status": "developing"
+  }
+]

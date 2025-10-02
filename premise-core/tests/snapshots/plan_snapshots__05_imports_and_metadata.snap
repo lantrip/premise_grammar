@@ -1,5 +1,5 @@
 ---
-source: tests/plan_snapshots.rs
+source: premise-core/tests/plan_snapshots.rs
 expression: plan
 ---
 {
@@ -10,6 +10,15 @@ expression: plan
         "index": 0
       }
     ]
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "custom_adapter.yaml",
+        "index": 0
+      }
+    ],
+    "edges": []
   },
   "diagnostics": []
 }

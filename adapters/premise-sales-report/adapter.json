@@ -1,0 +1,28 @@
+{
+  "id": "premise-sales-report",
+  "name": "Sales Call Report Generator",
+  "version": "1.0.0",
+  "description": "Analyzes sales call transcripts and generates comprehensive reports with action items, sentiment analysis, and participant insights",
+  "domains": [
+    "sales",
+    "business"
+  ],
+  "capabilities": {
+    "generates_artifacts": true,
+    "uses_notes_context": true,
+    "contributes_facts": true,
+    "output_formats": [
+      "pdf",
+      "html",
+      "markdown"
+    ],
+    "entity_types": [
+      "participant",
+      "company",
+      "product"
+    ]
+  },
+  "entry_point": "./sales-analyzer.js",
+  "author": "Premise Contributors",
+  "repository": "https://github.com/premise/adapters"
+}

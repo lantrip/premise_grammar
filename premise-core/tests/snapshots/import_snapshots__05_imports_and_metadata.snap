@@ -1,5 +1,5 @@
 ---
-source: tests/import_snapshots.rs
+source: premise-core/tests/import_snapshots.rs
 expression: analysis
 ---
 {

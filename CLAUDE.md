@@ -249,6 +249,38 @@ vsce package
 vsce publish
 ```
 
+## Story Notes System
+
+Structured story knowledge base stored in `.premise-notes/` using JSONL format for reusability, version control, and external tool integration.
+
+**Architecture**: Notes system is implemented in Rust (`premise-core/src/notes/`) and exposed via CLI. VSCode extension calls CLI for operations.
+
+**Quick Start (CLI)**:
+```bash
+# Initialize and extract
+premise notes init --title "My Story"
+premise notes extract-facts story/chapter1.prem
+premise notes extract-timeline story/chapter1.prem
+
+# Query
+premise notes query --entity "Hero"
+grep '"Maya Chen"' .premise-notes/facts.jsonl
+jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
+```
+
+**Quick Start (VSCode)**:
+- Command: **Premise: Extract Facts to Notes…**
+- Internally calls `premise notes` CLI commands
+
+**Files** (JSONL = one JSON per line):
+- `beats.jsonl` - Story beats with entity refs
+- `facts.jsonl` - Traits, relationships, knowledge, events, state
+- `timeline.jsonl`, `consistency.jsonl`, `index.json`, `metadata.json`
+
+**CLI Commands**: `premise notes init|export-beats|extract-facts|extract-timeline|query|rebuild-index|status`
+
+**Full docs**: [NOTES_SYSTEM.md](./NOTES_SYSTEM.md) | **Schema**: `premise-core/src/notes/schema.rs` (Rust, canonical)
+
 ## AI Integration Notes
 
 - LSP helpers via `workspace/executeCommand`:

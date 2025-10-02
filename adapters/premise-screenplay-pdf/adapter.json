@@ -1,0 +1,26 @@
+{
+  "id": "premise-screenplay-pdf",
+  "name": "Screenplay PDF Generator",
+  "version": "1.0.0",
+  "description": "Generates professional screenplay PDFs in industry-standard format from Premise narrative files",
+  "domains": [
+    "narrative",
+    "screenplay"
+  ],
+  "capabilities": {
+    "generates_artifacts": true,
+    "uses_notes_context": true,
+    "contributes_facts": false,
+    "output_formats": [
+      "pdf",
+      "fdx"
+    ],
+    "entity_types": [
+      "character",
+      "location"
+    ]
+  },
+  "entry_point": "./screenplay-generator.js",
+  "author": "Premise Contributors",
+  "repository": "https://github.com/premise/adapters"
+}

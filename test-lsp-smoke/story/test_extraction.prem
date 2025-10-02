@@ -1,0 +1,41 @@
+TITLE: Test Story
+WORLD: Fantasy
+
+@characters {
+  - Hero: A brave warrior with a mysterious past
+  - Mentor: An wise old sage who guides the Hero
+  - Villain: A dark sorcerer seeking ultimate power
+}
+
+= Act One
+
+== The Beginning
+
+{Hero} meets {Mentor} in the tavern.
+
+{Hero}
+  I need your help. The {Villain} has taken my family.
+
+{Mentor}
+  (thoughtfully)
+  This is a dangerous path you're choosing, young {Hero}.
+
+/// {Hero} decides to embark on a quest to defeat {Villain}
+
+=== Training Montage
+
+{Mentor} trains {Hero} in ancient combat techniques.
+
+{Hero} and {Mentor} practice daily, forming a strong bond.
+
+== The Confrontation
+
+{Hero} faces {Villain} in the final battle.
+
+{Villain}
+  You cannot defeat me, {Hero}!
+
+{Hero}
+  I have to try, for my family!
+
+/// {Hero} defeats {Villain} using the skills learned from {Mentor}

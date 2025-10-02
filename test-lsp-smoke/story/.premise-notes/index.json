@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "story_root": ".",
+  "last_updated": "2025-10-01T19:41:45.121779+00:00",
+  "stats": {
+    "beats": 0,
+    "facts": 18,
+    "timeline_events": 0,
+    "consistency_entries": 0,
+    "entities_tracked": 8
+  },
+  "entity_index": {
+    "Burned District": [
+      "fact_199a147b1ab852ad977",
+      "fact_199a147b1abceb4e970",
+      "fact_199a147b1ab24c39a74",
+      "fact_199a147b1abd0e7d761"
+    ],
+    "Hero": [
+      "fact_199a0a3e0d178dcbd6f",
+      "fact_199a0a3e0da5cda72cc",
+      "fact_199a0a3e0daed907d24",
+      "fact_199a0a3e0db39b3780",
+      "fact_199a0a3e0e0fc91ae6a"
+    ],
+    "House": [
+      "fact_199a147b1ab852ad977",
+      "fact_199a147b1ab6dfc4e23",
+      "fact_199a147b1abf315c1bc",
+      "fact_199a147b1ab22674f1a"
+    ],
+    "Keeper Aldrich": [
+      "fact_199a147b1abceb4e970",
+      "fact_199a147b1ab6dfc4e23",
+      "fact_199a147b1abc36a7ab4",
+      "fact_199a147b1abdd6d1767"
+    ],
+    "Last Library - Memory Garden": [
+      "fact_199a147b1ab24c39a74",
+      "fact_199a147b1abf315c1bc",
+      "fact_199a147b1abc36a7ab4",
+      "fact_199a147b1ab2cabff8f"
+    ],
+    "Maya Chen": [
+      "fact_199a147b1abd0e7d761",
+      "fact_199a147b1ab22674f1a",
+      "fact_199a147b1abdd6d1767",
+      "fact_199a147b1ab2cabff8f"
+    ],
+    "Mentor": [
+      "fact_199a0a3e0d145e0c0a8",
+      "fact_199a0a3e0daed907d24",
+      "fact_199a0a3e0da89ec2b98",
+      "fact_199a0a3e0db39b3780"
+    ],
+    "Villain": [
+      "fact_199a0a3e0d1f97f2bcb",
+      "fact_199a0a3e0da5cda72cc",
+      "fact_199a0a3e0da89ec2b98",
+      "fact_199a0a3e0e0fc91ae6a"
+    ]
+  },
+  "file_index": {
+    "scene4.prem": [
+      "fact_199a147b1ab852ad977",
+      "fact_199a147b1abceb4e970",
+      "fact_199a147b1ab24c39a74",
+      "fact_199a147b1abd0e7d761",
+      "fact_199a147b1ab6dfc4e23",
+      "fact_199a147b1abf315c1bc",
+      "fact_199a147b1ab22674f1a",
+      "fact_199a147b1abc36a7ab4",
+      "fact_199a147b1abdd6d1767",
+      "fact_199a147b1ab2cabff8f"
+    ],
+    "test_extraction.prem": [
+      "fact_199a0a3e0d178dcbd6f",
+      "fact_199a0a3e0d145e0c0a8",
+      "fact_199a0a3e0d1f97f2bcb",
+      "fact_199a0a3e0da5cda72cc",
+      "fact_199a0a3e0daed907d24",
+      "fact_199a0a3e0da89ec2b98",
+      "fact_199a0a3e0db39b3780",
+      "fact_199a0a3e0e0fc91ae6a"
+    ]
+  }
+}

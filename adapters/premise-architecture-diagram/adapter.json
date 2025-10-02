@@ -1,0 +1,31 @@
+{
+  "id": "premise-architecture-diagram",
+  "name": "Software Architecture Diagram Generator",
+  "version": "1.0.0",
+  "description": "Generates interactive architecture diagrams and documentation from Premise architecture files, supporting C4 model, UML, and custom formats",
+  "domains": [
+    "architecture",
+    "software",
+    "engineering"
+  ],
+  "capabilities": {
+    "generates_artifacts": true,
+    "uses_notes_context": true,
+    "contributes_facts": true,
+    "output_formats": [
+      "svg",
+      "plantuml",
+      "mermaid",
+      "html"
+    ],
+    "entity_types": [
+      "component",
+      "service",
+      "database",
+      "api"
+    ]
+  },
+  "entry_point": "./arch-diagram.js",
+  "author": "Premise Contributors",
+  "repository": "https://github.com/premise/adapters"
+}

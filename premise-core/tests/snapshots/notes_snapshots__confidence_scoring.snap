@@ -1,0 +1,32 @@
+---
+source: premise-core/tests/notes_snapshots.rs
+expression: normalize_facts(all_facts)
+---
+[
+  {
+    "type": "trait",
+    "source": "imported",
+    "entity": "Hero",
+    "category": "description",
+    "fact": "Defined trait",
+    "evidence": [
+      "test.prem:2"
+    ],
+    "confidence": 1.0
+  },
+  {
+    "type": "relationship",
+    "source": "imported",
+    "entities": [
+      "Hero",
+      "Mentor"
+    ],
+    "category": "co-occurrence",
+    "fact": "Hero and Mentor appear together in act 'Act One'",
+    "evidence": [
+      "test.prem:7"
+    ],
+    "confidence": 0.7,
+    "status": "developing"
+  }
+]

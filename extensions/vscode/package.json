@@ -86,6 +86,14 @@
       {
         "command": "premise.updateEntityDescriptions",
         "title": "Premise: Update Entity Descriptions…"
+      },
+      {
+        "command": "premise.extractFacts",
+        "title": "Premise: Extract Facts to Notes…"
+      },
+      {
+        "command": "premise.exportBeats",
+        "title": "Premise: Export Beats to Notes"
       }
     ],
     "configuration": {
@@ -178,6 +186,30 @@
           ],
           "default": "descriptions-only",
           "markdownDescription": "Scope of entity updates: 'descriptions-only' (basic descriptions), 'relationships' (include interactions), 'comprehensive' (full analysis)."
+        },
+        "premise.notes.enableTracking": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Automatically export beats to .premise-notes/ after generation."
+        },
+        "premise.notes.factCategories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["trait", "relationship", "knowledge", "event", "state"]
+          },
+          "default": ["trait", "relationship", "knowledge", "event"],
+          "markdownDescription": "Which fact types to extract: trait, relationship, knowledge, event, state."
+        },
+        "premise.notes.storageLocation": {
+          "type": "string",
+          "default": ".premise-notes",
+          "markdownDescription": "Directory name for notes storage (relative to story root)."
+        },
+        "premise.notes.lspIntegration": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Enable LSP integration for notes (diagnostics, hovers, code lenses). Experimental."
         }
       }
     },
