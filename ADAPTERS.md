@@ -21,6 +21,7 @@ Meeting         @attendee Sarah      meeting/topic/decision       Notes
 ```
 
 All domains share:
+
 - **Entities**: Definitions with references `{Entity}`
 - **Hierarchy**: Act/Scene/Cel (or mapped equivalents)
 - **Content Types**: Beats (`///`), treatment (`//`), narrative (`/`)
@@ -85,6 +86,7 @@ premise adapters show premise-screenplay-pdf
 ```
 
 **Output Example**:
+
 ```
 Available adapters:
 
@@ -98,6 +100,7 @@ Available adapters:
 ### Adapter Search Paths
 
 Adapters are discovered from:
+
 1. `./adapters` - Current directory
 2. `~/.premise/adapters` - User home directory
 3. `/usr/local/share/premise/adapters` - System-wide (Unix)
@@ -110,6 +113,7 @@ Adapters use **Domain Mappers** to translate Premise concepts into domain-specif
 ### Built-in Mappers
 
 #### Narrative Domain (1:1 mapping)
+
 ```
 @character Hero     → character
 @location Tavern    → location
@@ -119,6 +123,7 @@ cel                 → cel
 ```
 
 #### Sales Domain
+
 ```
 @character John     → participant
 @location Acme      → company
@@ -128,6 +133,7 @@ cel                 → moment
 ```
 
 #### Architecture Domain
+
 ```
 @character Auth     → component
 @location Backend   → service
@@ -218,6 +224,7 @@ let facts = FactQuery::new()
 ### Query Results
 
 All queries return `Vec<Fact>` or `Vec<Beat>` with:
+
 - **Evidence**: File:line references for verification
 - **Confidence**: 0.0-1.0 score (1.0 = explicit, 0.7 = inferred)
 - **Section Context**: Act/scene/cel where fact was found
@@ -235,6 +242,7 @@ cd adapters/my-adapter
 ### 2. Create Manifest
 
 **`adapter.json`**:
+
 ```json
 {
   "id": "my-adapter",
@@ -256,12 +264,13 @@ cd adapters/my-adapter
 ### 3. Implement Entry Point
 
 **`generate.js`** (Node.js example):
+
 ```javascript
 #!/usr/bin/env node
 
 // Read Premise IR from stdin
-const fs = require('fs');
-const input = fs.readFileSync(0, 'utf-8');
+const fs = require("fs");
+const input = fs.readFileSync(0, "utf-8");
 const ir = JSON.parse(input);
 
 // Access story structure
@@ -308,6 +317,7 @@ premise run premise-architecture-diagram arch.prem -o diagram.svg
 ```
 
 **Execution flow**:
+
 1. Parse `.prem` file to IR (JSON)
 2. Pass IR to adapter via stdin
 3. Provide notes context via environment/API
@@ -324,6 +334,7 @@ premise run premise-architecture-diagram arch.prem -o diagram.svg
 ```
 
 **Benefits**:
+
 - **Trust**: Know the source of generated content
 - **Rollback**: Remove all facts from a specific adapter
 - **Reproducibility**: Re-run specific adapter versions
@@ -334,6 +345,7 @@ premise run premise-architecture-diagram arch.prem -o diagram.svg
 ### Screenplay Generation (Narrative Domain)
 
 **Input** (`story.prem`):
+
 ```premise
 @character MAYA CHEN: A determined investigator
 
@@ -354,6 +366,7 @@ MAYA CHEN
 ### Sales Call Analysis (Sales Domain)
 
 **Input** (`call-transcript.prem`):
+
 ```premise
 @participant Sarah (Sales Rep): Account Executive at SalesCorp
 @participant John (Prospect): CTO at TechCorp
@@ -374,6 +387,7 @@ MAYA CHEN
 
 **Adapter**: `premise-sales-report`
 **Output**: Call summary with:
+
 - Participant insights
 - Action items
 - Objection tracking
@@ -383,6 +397,7 @@ MAYA CHEN
 ### Architecture Documentation (Software Domain)
 
 **Input** (`system-design.prem`):
+
 ```premise
 @component AuthService: JWT-based authentication service
 @component UserDB: PostgreSQL user database
@@ -403,6 +418,7 @@ MAYA CHEN
 
 **Adapter**: `premise-architecture-diagram`
 **Output**:
+
 - C4 diagrams (SVG)
 - PlantUML source
 - Mermaid diagrams
@@ -435,6 +451,7 @@ Use `"*"` to support all domains:
 ### Adapter Composition
 
 Chain adapters together:
+
 ```bash
 # Future feature
 premise run analyzer input.prem | premise run visualizer -o output.html
@@ -453,6 +470,7 @@ Adapters can write facts back to notes:
 ```
 
 Example contributions:
+
 - **Screenplay adapter**: Extract dialogue patterns, scene lengths
 - **Sales adapter**: Detect objections, commitment signals
 - **Architecture adapter**: Identify dependencies, complexity metrics
@@ -460,26 +478,31 @@ Example contributions:
 ## Best Practices
 
 ### 1. Design for Reusability
+
 - Use domain mappings for flexibility
 - Support multiple output formats
 - Make configuration external (not hardcoded)
 
 ### 2. Leverage Notes Context
+
 - Query facts before generating
 - Avoid contradicting existing knowledge
 - Use confidence scores to prioritize
 
 ### 3. Provide Good Metadata
+
 - Write clear descriptions
 - List all supported entity types
 - Document output formats
 
 ### 4. Handle Errors Gracefully
+
 - Validate input IR
 - Provide helpful error messages
 - Fall back to safe defaults
 
 ### 5. Version Carefully
+
 - Use semantic versioning
 - Document breaking changes
 - Test with various Premise versions
@@ -491,6 +514,7 @@ Example contributions:
 **Problem**: `premise adapters list` doesn't show your adapter
 
 **Solutions**:
+
 1. Check manifest file is named `adapter.json` or `premise-adapter.json`
 2. Verify adapter is in a search path
 3. Ensure JSON is valid: `cat adapter.json | jq`
@@ -501,6 +525,7 @@ Example contributions:
 **Problem**: Adapter discovered but shows errors
 
 **Solutions**:
+
 1. Validate required fields: `id`, `name`, `version`, `domains`, `capabilities`, `entry_point`
 2. Check `capabilities` has all required boolean fields
 3. Ensure `domains` is an array of strings
@@ -510,6 +535,7 @@ Example contributions:
 **Problem**: Adapter queries return no facts
 
 **Solutions**:
+
 1. Verify notes exist: `premise notes status .`
 2. Run extraction: `premise notes extract-facts file.prem`
 3. Rebuild index: `premise notes rebuild-index .`
@@ -552,7 +578,6 @@ premise --format json adapters list
 
 ## See Also
 
-- [AI_ROADMAP.md](./AI_ROADMAP.md) - Adapter framework status and roadmap
-- [NOTES_SYSTEM.md](./NOTES_SYSTEM.md) - Notes system documentation
+- [AI_ROADMAP.md](./AI_ROADMAP.md) - Consolidated roadmap and notes reference
 - [premise-core/src/adapters/](./premise-core/src/adapters/) - Implementation source
 - [adapters/](./adapters/) - Example adapter manifests

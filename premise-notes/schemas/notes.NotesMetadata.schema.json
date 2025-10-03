@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NotesMetadata",
+  "type": "object",
+  "required": [
+    "config",
+    "created",
+    "modified",
+    "schema_version"
+  ],
+  "properties": {
+    "config": {
+      "$ref": "#/definitions/NotesConfig"
+    },
+    "created": {
+      "type": "string"
+    },
+    "modified": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "definitions": {
+    "NotesConfig": {
+      "type": "object",
+      "required": [
+        "auto_export",
+        "fact_categories",
+        "lsp_integration"
+      ],
+      "properties": {
+        "auto_export": {
+          "type": "boolean"
+        },
+        "fact_categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lsp_integration": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

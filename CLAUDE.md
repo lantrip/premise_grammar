@@ -256,6 +256,7 @@ Structured story knowledge base stored in `.premise-notes/` using JSONL format f
 **Architecture**: Notes system is implemented in Rust (`premise-core/src/notes/`) and exposed via CLI. VSCode extension calls CLI for operations.
 
 **Quick Start (CLI)**:
+
 ```bash
 # Initialize and extract
 premise notes init --title "My Story"
@@ -269,17 +270,19 @@ jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
 ```
 
 **Quick Start (VSCode)**:
+
 - Command: **Premise: Extract Facts to Notes…**
 - Internally calls `premise notes` CLI commands
 
 **Files** (JSONL = one JSON per line):
+
 - `beats.jsonl` - Story beats with entity refs
 - `facts.jsonl` - Traits, relationships, knowledge, events, state
 - `timeline.jsonl`, `consistency.jsonl`, `index.json`, `metadata.json`
 
 **CLI Commands**: `premise notes init|export-beats|extract-facts|extract-timeline|query|rebuild-index|status`
 
-**Full docs**: [NOTES_SYSTEM.md](./NOTES_SYSTEM.md) | **Schema**: `premise-core/src/notes/schema.rs` (Rust, canonical)
+**Reference**: See `AI_ROADMAP.md` for the consolidated notes system and AI roadmap. Schema remains canonical in `premise-core/src/notes/schema.rs`.
 
 ## AI Integration Notes
 

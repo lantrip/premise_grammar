@@ -1,0 +1,195 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fact",
+  "type": "object",
+  "required": [
+    "added",
+    "evidence",
+    "fact",
+    "id",
+    "source",
+    "type"
+  ],
+  "properties": {
+    "added": {
+      "type": "string"
+    },
+    "category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "format": "double"
+    },
+    "entities": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "entity": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fact": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "metadata": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/FactMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provenance": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Provenance"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "$ref": "#/definitions/FactSource"
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timeline": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Timeline"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "type": {
+      "$ref": "#/definitions/FactType"
+    }
+  },
+  "definitions": {
+    "FactMetadata": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "FactSource": {
+      "type": "string",
+      "enum": [
+        "llm-generated",
+        "manual",
+        "imported"
+      ]
+    },
+    "FactType": {
+      "type": "string",
+      "enum": [
+        "trait",
+        "relationship",
+        "knowledge",
+        "event",
+        "state"
+      ]
+    },
+    "Provenance": {
+      "description": "Per-record provenance details for transparency and repeatability",
+      "type": "object",
+      "properties": {
+        "aliases_applied": {
+          "description": "Mapping of alias -> canonical applied during normalization",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "normalization_steps": {
+          "description": "Freeform step names for normalization pipeline",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "normalized_with_aliases": {
+          "description": "Aliases considered during normalization (canonical names)",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Timeline": {
+      "type": "string",
+      "enum": [
+        "past",
+        "present",
+        "future"
+      ]
+    }
+  }
+}

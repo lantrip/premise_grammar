@@ -1,4 +1,4 @@
-use super::schema::*;
+use crate::notes::*;
 use regex::Regex;
 use std::collections::HashSet;
 use tree_sitter::Node;
@@ -46,7 +46,7 @@ fn walk_for_beats(
             if !text.is_empty() {
                 let entities = extract_entity_references(&text);
                 let beat = Beat {
-                    id: super::io::generate_id("beat_"),
+                    id: crate::notes::generate_id("beat_"),
                     text,
                     file: file_path.to_string(),
                     line: Some(node.start_position().row + 1),
@@ -120,7 +120,7 @@ fn walk_for_entities(node: &Node, source: &str, file_path: &str, facts: &mut Vec
                     if !entity_name.is_empty() && !description.is_empty() {
                         let fact = Fact {
                             fact_type: FactType::Trait,
-                            id: super::io::generate_id("fact_"),
+                            id: crate::notes::generate_id("fact_"),
                             entity: Some(entity_name.clone()),
                             entities: None,
                             category: Some("description".to_string()),
@@ -148,7 +148,7 @@ fn walk_for_entities(node: &Node, source: &str, file_path: &str, facts: &mut Vec
                     if !description.is_empty() {
                         let fact = Fact {
                             fact_type: FactType::Trait,
-                            id: super::io::generate_id("fact_"),
+                            id: crate::notes::generate_id("fact_"),
                             entity: Some(entity_name.clone()),
                             entities: None,
                             category: Some("description".to_string()),
@@ -285,7 +285,7 @@ fn generate_cooccurrence_facts(
 
             let fact = Fact {
                 fact_type: FactType::Relationship,
-                id: super::io::generate_id("fact_"),
+                id: crate::notes::generate_id("fact_"),
                 entity: None,
                 entities: Some(vec![entities[i].clone(), entities[j].clone()]),
                 category: Some("co-occurrence".to_string()),

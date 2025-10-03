@@ -49,7 +49,10 @@ async function execPremiseCli(args: string[], cwd?: string): Promise<string> {
   const cli = findPremiseCli();
   const command = `${cli} ${args.join(" ")}`;
   try {
-    const { stdout } = await execAsync(command, { cwd, maxBuffer: 10 * 1024 * 1024 });
+    const { stdout } = await execAsync(command, {
+      cwd,
+      maxBuffer: 10 * 1024 * 1024,
+    });
     return stdout;
   } catch (err: any) {
     throw new Error(`CLI command failed: ${command}\n${err.message}`);
@@ -59,7 +62,10 @@ async function execPremiseCli(args: string[], cwd?: string): Promise<string> {
 /**
  * Initialize notes directory
  */
-async function initializeNotes(storyRoot: string, title?: string): Promise<void> {
+async function initializeNotes(
+  storyRoot: string,
+  title?: string
+): Promise<void> {
   const args = ["notes", "init"];
   if (title) {
     args.push("--title", title);
@@ -70,9 +76,14 @@ async function initializeNotes(storyRoot: string, title?: string): Promise<void>
 /**
  * Get notes status
  */
-async function getNotesStatus(storyRoot: string): Promise<{ exists: boolean; initialized: boolean }> {
+async function getNotesStatus(
+  storyRoot: string
+): Promise<{ exists: boolean; initialized: boolean }> {
   try {
-    const output = await execPremiseCli(["--format", "json", "notes", "status"], storyRoot);
+    const output = await execPremiseCli(
+      ["--format", "json", "notes", "status"],
+      storyRoot
+    );
     return JSON.parse(output);
   } catch {
     return { exists: false, initialized: false };
@@ -97,7 +108,10 @@ async function exportBeats(filePath: string, storyRoot: string): Promise<void> {
 /**
  * Extract facts from a file (structural only, no AI)
  */
-async function extractFactsStructural(filePath: string, storyRoot: string): Promise<void> {
+async function extractFactsStructural(
+  filePath: string,
+  storyRoot: string
+): Promise<void> {
   const relativePath = path.relative(storyRoot, filePath);
   await execPremiseCli(["notes", "extract-facts", relativePath], storyRoot);
 }
@@ -1154,7 +1168,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
           // Get entity update scope from configuration
           const cfg_ai = vscode.workspace.getConfiguration("premise.ai");
-          const entityUpdateScope = cfg_ai.get<string>("entityUpdateScope", "descriptions-only");
+          const entityUpdateScope = cfg_ai.get<string>(
+            "entityUpdateScope",
+            "descriptions-only"
+          );
 
           const systemFile = getEntitySystemPrompt(entityUpdateScope, true);
           const schemaFile = getEntitySchemaPrompt(entityUpdateScope);
@@ -1241,168 +1258,162 @@ export async function activate(context: vscode.ExtensionContext) {
       );
 
       // Command: Extract facts from story
-      await registerCommandOnce(
-        context,
-        "premise.extractFacts",
-        async () => {
-          const editor = vscode.window.activeTextEditor;
-          if (!editor) return;
-          const doc = editor.document;
-          if (doc.languageId !== "premise") return;
+      await registerCommandOnce(context, "premise.extractFacts", async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+        const doc = editor.document;
+        if (doc.languageId !== "premise") return;
 
-          const scope = await pickScope();
-          if (!scope) return;
+        const scope = await pickScope();
+        if (!scope) return;
 
-          // Get story root for notes directory
-          const storyRoot = await getStoryRootPathForUri(doc.uri);
-          if (!storyRoot) {
-            vscode.window.showErrorMessage("Could not determine story root.");
-            return;
-          }
-
-          // Check if notes are initialized
-          const notesStatus = await getNotesStatus(storyRoot);
-          if (!notesStatus.initialized) {
-            const choice = await vscode.window.showInformationMessage(
-              "Notes system not initialized. Initialize now?",
-              "Initialize",
-              "Cancel"
-            );
-            if (choice !== "Initialize") return;
-            await initializeNotes(storyRoot);
-          }
-
-          const cfg = vscode.workspace.getConfiguration("premise");
-          const provider = cfg.get<string>("ai.provider", "openrouter");
-          const model = cfg.get<string>("ai.model", "openai/gpt-4o-mini");
-          const endpoint = cfg.get<string>(
-            "ai.endpoint",
-            "https://openrouter.ai/api/v1/chat/completions"
-          );
-          const apiKey =
-            cfg.get<string>("ai.apiKey") ||
-            process.env.OPENROUTER_API_KEY ||
-            "";
-          if (provider !== "openrouter") {
-            vscode.window.showWarningMessage(
-              "Only OpenRouter is supported in this preview."
-            );
-            return;
-          }
-          if (!apiKey) {
-            vscode.window.showErrorMessage(
-              "Set OpenRouter API key in settings (premise.ai.apiKey) or OPENROUTER_API_KEY."
-            );
-            return;
-          }
-
-          const entityNames = await listEntityNamesForUri(doc.uri).catch(
-            () => [] as string[]
-          );
-          const structure = await collectStructureForUris([
-            doc.uri.toString(),
-          ]).catch(() => ({ sections: [] }));
-
-          // Get fact categories from settings
-          const cfg_notes = vscode.workspace.getConfiguration("premise.notes");
-          const factCategories = cfg_notes.get<string[]>(
-            "factCategories",
-            ["trait", "relationship", "knowledge", "event"]
-          );
-
-          const system = getFactExtractionSystemPrompt(factCategories);
-          const schema = getFactExtractionSchemaPrompt(factCategories);
-
-          let textToProcess = doc.getText();
-          let extra = "";
-
-          if (scope === "uncommitted-file") {
-            const ranges = await getUncommittedChangedRangesForFile(
-              doc.uri.fsPath
-            );
-            extra = `\\nChangedRanges: ${JSON.stringify(ranges)}`;
-          }
-
-          const user = `File: ${doc.uri.fsPath}\\nEntities: ${JSON.stringify(
-            entityNames
-          )}\\nStructure: ${JSON.stringify(
-            structure
-          )}${extra}\\n---\\n${textToProcess}\\n---\\n${schema}`;
-
-          try {
-            const content = await openRouterChat({
-              endpoint,
-              apiKey,
-              model,
-              messages: [
-                { role: "system", content: system },
-                { role: "user", content: user },
-              ],
-            });
-
-            const extractedFacts = extractFacts(content, doc.uri.fsPath, storyRoot);
-            if (extractedFacts.length === 0) {
-              vscode.window.showInformationMessage("No facts extracted.");
-              return;
-            }
-
-            // Append facts to notes
-            await appendFacts(storyRoot, extractedFacts);
-            await rebuildIndex(storyRoot);
-
-            vscode.window.showInformationMessage(
-              `Extracted ${extractedFacts.length} fact(s) to .premise-notes/facts.jsonl`
-            );
-          } catch (err) {
-            vscode.window.showErrorMessage(
-              `Extract facts failed: ${String(err)}`
-            );
-          }
+        // Get story root for notes directory
+        const storyRoot = await getStoryRootPathForUri(doc.uri);
+        if (!storyRoot) {
+          vscode.window.showErrorMessage("Could not determine story root.");
+          return;
         }
-      );
+
+        // Check if notes are initialized
+        const notesStatus = await getNotesStatus(storyRoot);
+        if (!notesStatus.initialized) {
+          const choice = await vscode.window.showInformationMessage(
+            "Notes system not initialized. Initialize now?",
+            "Initialize",
+            "Cancel"
+          );
+          if (choice !== "Initialize") return;
+          await initializeNotes(storyRoot);
+        }
+
+        const cfg = vscode.workspace.getConfiguration("premise");
+        const provider = cfg.get<string>("ai.provider", "openrouter");
+        const model = cfg.get<string>("ai.model", "openai/gpt-4o-mini");
+        const endpoint = cfg.get<string>(
+          "ai.endpoint",
+          "https://openrouter.ai/api/v1/chat/completions"
+        );
+        const apiKey =
+          cfg.get<string>("ai.apiKey") || process.env.OPENROUTER_API_KEY || "";
+        if (provider !== "openrouter") {
+          vscode.window.showWarningMessage(
+            "Only OpenRouter is supported in this preview."
+          );
+          return;
+        }
+        if (!apiKey) {
+          vscode.window.showErrorMessage(
+            "Set OpenRouter API key in settings (premise.ai.apiKey) or OPENROUTER_API_KEY."
+          );
+          return;
+        }
+
+        const entityNames = await listEntityNamesForUri(doc.uri).catch(
+          () => [] as string[]
+        );
+        const structure = await collectStructureForUris([
+          doc.uri.toString(),
+        ]).catch(() => ({ sections: [] }));
+
+        // Get fact categories from settings
+        const cfg_notes = vscode.workspace.getConfiguration("premise.notes");
+        const factCategories = cfg_notes.get<string[]>("factCategories", [
+          "trait",
+          "relationship",
+          "knowledge",
+          "event",
+        ]);
+
+        const system = getFactExtractionSystemPrompt(factCategories);
+        const schema = getFactExtractionSchemaPrompt(factCategories);
+
+        let textToProcess = doc.getText();
+        let extra = "";
+
+        if (scope === "uncommitted-file") {
+          const ranges = await getUncommittedChangedRangesForFile(
+            doc.uri.fsPath
+          );
+          extra = `\\nChangedRanges: ${JSON.stringify(ranges)}`;
+        }
+
+        const user = `File: ${doc.uri.fsPath}\\nEntities: ${JSON.stringify(
+          entityNames
+        )}\\nStructure: ${JSON.stringify(
+          structure
+        )}${extra}\\n---\\n${textToProcess}\\n---\\n${schema}`;
+
+        try {
+          const content = await openRouterChat({
+            endpoint,
+            apiKey,
+            model,
+            messages: [
+              { role: "system", content: system },
+              { role: "user", content: user },
+            ],
+          });
+
+          const extractedFacts = extractFacts(
+            content,
+            doc.uri.fsPath,
+            storyRoot
+          );
+          if (extractedFacts.length === 0) {
+            vscode.window.showInformationMessage("No facts extracted.");
+            return;
+          }
+
+          // Append facts to notes
+          await appendFacts(storyRoot, extractedFacts);
+          await rebuildIndex(storyRoot);
+
+          vscode.window.showInformationMessage(
+            `Extracted ${extractedFacts.length} fact(s) to .premise-notes/facts.jsonl`
+          );
+        } catch (err) {
+          vscode.window.showErrorMessage(
+            `Extract facts failed: ${String(err)}`
+          );
+        }
+      });
 
       // Command: Export current beats to notes
-      await registerCommandOnce(
-        context,
-        "premise.exportBeats",
-        async () => {
-          const editor = vscode.window.activeTextEditor;
-          if (!editor) return;
-          const doc = editor.document;
-          if (doc.languageId !== "premise") return;
+      await registerCommandOnce(context, "premise.exportBeats", async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+        const doc = editor.document;
+        if (doc.languageId !== "premise") return;
 
-          const storyRoot = await getStoryRootPathForUri(doc.uri);
-          if (!storyRoot) {
-            vscode.window.showErrorMessage("Could not determine story root.");
-            return;
-          }
-
-          // Check if notes are initialized
-          const notesStatus = await getNotesStatus(storyRoot);
-          if (!notesStatus.initialized) {
-            const choice = await vscode.window.showInformationMessage(
-              "Notes system not initialized. Initialize now?",
-              "Initialize",
-              "Cancel"
-            );
-            if (choice !== "Initialize") return;
-            await initializeNotes(storyRoot);
-          }
-
-          // Export beats via CLI
-          try {
-            await exportBeats(doc.uri.fsPath, storyRoot);
-            await rebuildIndex(storyRoot);
-            vscode.window.showInformationMessage(
-              "Beats exported to .premise-notes/beats.jsonl"
-            );
-          } catch (err) {
-            vscode.window.showErrorMessage(
-              `Export beats failed: ${String(err)}`
-            );
-          }
+        const storyRoot = await getStoryRootPathForUri(doc.uri);
+        if (!storyRoot) {
+          vscode.window.showErrorMessage("Could not determine story root.");
+          return;
         }
-      );
+
+        // Check if notes are initialized
+        const notesStatus = await getNotesStatus(storyRoot);
+        if (!notesStatus.initialized) {
+          const choice = await vscode.window.showInformationMessage(
+            "Notes system not initialized. Initialize now?",
+            "Initialize",
+            "Cancel"
+          );
+          if (choice !== "Initialize") return;
+          await initializeNotes(storyRoot);
+        }
+
+        // Export beats via CLI
+        try {
+          await exportBeats(doc.uri.fsPath, storyRoot);
+          await rebuildIndex(storyRoot);
+          vscode.window.showInformationMessage(
+            "Beats exported to .premise-notes/beats.jsonl"
+          );
+        } catch (err) {
+          vscode.window.showErrorMessage(`Export beats failed: ${String(err)}`);
+        }
+      });
     } else {
       vscode.window.showWarningMessage(
         "Premise LSP server binary not found. Syntax highlighting will still work."
@@ -1554,28 +1565,34 @@ async function pickScope(): Promise<Scope | undefined> {
 
 type BeatGenerationMode = "add-new" | "update-fix" | "recreate-all";
 
-async function pickBeatGenerationMode(): Promise<BeatGenerationMode | undefined> {
+async function pickBeatGenerationMode(): Promise<
+  BeatGenerationMode | undefined
+> {
   const cfg = vscode.workspace.getConfiguration("premise.ai");
-  const defaultMode = cfg.get<BeatGenerationMode>("beatGenerationMode", "add-new");
+  const defaultMode = cfg.get<BeatGenerationMode>(
+    "beatGenerationMode",
+    "add-new"
+  );
 
   const items = [
     {
       label: "Add New Beats",
       val: "add-new" as BeatGenerationMode,
-      detail: "Generate new beats without changing existing ones (default behavior)",
-      picked: defaultMode === "add-new"
+      detail:
+        "Generate new beats without changing existing ones (default behavior)",
+      picked: defaultMode === "add-new",
     },
     {
       label: "Update/Fix Beats",
       val: "update-fix" as BeatGenerationMode,
       detail: "Analyze and improve existing beats based on current narrative",
-      picked: defaultMode === "update-fix"
+      picked: defaultMode === "update-fix",
     },
     {
       label: "Recreate All Beats",
       val: "recreate-all" as BeatGenerationMode,
       detail: "Replace all existing beats with completely new ones",
-      picked: defaultMode === "recreate-all"
+      picked: defaultMode === "recreate-all",
     },
   ];
 
@@ -1586,7 +1603,10 @@ async function pickBeatGenerationMode(): Promise<BeatGenerationMode | undefined>
   return pick?.val;
 }
 
-function getBeatSystemPrompt(mode: BeatGenerationMode, qualityLevel: string): string {
+function getBeatSystemPrompt(
+  mode: BeatGenerationMode,
+  qualityLevel: string
+): string {
   const basePrompt = `You are a story analyst creating beats for a Premise story. Beats are MAJOR STORY MILESTONES, not every detail.
 
 IMPORTANT: Generate 3-8 beats maximum per section. Focus on KEY TURNING POINTS only.
@@ -1619,10 +1639,16 @@ NEVER copy text. Summarize ONLY the most important story events. Return ONLY str
   }
 }
 
-function getBeatSchemaPrompt(mode: BeatGenerationMode, qualityLevel: string): string {
-  const lengthConstraint = qualityLevel === "concise" ? "10-50" :
-                          qualityLevel === "detailed" ? "30-80" :
-                          "50-120";
+function getBeatSchemaPrompt(
+  mode: BeatGenerationMode,
+  qualityLevel: string
+): string {
+  const lengthConstraint =
+    qualityLevel === "concise"
+      ? "10-50"
+      : qualityLevel === "detailed"
+      ? "30-80"
+      : "50-120";
 
   const baseSchema = `Schema: { "beats": [ string, string, ... ] }
 
@@ -1790,9 +1816,10 @@ async function showBeatPreview(
   existingBeats: string[] = []
 ): Promise<"apply" | "skip" | "apply-all" | "cancel"> {
   const newBeatsText = beats.join("\n");
-  const existingBeatsText = existingBeats.length > 0
-    ? existingBeats.map(b => `/// ${b}`).join("\n")
-    : "(No existing beats)";
+  const existingBeatsText =
+    existingBeats.length > 0
+      ? existingBeats.map((b) => `/// ${b}`).join("\n")
+      : "(No existing beats)";
 
   let previewText = "";
   if (mode === "add-new") {
@@ -1804,13 +1831,15 @@ async function showBeatPreview(
   }
 
   const sectionTitle = sectionInfo.title ? ` (${sectionInfo.title})` : "";
-  const message = `Apply ${mode} mode to ${sectionInfo.kind || "section"}${sectionTitle}?`;
+  const message = `Apply ${mode} mode to ${
+    sectionInfo.kind || "section"
+  }${sectionTitle}?`;
 
   const choice = await vscode.window.showInformationMessage(
     message,
     {
       modal: true,
-      detail: previewText
+      detail: previewText,
     },
     "Apply",
     "Skip",
@@ -1819,15 +1848,21 @@ async function showBeatPreview(
   );
 
   switch (choice) {
-    case "Apply": return "apply";
-    case "Skip": return "skip";
-    case "Apply All": return "apply-all";
-    default: return "cancel";
+    case "Apply":
+      return "apply";
+    case "Skip":
+      return "skip";
+    case "Apply All":
+      return "apply-all";
+    default:
+      return "cancel";
   }
 }
 
 function getEntitySystemPrompt(updateScope: string, isFile: boolean): string {
-  const basePrompt = `You analyze Premise ${isFile ? "file" : "section"} and produce JSON updates to entity descriptions defined with @entity lines. Return ONLY strict JSON.`;
+  const basePrompt = `You analyze Premise ${
+    isFile ? "file" : "section"
+  } and produce JSON updates to entity descriptions defined with @entity lines. Return ONLY strict JSON.`;
 
   switch (updateScope) {
     case "relationships":
@@ -1842,7 +1877,8 @@ function getEntitySystemPrompt(updateScope: string, isFile: boolean): string {
 }
 
 function getEntitySchemaPrompt(updateScope: string): string {
-  const baseSchema = "Schema: { entities: [ { name: string, description: string } ] }\\nRules: Only include entities already defined in the file. Use only provided entity names.";
+  const baseSchema =
+    "Schema: { entities: [ { name: string, description: string } ] }\\nRules: Only include entities already defined in the file. Use only provided entity names.";
 
   switch (updateScope) {
     case "relationships":
@@ -2032,11 +2068,19 @@ async function listUncommittedPremFilesUnderRoot(
       .map((rel) => (path.isAbsolute(rel) ? rel : path.join(topLevel, rel)))
       // Keep only files within the requested story root
       .filter((abs) => abs === rootPath || abs.startsWith(rootPath + path.sep));
-    console.log("🐛 listUncommittedPremFilesUnderRoot - files after processing:", files);
+    console.log(
+      "🐛 listUncommittedPremFilesUnderRoot - files after processing:",
+      files
+    );
     // Deduplicate
     const set = new Set(files);
-    const result = Array.from(set).map((p) => normalizeFileUri(vscode.Uri.file(p)));
-    console.log("🐛 listUncommittedPremFilesUnderRoot - final URIs:", result.map(u => u.toString()));
+    const result = Array.from(set).map((p) =>
+      normalizeFileUri(vscode.Uri.file(p))
+    );
+    console.log(
+      "🐛 listUncommittedPremFilesUnderRoot - final URIs:",
+      result.map((u) => u.toString())
+    );
     return result;
   } catch (err) {
     console.log("🐛 listUncommittedPremFilesUnderRoot - error:", err);
@@ -2303,6 +2347,105 @@ function extractEntityTokens(beat: string): string[] {
     if (name) out.push(name);
   }
   return out;
+}
+
+function buildAliasMapFromDocument(
+  doc: vscode.TextDocument,
+  canonical: string[]
+): Map<string, string> {
+  const map = new Map<string, string>();
+  // 1) Inline +aliases: lines associated with the most recent @entity line
+  let currentEntity: string | undefined;
+  const lines = doc.getText().split(/\r?\n/);
+  for (const line of lines) {
+    const entMatch = line.match(/^@(\w+)\s+([^:]+):/);
+    if (entMatch) {
+      currentEntity = entMatch[2].trim();
+      continue;
+    }
+    const aliasMatch = line.match(/^\s*\+aliases:\s*(.*)$/);
+    if (aliasMatch && currentEntity) {
+      const aliases = aliasMatch[1]
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      for (const a of aliases) {
+        map.set(a, currentEntity);
+      }
+    }
+  }
+  // 2) Heuristic alias mapping: first/last tokens if unique across canonical set
+  const firstTokenMap = new Map<string, string[]>();
+  const lastTokenMap = new Map<string, string[]>();
+  for (const c of canonical) {
+    const parts = c.split(/\s+/).filter(Boolean);
+    if (parts.length > 0) {
+      const first = parts[0];
+      const last = parts[parts.length - 1];
+      firstTokenMap.set(first, [...(firstTokenMap.get(first) || []), c]);
+      lastTokenMap.set(last, [...(lastTokenMap.get(last) || []), c]);
+    }
+  }
+  for (const [token, names] of firstTokenMap) {
+    if (names.length === 1 && !map.has(token)) map.set(token, names[0]);
+  }
+  for (const [token, names] of lastTokenMap) {
+    if (names.length === 1 && !map.has(token)) map.set(token, names[0]);
+  }
+  return map;
+}
+
+function normalizeAliasesInBeat(
+  beat: string,
+  aliasMap: Map<string, string>
+): string {
+  return beat.replace(/\{([^}]+)\}/g, (m, inner) => {
+    const name = String(inner || "").trim();
+    if (!name || name.startsWith("?")) return m; // keep uncertain or empty as-is
+    const canonical = aliasMap.get(name);
+    return canonical ? `{${canonical}}` : m;
+  });
+}
+
+function convertUnknownEntitiesToUncertain(
+  beat: string,
+  canon: Set<string>
+): string {
+  return beat.replace(/\{([^}]+)\}/g, (m, inner) => {
+    const name = String(inner || "").trim();
+    if (!name) return m;
+    if (name.startsWith("?")) return m; // already uncertain
+    if (canon.has(name)) return m; // known canonical
+    return `{?${name}}`;
+  });
+}
+
+function partitionBeatsForReview(
+  beats: string[],
+  canon?: Set<string>
+): { valid: string[]; uncertain: string[]; unknown: string[] } {
+  if (!canon)
+    return { valid: Array.from(new Set(beats)), uncertain: [], unknown: [] };
+  const valid: string[] = [];
+  const uncertain: string[] = [];
+  const unknown: string[] = [];
+  for (const b of beats) {
+    const tokens = extractEntityTokens(b);
+    const hasUncertain = tokens.some((t) => t.startsWith("?"));
+    const unknownTokens = tokens.filter(
+      (t) => !t.startsWith("?") && !canon.has(t)
+    );
+    if (unknownTokens.length === 0 && !hasUncertain) valid.push(b);
+    else if (unknownTokens.length === 0 && hasUncertain) uncertain.push(b);
+    else unknown.push(b);
+  }
+  // Deduplicate within categories
+  const dedupe = (arr: string[]) => arr.filter((x, i) => arr.indexOf(x) === i);
+  return {
+    valid: dedupe(valid),
+    uncertain: dedupe(uncertain),
+    unknown: dedupe(unknown),
+  };
 }
 
 function getBeatInsertPosition(): "append" | "prepend" {

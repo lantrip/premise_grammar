@@ -2,6 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use clap::{Args, Parser as ClapParser, Subcommand, ValueEnum};
+use premise_core::notes::NotesSink;
 
 use premise_core::{api, Parser};
 use schemars::schema::RootSchema;
@@ -16,6 +17,28 @@ impl Format {
     fn is_json(&self) -> bool {
         matches!(self, Format::Json)
     }
+}
+
+#[derive(Copy, Clone, Debug, ValueEnum)]
+enum Sink {
+    /// Use the managed .premise-notes directory (default)
+    Notes,
+    /// Print to stdout (respects --format)
+    Stdout,
+    /// Append JSONL files to a directory (beats.jsonl, facts.jsonl, timeline.jsonl)
+    JsonlDir,
+    /// Write individual JSON files to a directory (beats/, facts/, timeline/)
+    Dir,
+}
+
+#[derive(Copy, Clone, Debug, ValueEnum)]
+enum InputMode {
+    /// Parse Premise (.prem) using tree-sitter (default)
+    Prem,
+    /// Treat input as plain text
+    Plain,
+    /// Treat input as Markdown (treated like plain text initially)
+    Markdown,
 }
 
 #[derive(Args, Debug)]
@@ -112,22 +135,124 @@ enum NotesCommands {
         /// Append to existing beats (default: true)
         #[arg(long, default_value = "true")]
         append: bool,
+        /// Output sink (notes|stdout|jsonl-dir|dir)
+        #[arg(long, value_enum, default_value_t = Sink::Notes)]
+        sink: Sink,
+        /// Output directory (used for jsonl-dir|dir)
+        #[arg(long)]
+        out_dir: Option<PathBuf>,
+        /// Input mode: prem|plain|markdown
+        #[arg(long, value_enum, default_value_t = InputMode::Prem)]
+        input: InputMode,
+        /// Read content from STDIN instead of file
+        #[arg(long, default_value = "false")]
+        stdin: bool,
+        /// Aliases file (JSON: canonical -> [aliases]) for normalization in text modes
+        #[arg(long)]
+        aliases: Option<PathBuf>,
+        /// Dry-run: print beats instead of writing
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
+        /// Generate deterministic IDs based on file/line/text
+        #[arg(long, default_value = "false")]
+        stable_ids: bool,
     },
     /// Extract facts from a file to notes directory
     ExtractFacts {
         /// Path to the .prem file
         file: PathBuf,
+        /// Output sink (notes|stdout|jsonl-dir|dir)
+        #[arg(long, value_enum, default_value_t = Sink::Notes)]
+        sink: Sink,
+        /// Output directory (used for jsonl-dir|dir)
+        #[arg(long)]
+        out_dir: Option<PathBuf>,
+        /// Input mode: prem|plain|markdown
+        #[arg(long, value_enum, default_value_t = InputMode::Prem)]
+        input: InputMode,
+        /// Read content from STDIN instead of file
+        #[arg(long, default_value = "false")]
+        stdin: bool,
+        /// Aliases file (JSON: canonical -> [aliases]) for normalization in text modes
+        #[arg(long)]
+        aliases: Option<PathBuf>,
+        /// Dry-run: print facts instead of writing
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
+        /// Generate deterministic IDs based on evidence and content
+        #[arg(long, default_value = "false")]
+        stable_ids: bool,
     },
     /// Extract timeline from a file
     ExtractTimeline {
         /// Path to the .prem file
         file: PathBuf,
+        /// Output sink (notes|stdout|jsonl-dir|dir)
+        #[arg(long, value_enum, default_value_t = Sink::Notes)]
+        sink: Sink,
+        /// Output directory (used for jsonl-dir|dir)
+        #[arg(long)]
+        out_dir: Option<PathBuf>,
+        /// Input mode: prem|plain|markdown
+        #[arg(long, value_enum, default_value_t = InputMode::Prem)]
+        input: InputMode,
+        /// Read content from STDIN instead of file
+        #[arg(long, default_value = "false")]
+        stdin: bool,
+        /// Aliases file (JSON: canonical -> [aliases]) for normalization in text modes
+        #[arg(long)]
+        aliases: Option<PathBuf>,
+        /// Dry-run: print timeline instead of writing
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
+        /// Generate deterministic IDs based on source and event
+        #[arg(long, default_value = "false")]
+        stable_ids: bool,
     },
     /// Rebuild the notes index
     RebuildIndex {
         /// Story root path (defaults to current directory)
         #[arg(default_value = ".")]
         path: PathBuf,
+    },
+    /// Summarize unknown/uncertain entity references across notes
+    SummarizeUncertain {
+        /// Story root path (defaults to current directory)
+        #[arg(default_value = ".")]
+        path: PathBuf,
+    },
+    /// Merge alias updates from a JSON file into notes aliases
+    MergeAliases {
+        /// Path to alias updates file (JSON: canonical -> [aliases])
+        #[arg(long)]
+        aliases: PathBuf,
+        /// Story root path (defaults to current directory)
+        #[arg(default_value = ".")]
+        path: PathBuf,
+        /// Dry-run: show changes without writing
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
+    },
+    /// Apply an alias delta JSON (canonical -> [aliases]) with conflict reporting
+    ApplyAliasDelta {
+        /// Delta JSON file path
+        #[arg(long)]
+        delta: PathBuf,
+        /// Story root path (defaults to current directory)
+        #[arg(default_value = ".")]
+        path: PathBuf,
+        /// Dry-run: show changes without writing
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
+    },
+    /// Normalize existing notes against current aliases
+    Normalize {
+        /// Story root path (defaults to current directory)
+        #[arg(default_value = ".")]
+        path: PathBuf,
+        /// Dry-run: print normalized output instead of writing
+        #[arg(long, default_value = "false")]
+        dry_run: bool,
     },
     /// Query notes by entity
     Query {
@@ -142,6 +267,22 @@ enum NotesCommands {
     Status {
         /// Story root path (defaults to current directory)
         #[arg(default_value = ".")]
+        path: PathBuf,
+    },
+    /// Discover entities from narrative text
+    DiscoverEntities {
+        /// Path to the .prem file
+        file: PathBuf,
+        /// Include uncertain references ({?Entity})
+        #[arg(long, default_value = "true")]
+        include_uncertain: bool,
+        /// Minimum confidence threshold (0.0-1.0)
+        #[arg(long, default_value = "0.5")]
+        min_confidence: f64,
+    },
+    /// List all entities with their aliases
+    ListEntities {
+        /// Path to the .prem file or story root
         path: PathBuf,
     },
 }
@@ -224,6 +365,145 @@ fn main() {
                     }
                 }
             }
+        }
+        Commands::Notes(NotesCommands::Normalize { path }) => {
+            use std::collections::{HashMap, HashSet};
+
+            // Read existing notes
+            let beats = match premise_core::notes::read_beats(&path) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("Error: Failed to read beats at {}: {}", path.display(), e);
+                    std::process::exit(1);
+                }
+            };
+            let facts = match premise_core::notes::read_facts(&path) {
+                Ok(f) => f,
+                Err(e) => {
+                    eprintln!("Error: Failed to read facts at {}: {}", path.display(), e);
+                    std::process::exit(1);
+                }
+            };
+
+            // Collect referenced files from beats and fact evidence
+            let mut files: HashSet<String> = HashSet::new();
+            for b in &beats {
+                if !b.file.is_empty() {
+                    files.insert(b.file.clone());
+                }
+            }
+            for f in &facts {
+                for ev in &f.evidence {
+                    if let Some(fp) = ev.split(':').next() {
+                        if !fp.is_empty() {
+                            files.insert(fp.to_string());
+                        }
+                    }
+                }
+                // Normalize is handled at top-level match to reuse global flags; no inner arm.
+            }
+
+            // Build alias maps per referenced file
+            struct Mapping {
+                canonical: HashSet<String>,
+                reverse: HashMap<String, String>,
+            }
+            let mut per_file: HashMap<String, Mapping> = HashMap::new();
+
+            for fpath in files.iter() {
+                let candidate = std::path::PathBuf::from(fpath);
+                let full_path = if candidate.is_absolute() { candidate } else { path.join(&candidate) };
+                let content = match fs::read_to_string(&full_path) {
+                    Ok(c) => c,
+                    Err(e) => {
+                        eprintln!("Warning: Failed to read source file {}: {}", full_path.display(), e);
+                        continue;
+                    }
+                };
+                let mut parser = Parser::new();
+                let tree = match parser.internal.parse(&content, None) {
+                    Some(t) => t,
+                    None => {
+                        eprintln!("Warning: Failed to parse source file {}", full_path.display());
+                        continue;
+                    }
+                };
+                let root = tree.root_node();
+                    let alias_map = premise_core::notes::extract_entities_with_aliases(
+                    &root,
+                    &content,
+                    full_path.to_str().unwrap_or("unknown"),
+                );
+                    let canonical: HashSet<String> = alias_map.keys().cloned().collect();
+                    let reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
+                    per_file.insert(
+                    fpath.clone(),
+                    Mapping { canonical, reverse },
+                );
+            }
+
+            // Global fallback maps
+            let mut global_canonical: HashSet<String> = HashSet::new();
+            let mut global_reverse: HashMap<String, String> = HashMap::new();
+            for m in per_file.values() {
+                for c in &m.canonical { global_canonical.insert(c.clone()); }
+                for (alias, canon) in &m.reverse {
+                    if let Some(existing) = global_reverse.get(alias) {
+                        if existing != canon { continue; }
+                    }
+                    global_reverse.insert(alias.clone(), canon.clone());
+                }
+            }
+
+            // Normalize beats
+            let mut normalized_beats = Vec::with_capacity(beats.len());
+            let mut beats_uncertain_count: usize = 0;
+            for mut b in beats {
+                    let (text, ents) = if let Some(m) = per_file.get(&b.file) {
+                        premise_core::notes::normalize_beat_text(&b.text, &m.canonical, &m.reverse)
+                    } else {
+                        premise_core::notes::normalize_beat_text(&b.text, &global_canonical, &global_reverse)
+                    };
+                if !premise_core::notes::collect_uncertain_entities_from_text(&text).is_empty() {
+                    beats_uncertain_count += 1;
+                }
+                b.text = text;
+                b.entities = ents;
+                normalized_beats.push(b);
+            }
+
+            // Normalize facts
+                let normalized_facts = premise_core::notes::normalize_facts(facts, &global_reverse);
+
+            // Persist
+                let notes_dir = premise_core::notes::get_notes_dir(&path);
+            let beats_path = notes_dir.join("beats.jsonl");
+            let facts_path = notes_dir.join("facts.jsonl");
+            if let Err(e) = premise_core::notes::write_jsonl(&beats_path, &normalized_beats) {
+                eprintln!("Error: Failed to write normalized beats: {}", e);
+                std::process::exit(1);
+            }
+            if let Err(e) = premise_core::notes::write_jsonl(&facts_path, &normalized_facts) {
+                eprintln!("Error: Failed to write normalized facts: {}", e);
+                std::process::exit(1);
+            }
+            if let Err(e) = premise_core::notes::rebuild_index(&path) {
+                eprintln!("Warning: Failed to rebuild index: {}", e);
+            }
+
+            eprintln!(
+                "Normalized {} beat(s) and {} fact(s) at {}",
+                normalized_beats.len(),
+                normalized_facts.len(),
+                path.display()
+            );
+            if beats_uncertain_count > 0 {
+                eprintln!(
+                    "Note: {} beat(s) still contain uncertain entities (e.g., {{?Name}}). Consider running 'premise notes discover-entities'.",
+                    beats_uncertain_count
+                );
+            }
+            println!("Normalization complete.");
         }
         Commands::Analyze { file, extract_notes } => {
             let content = fs::read_to_string(&file).expect("failed to read file");
@@ -356,107 +636,478 @@ fn main() {
                         }
                     }
                 }
-                NotesCommands::ExportBeats { file, append: _ } => {
-                    let content = match fs::read_to_string(&file) {
-                        Ok(c) => c,
-                        Err(e) => {
-                            eprintln!("Error: Failed to read file {}: {}", file.display(), e);
-                            std::process::exit(1);
-                        }
-                    };
-                    let mut parser = Parser::new();
-
-                    // Parse and get tree-sitter tree
-                    let tree = match parser.internal.parse(&content, None) {
-                        Some(t) => t,
-                        None => {
-                            eprintln!("Error: Failed to parse file {}", file.display());
-                            std::process::exit(1);
-                        }
-                    };
-                    let root = tree.root_node();
-
-                    let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
-                    if let Err(e) = premise_core::notes::initialize_notes(story_root, None) {
-                        eprintln!("Error: Failed to initialize notes at {}: {}", story_root.display(), e);
-                        std::process::exit(1);
-                    }
-
+                NotesCommands::ExportBeats { file, append: _, sink, out_dir, input, stdin, aliases, dry_run, stable_ids } => {
                     let file_str = file.to_str().unwrap_or("unknown");
-                    // Use enhanced extraction with source text
-                    let beats = premise_core::notes::extract_beats_from_tree(&root, &content, file_str);
+                    let content = if stdin {
+                        use std::io::Read; let mut buf = String::new(); std::io::stdin().read_to_string(&mut buf).expect("failed to read stdin"); buf
+                    } else {
+                        match fs::read_to_string(&file) { Ok(c) => c, Err(e) => { eprintln!("Error: Failed to read file {}: {}", file.display(), e); std::process::exit(1);} }
+                    };
 
-                    if let Err(e) = premise_core::notes::append_beats(story_root, &beats) {
-                        eprintln!("Error: Failed to save beats: {}", e);
-                        std::process::exit(1);
+                    let mut beats = Vec::new();
+                    let mut canonical: std::collections::HashSet<String> = std::collections::HashSet::new();
+                    let mut reverse: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+
+                    match input {
+                        InputMode::Prem => {
+                            let mut parser = Parser::new();
+                            let tree = match parser.internal.parse(&content, None) { Some(t) => t, None => { eprintln!("Error: Failed to parse file {}", file.display()); std::process::exit(1);} };
+                            let root = tree.root_node();
+                            beats = premise_core::notes::extract_beats_from_tree(&root, &content, file_str);
+                            let alias_map = premise_core::notes::extract_entities_with_aliases(&root, &content, file_str);
+                            canonical = alias_map.keys().cloned().collect();
+                            reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
+                        }
+                        InputMode::Plain | InputMode::Markdown => {
+                            let opts = premise_notes::extract_text::TextExtractionOptions { file_label: Some(file_str.to_string()), section_headers: matches!(input, InputMode::Markdown) };
+                            beats = premise_notes::extract_text::extract_beats_from_text(&content, &opts);
+                            if let Some(path) = aliases {
+                                let alias_map: std::collections::HashMap<String, Vec<String>> = match std::fs::read_to_string(&path).ok().and_then(|s| serde_json::from_str(&s).ok()) { Some(m) => m, None => std::collections::HashMap::new() };
+                                canonical = alias_map.keys().cloned().collect();
+                                reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
+                            } else {
+                                let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
+                                let (alias_map, _report) = premise_notes::io::load_aliases_with(story_root, &[]).unwrap_or((std::collections::HashMap::new(), premise_notes::io::AliasMergeReport{ added:0, conflicts: vec![] }));
+                                canonical = alias_map.keys().cloned().collect();
+                                reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
+                            }
+                        }
                     }
 
-                    if let Err(e) = premise_core::notes::rebuild_index(story_root) {
-                        eprintln!("Warning: Failed to rebuild index: {}", e);
+                    beats = premise_core::notes::normalize_beats(beats, &canonical, &reverse);
+
+                    if stable_ids {
+                        // Recompute IDs deterministically
+                        for b in &mut beats {
+                            let line_str = b.line.map(|n| n.to_string()).unwrap_or_default();
+                            let id = premise_notes::io::stable_id("beat_", &[&b.file, &line_str, &b.text]);
+                            b.id = id;
+                        }
                     }
 
-                    println!("Exported {} beats from {}", beats.len(), file.display());
+                    if dry_run {
+                        let pretty = matches!(cli.globals.format, Format::Pretty);
+                        if pretty {
+                            println!("Beats ({}):", beats.len());
+                            for b in &beats { println!("- {}", b.text); }
+                        } else {
+                            println!("{}", serde_json::to_string_pretty(&beats).unwrap());
+                        }
+                        return;
+                    }
+
+                    match sink {
+                        Sink::Notes => {
+                            let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
+                            if let Err(e) = premise_core::notes::initialize_notes(story_root, None) {
+                                eprintln!("Error: Failed to initialize notes at {}: {}", story_root.display(), e);
+                                std::process::exit(1);
+                            }
+                            if let Err(e) = premise_core::notes::append_beats(story_root, &beats) {
+                                eprintln!("Error: Failed to save beats: {}", e);
+                                std::process::exit(1);
+                            }
+                            if let Err(e) = premise_core::notes::rebuild_index(story_root) {
+                                eprintln!("Warning: Failed to rebuild index: {}", e);
+                            }
+                            // Surface uncertainty for review
+                            let mut total_uncertain: usize = 0;
+                            for b in &beats {
+                                let u = premise_core::notes::collect_uncertain_entities_from_text(&b.text);
+                                if !u.is_empty() { total_uncertain += 1; }
+                            }
+                            if total_uncertain > 0 {
+                                eprintln!("Note: {} beat(s) contain uncertain entities (e.g., {{?Name}}). Consider running 'premise notes discover-entities'.", total_uncertain);
+                            }
+                            println!("Exported {} beats from {}", beats.len(), file.display());
+                        }
+                        Sink::Stdout => {
+                            let pretty = matches!(cli.globals.format, Format::Pretty);
+                            let mut s = premise_core::notes::StdoutSink::new(pretty);
+                            if let Err(e) = s.emit_beats(&beats) {
+                                eprintln!("Error: Failed to emit beats: {}", e);
+                                std::process::exit(1);
+                            }
+                        }
+                        Sink::JsonlDir => {
+                            let dir = out_dir.unwrap_or_else(|| PathBuf::from("."));
+                            let mut s = match premise_core::notes::JsonlDirSink::new(&dir) {
+                                Ok(s) => s,
+                                Err(e) => {
+                                    eprintln!("Error: Failed to prepare output dir {}: {}", dir.display(), e);
+                                    std::process::exit(1);
+                                }
+                            };
+                            if let Err(e) = s.emit_beats(&beats) {
+                                eprintln!("Error: Failed to write beats: {}", e);
+                                std::process::exit(1);
+                            }
+                            eprintln!("Wrote beats to {}/beats.jsonl", dir.display());
+                        }
+                        Sink::Dir => {
+                            let dir = out_dir.unwrap_or_else(|| PathBuf::from("."));
+                            let mut s = match premise_core::notes::DirSink::new(&dir) {
+                                Ok(s) => s,
+                                Err(e) => {
+                                    eprintln!("Error: Failed to prepare output dir {}: {}", dir.display(), e);
+                                    std::process::exit(1);
+                                }
+                            };
+                            if let Err(e) = s.emit_beats(&beats) {
+                                eprintln!("Error: Failed to write beats: {}", e);
+                                std::process::exit(1);
+                            }
+                            eprintln!("Wrote beats to {}", dir.display());
+                        }
+                    }
                 }
-                NotesCommands::ExtractFacts { file } => {
-                    let content = match fs::read_to_string(&file) {
-                        Ok(c) => c,
-                        Err(e) => {
-                            eprintln!("Error: Failed to read file {}: {}", file.display(), e);
-                            std::process::exit(1);
-                        }
-                    };
-                    let mut parser = Parser::new();
-
-                    // Parse and get tree-sitter tree
-                    let tree = match parser.internal.parse(&content, None) {
-                        Some(t) => t,
-                        None => {
-                            eprintln!("Error: Failed to parse file {}", file.display());
-                            std::process::exit(1);
-                        }
-                    };
-                    let root = tree.root_node();
-
-                    let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
-                    if let Err(e) = premise_core::notes::initialize_notes(story_root, None) {
-                        eprintln!("Error: Failed to initialize notes at {}: {}", story_root.display(), e);
-                        std::process::exit(1);
-                    }
-
+                NotesCommands::ExtractFacts { file, sink, out_dir, input, stdin, aliases, dry_run, stable_ids } => {
                     let file_str = file.to_str().unwrap_or("unknown");
-                    // Use enhanced extraction with source text
-                    let facts = premise_core::notes::extract_all_facts_from_tree(&root, &content, file_str);
+                    let content = if stdin { use std::io::Read; let mut buf = String::new(); std::io::stdin().read_to_string(&mut buf).expect("failed to read stdin"); buf } else { match fs::read_to_string(&file) { Ok(c) => c, Err(e) => { eprintln!("Error: Failed to read file {}: {}", file.display(), e); std::process::exit(1);} } };
 
-                    if let Err(e) = premise_core::notes::append_facts(story_root, &facts) {
-                        eprintln!("Error: Failed to save facts: {}", e);
-                        std::process::exit(1);
+                    let mut facts = Vec::new();
+                    let mut alias_map: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
+
+                    match input {
+                        InputMode::Prem => {
+                            let mut parser = Parser::new();
+                            let tree = match parser.internal.parse(&content, None) { Some(t) => t, None => { eprintln!("Error: Failed to parse file {}", file.display()); std::process::exit(1);} };
+                            let root = tree.root_node();
+                            facts = premise_core::notes::extract_all_facts_from_tree(&root, &content, file_str);
+                            alias_map = premise_core::notes::extract_entities_with_aliases(&root, &content, file_str);
+                        }
+                        InputMode::Plain | InputMode::Markdown => {
+                            facts = premise_notes::extract_text::extract_facts_from_text(&content, file_str);
+                            if let Some(path) = aliases {
+                                alias_map = match std::fs::read_to_string(&path).ok().and_then(|s| serde_json::from_str(&s).ok()) { Some(m) => m, None => std::collections::HashMap::new() };
+                            } else {
+                                let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
+                                let (loaded, _report) = premise_notes::io::load_aliases_with(story_root, &[]).unwrap_or((std::collections::HashMap::new(), premise_notes::io::AliasMergeReport{ added:0, conflicts: vec![] }));
+                                alias_map = loaded;
+                            }
+                        }
                     }
 
-                    if let Err(e) = premise_core::notes::rebuild_index(story_root) {
-                        eprintln!("Warning: Failed to rebuild index: {}", e);
+                    let reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
+                    facts = premise_core::notes::normalize_facts(facts, &reverse);
+
+                    if stable_ids {
+                        for f in &mut facts {
+                            let ev = f.evidence.get(0).cloned().unwrap_or_default();
+                            let id = premise_notes::io::stable_id("fact_", &[&ev, &f.fact]);
+                            f.id = id;
+                        }
                     }
 
-                    println!("Extracted {} facts from {}", facts.len(), file.display());
+                    if dry_run {
+                        let pretty = matches!(cli.globals.format, Format::Pretty);
+                        if pretty {
+                            println!("Facts ({}):", facts.len());
+                            for f in &facts { println!("- {}", f.fact); }
+                        } else {
+                            println!("{}", serde_json::to_string_pretty(&facts).unwrap());
+                        }
+                        return;
+                    }
+
+                    match sink {
+                        Sink::Notes => {
+                            let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
+                            if let Err(e) = premise_core::notes::initialize_notes(story_root, None) {
+                                eprintln!("Error: Failed to initialize notes at {}: {}", story_root.display(), e);
+                                std::process::exit(1);
+                            }
+                            if let Err(e) = premise_core::notes::append_facts(story_root, &facts) {
+                                eprintln!("Error: Failed to save facts: {}", e);
+                                std::process::exit(1);
+                            }
+                            if let Err(e) = premise_core::notes::rebuild_index(story_root) {
+                                eprintln!("Warning: Failed to rebuild index: {}", e);
+                            }
+                            // Surface unknown entities for review
+                            let canonical: std::collections::HashSet<String> = alias_map.keys().cloned().collect();
+                            let unknowns = premise_core::notes::collect_unknown_fact_entities(&facts, &canonical);
+                            if !unknowns.is_empty() {
+                                eprintln!("Note: {} unknown entity reference(s) found in facts: {}", unknowns.len(), unknowns.join(", "));
+                                eprintln!("Consider running 'premise notes discover-entities'.");
+                            }
+                            println!("Extracted {} facts from {}", facts.len(), file.display());
+                        }
+                        Sink::Stdout => {
+                            let pretty = matches!(cli.globals.format, Format::Pretty);
+                            let mut s = premise_core::notes::StdoutSink::new(pretty);
+                            if let Err(e) = s.emit_facts(&facts) {
+                                eprintln!("Error: Failed to emit facts: {}", e);
+                                std::process::exit(1);
+                            }
+                        }
+                        Sink::JsonlDir => {
+                            let dir = out_dir.unwrap_or_else(|| PathBuf::from("."));
+                            let mut s = match premise_core::notes::JsonlDirSink::new(&dir) {
+                                Ok(s) => s,
+                                Err(e) => {
+                                    eprintln!("Error: Failed to prepare output dir {}: {}", dir.display(), e);
+                                    std::process::exit(1);
+                                }
+                            };
+                            if let Err(e) = s.emit_facts(&facts) {
+                                eprintln!("Error: Failed to write facts: {}", e);
+                                std::process::exit(1);
+                            }
+                            eprintln!("Wrote facts to {}/facts.jsonl", dir.display());
+                        }
+                        Sink::Dir => {
+                            let dir = out_dir.unwrap_or_else(|| PathBuf::from("."));
+                            let mut s = match premise_core::notes::DirSink::new(&dir) {
+                                Ok(s) => s,
+                                Err(e) => {
+                                    eprintln!("Error: Failed to prepare output dir {}: {}", dir.display(), e);
+                                    std::process::exit(1);
+                                }
+                            };
+                            if let Err(e) = s.emit_facts(&facts) {
+                                eprintln!("Error: Failed to write facts: {}", e);
+                                std::process::exit(1);
+                            }
+                            eprintln!("Wrote facts to {}", dir.display());
+                        }
+                    }
                 }
-                NotesCommands::ExtractTimeline { file } => {
-                    let content = fs::read_to_string(&file).expect("failed to read file");
-                    let mut parser = Parser::new();
-                    let ir = parser.analyze_ir(&content);
-
-                    let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
-                    premise_core::notes::initialize_notes(story_root, None)
-                        .expect("failed to initialize notes");
-
+                NotesCommands::ExtractTimeline { file, sink, out_dir, input, stdin, aliases: _, dry_run, stable_ids } => {
                     let file_str = file.to_str().unwrap_or("unknown");
-                    let timeline = premise_core::notes::extract_timeline_from_ir(&ir, file_str);
-                    let timeline_path = premise_core::notes::get_notes_dir(story_root).join("timeline.jsonl");
-                    premise_core::notes::append_many_jsonl(&timeline_path, &timeline)
-                        .expect("failed to append timeline");
+                    let content = if stdin { use std::io::Read; let mut buf = String::new(); std::io::stdin().read_to_string(&mut buf).expect("failed to read stdin"); buf } else { fs::read_to_string(&file).expect("failed to read file") };
+                    let mut timeline = match input {
+                        InputMode::Prem => {
+                            let mut parser = Parser::new();
+                            let ir = parser.analyze_ir(&content);
+                            premise_core::notes::extract_timeline_from_ir(&ir, file_str)
+                        }
+                        InputMode::Plain | InputMode::Markdown => {
+                            premise_notes::extract_text::extract_timeline_from_text(&content, file_str)
+                        }
+                    };
 
-                    premise_core::notes::rebuild_index(story_root)
-                        .expect("failed to rebuild index");
+                    if stable_ids {
+                        for ev in &mut timeline {
+                            let src = ev.source.get(0).cloned().unwrap_or_default();
+                            let id = premise_notes::io::stable_id("timeline_", &[&src, &ev.event]);
+                            ev.id = id;
+                        }
+                    }
 
-                    println!("Extracted {} timeline events from {}", timeline.len(), file.display());
+                    if dry_run {
+                        let pretty = matches!(cli.globals.format, Format::Pretty);
+                        if pretty {
+                            println!("Timeline events ({}):", timeline.len());
+                            for e in &timeline { println!("- {}", e.event); }
+                        } else {
+                            println!("{}", serde_json::to_string_pretty(&timeline).unwrap());
+                        }
+                        return;
+                    }
+
+                    match sink {
+                        Sink::Notes => {
+                            let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
+                            premise_core::notes::initialize_notes(story_root, None)
+                                .expect("failed to initialize notes");
+                            let timeline_path = premise_core::notes::get_notes_dir(story_root).join("timeline.jsonl");
+                            premise_core::notes::append_many_jsonl(&timeline_path, &timeline)
+                                .expect("failed to append timeline");
+                            premise_core::notes::rebuild_index(story_root)
+                                .expect("failed to rebuild index");
+                        // Surface uncertainty in timeline event texts
+                        let mut total_uncertain: usize = 0;
+                        for ev in &timeline {
+                            let u = premise_core::notes::collect_uncertain_entities_from_text(&ev.event);
+                            if !u.is_empty() { total_uncertain += 1; }
+                        }
+                        if total_uncertain > 0 {
+                            eprintln!(
+                                "Note: {} timeline event(s) contain uncertain entities (e.g., {{?Name}}). Consider running 'premise notes discover-entities'.",
+                                total_uncertain
+                            );
+                        }
+                            println!("Extracted {} timeline events from {}", timeline.len(), file.display());
+                        }
+                        Sink::Stdout => {
+                            let pretty = matches!(cli.globals.format, Format::Pretty);
+                            let mut s = premise_core::notes::StdoutSink::new(pretty);
+                            if let Err(e) = s.emit_timeline(&timeline) {
+                                eprintln!("Error: Failed to emit timeline: {}", e);
+                                std::process::exit(1);
+                            }
+                        }
+                        Sink::JsonlDir => {
+                            let dir = out_dir.unwrap_or_else(|| PathBuf::from("."));
+                            let mut s = match premise_core::notes::JsonlDirSink::new(&dir) {
+                                Ok(s) => s,
+                                Err(e) => {
+                                    eprintln!("Error: Failed to prepare output dir {}: {}", dir.display(), e);
+                                    std::process::exit(1);
+                                }
+                            };
+                            if let Err(e) = s.emit_timeline(&timeline) {
+                                eprintln!("Error: Failed to write timeline: {}", e);
+                                std::process::exit(1);
+                            }
+                            eprintln!("Wrote timeline to {}/timeline.jsonl", dir.display());
+                        }
+                        Sink::Dir => {
+                            let dir = out_dir.unwrap_or_else(|| PathBuf::from("."));
+                            let mut s = match premise_core::notes::DirSink::new(&dir) {
+                                Ok(s) => s,
+                                Err(e) => {
+                                    eprintln!("Error: Failed to prepare output dir {}: {}", dir.display(), e);
+                                    std::process::exit(1);
+                                }
+                            };
+                            if let Err(e) = s.emit_timeline(&timeline) {
+                                eprintln!("Error: Failed to write timeline: {}", e);
+                                std::process::exit(1);
+                            }
+                            eprintln!("Wrote timeline to {}", dir.display());
+                        }
+                    }
+                }
+                NotesCommands::Normalize { path, dry_run } => {
+                    use std::collections::{HashMap, HashSet};
+
+                    let beats = match premise_core::notes::read_beats(&path) {
+                        Ok(b) => b,
+                        Err(e) => {
+                            eprintln!("Error: Failed to read beats at {}: {}", path.display(), e);
+                            std::process::exit(1);
+                        }
+                    };
+                    let facts = match premise_core::notes::read_facts(&path) {
+                        Ok(f) => f,
+                        Err(e) => {
+                            eprintln!("Error: Failed to read facts at {}: {}", path.display(), e);
+                            std::process::exit(1);
+                        }
+                    };
+
+                    let mut files: HashSet<String> = HashSet::new();
+                    for b in &beats {
+                        if !b.file.is_empty() {
+                            files.insert(b.file.clone());
+                        }
+                    }
+                    for f in &facts {
+                        for ev in &f.evidence {
+                            if let Some(fp) = ev.split(':').next() {
+                                if !fp.is_empty() {
+                                    files.insert(fp.to_string());
+                                }
+                            }
+                        }
+                    }
+
+                    struct Mapping {
+                        canonical: HashSet<String>,
+                        reverse: HashMap<String, String>,
+                    }
+                    let mut per_file: HashMap<String, Mapping> = HashMap::new();
+
+                    for fpath in files.iter() {
+                        let candidate = std::path::PathBuf::from(fpath);
+                        let full_path = if candidate.is_absolute() { candidate } else { path.join(&candidate) };
+                        let content = match fs::read_to_string(&full_path) {
+                            Ok(c) => c,
+                            Err(e) => {
+                                eprintln!("Warning: Failed to read source file {}: {}", full_path.display(), e);
+                                continue;
+                            }
+                        };
+                        let mut parser = Parser::new();
+                        let tree = match parser.internal.parse(&content, None) {
+                            Some(t) => t,
+                            None => {
+                                eprintln!("Warning: Failed to parse source file {}", full_path.display());
+                                continue;
+                            }
+                        };
+                        let root = tree.root_node();
+                        let alias_map = premise_core::notes::extract_entities_with_aliases(
+                            &root,
+                            &content,
+                            full_path.to_str().unwrap_or("unknown"),
+                        );
+                        let canonical: HashSet<String> = alias_map.keys().cloned().collect();
+                        let reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
+                        per_file.insert(
+                            fpath.clone(),
+                            Mapping { canonical, reverse },
+                        );
+                    }
+
+                    let mut global_canonical: HashSet<String> = HashSet::new();
+                    let mut global_reverse: HashMap<String, String> = HashMap::new();
+                    for m in per_file.values() {
+                        for c in &m.canonical { global_canonical.insert(c.clone()); }
+                        for (alias, canon) in &m.reverse {
+                            if let Some(existing) = global_reverse.get(alias) {
+                                if existing != canon { continue; }
+                            }
+                            global_reverse.insert(alias.clone(), canon.clone());
+                        }
+                    }
+
+                    let mut normalized_beats = Vec::with_capacity(beats.len());
+                    let mut beats_uncertain_count: usize = 0;
+                    for mut b in beats {
+                        let (text, ents) = if let Some(m) = per_file.get(&b.file) {
+                            premise_core::notes::normalize_beat_text(&b.text, &m.canonical, &m.reverse)
+                        } else {
+                            premise_core::notes::normalize_beat_text(&b.text, &global_canonical, &global_reverse)
+                        };
+                        if !premise_core::notes::collect_uncertain_entities_from_text(&text).is_empty() {
+                            beats_uncertain_count += 1;
+                        }
+                        b.text = text;
+                        b.entities = ents;
+                        normalized_beats.push(b);
+                    }
+
+                    let normalized_facts = premise_core::notes::normalize_facts(facts, &global_reverse);
+
+                    let notes_dir = premise_core::notes::get_notes_dir(&path);
+                    let beats_path = notes_dir.join("beats.jsonl");
+                    let facts_path = notes_dir.join("facts.jsonl");
+                    if dry_run {
+                        let output = serde_json::json!({
+                            "beats": &normalized_beats,
+                            "facts": &normalized_facts
+                        });
+                        println!("{}", serde_json::to_string_pretty(&output).unwrap());
+                    } else {
+                        if let Err(e) = premise_core::notes::write_jsonl(&beats_path, &normalized_beats) {
+                            eprintln!("Error: Failed to write normalized beats: {}", e);
+                            std::process::exit(1);
+                        }
+                        if let Err(e) = premise_core::notes::write_jsonl(&facts_path, &normalized_facts) {
+                            eprintln!("Error: Failed to write normalized facts: {}", e);
+                            std::process::exit(1);
+                        }
+                        if let Err(e) = premise_core::notes::rebuild_index(&path) {
+                            eprintln!("Warning: Failed to rebuild index: {}", e);
+                        }
+                    }
+
+                    eprintln!(
+                        "Normalized {} beat(s) and {} fact(s) at {}",
+                        normalized_beats.len(),
+                        normalized_facts.len(),
+                        path.display()
+                    );
+                    if beats_uncertain_count > 0 {
+                        eprintln!(
+                            "Note: {} beat(s) still contain uncertain entities (e.g., {{?Name}}). Consider running 'premise notes discover-entities'.",
+                            beats_uncertain_count
+                        );
+                    }
+                    println!("Normalization complete.");
                 }
                 NotesCommands::RebuildIndex { path } => {
                     let index = match premise_core::notes::rebuild_index(&path) {
@@ -535,6 +1186,211 @@ fn main() {
                                 println!("  Consistency entries: {}", stats.consistency_entries);
                                 println!("  Entities tracked: {}", stats.entities_tracked);
                             }
+                        }
+                    }
+                }
+                NotesCommands::SummarizeUncertain { path } => {
+                    match premise_notes::orchestrate::summarize_uncertainties(&path) {
+                        Ok((unknown_entities, files)) => {
+                            match cli.globals.format {
+                                Format::Json => {
+                                    let out = serde_json::json!({
+                                        "unknown_entities": unknown_entities,
+                                        "files": files
+                                    });
+                                    println!("{}", serde_json::to_string_pretty(&out).unwrap());
+                                }
+                                Format::Pretty => {
+                                    if unknown_entities.is_empty() {
+                                        println!("No unknown or uncertain entities found.");
+                                    } else {
+                                        println!("Unknown/uncertain entities ({}):", unknown_entities.len());
+                                        for e in &unknown_entities { println!("  {}", e); }
+                                    }
+                                    if !files.is_empty() {
+                                        println!("\nReferenced files:");
+                                        for f in &files { println!("  {}", f); }
+                                    }
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            eprintln!("Error: {}", e);
+                            std::process::exit(1);
+                        }
+                    }
+                }
+                NotesCommands::MergeAliases { aliases, path, dry_run } => {
+                    let incoming: std::collections::HashMap<String, Vec<String>> = match std::fs::read_to_string(&aliases).ok().and_then(|s| serde_json::from_str(&s).ok()) {
+                        Some(m) => m,
+                        None => { eprintln!("Error: Failed to read aliases file {}", aliases.display()); std::process::exit(1); }
+                    };
+                    let mut base = match premise_notes::io::read_alias_map(&path) { Ok(m) => m, Err(e) => { eprintln!("Error: Failed to read existing aliases: {}", e); std::process::exit(1);} };
+                    let report = premise_notes::io::merge_alias_maps(&mut base, &incoming);
+                    if dry_run {
+                        println!("{}", serde_json::to_string_pretty(&serde_json::json!({
+                            "added": report.added,
+                            "conflicts": report.conflicts
+                        })).unwrap());
+                    } else {
+                        if let Err(e) = premise_notes::io::write_alias_map(&path, &base) { eprintln!("Error: Failed to write aliases: {}", e); std::process::exit(1);} else { println!("Merged aliases. Added: {}. Conflicts: {}", report.added, report.conflicts.len()); }
+                    }
+                }
+                NotesCommands::ApplyAliasDelta { delta, path, dry_run } => {
+                    let incoming: std::collections::HashMap<String, Vec<String>> = match std::fs::read_to_string(&delta).ok().and_then(|s| serde_json::from_str(&s).ok()) {
+                        Some(m) => m,
+                        None => { eprintln!("Error: Failed to read delta file {}", delta.display()); std::process::exit(1); }
+                    };
+                    let mut base = match premise_notes::io::read_alias_map(&path) { Ok(m) => m, Err(e) => { eprintln!("Error: Failed to read existing aliases: {}", e); std::process::exit(1);} };
+                    let report = premise_notes::io::apply_alias_delta(&mut base, &incoming);
+                    if dry_run {
+                        println!("{}", serde_json::to_string_pretty(&serde_json::json!({
+                            "added": report.added,
+                            "conflicts": report.conflicts
+                        })).unwrap());
+                    } else {
+                        if let Err(e) = premise_notes::io::write_alias_map(&path, &base) { eprintln!("Error: Failed to write aliases: {}", e); std::process::exit(1);} else { println!("Applied alias delta. Added: {}. Conflicts: {}", report.added, report.conflicts.len()); }
+                    }
+                }
+                NotesCommands::DiscoverEntities { file, include_uncertain, min_confidence } => {
+                    use std::collections::HashSet;
+
+                    let content = match fs::read_to_string(&file) {
+                        Ok(c) => c,
+                        Err(e) => {
+                            eprintln!("Error: Failed to read file {}: {}", file.display(), e);
+                            std::process::exit(1);
+                        }
+                    };
+
+                    let mut parser = Parser::new();
+                    let tree = match parser.internal.parse(&content, None) {
+                        Some(t) => t,
+                        None => {
+                            eprintln!("Error: Failed to parse file {}", file.display());
+                            std::process::exit(1);
+                        }
+                    };
+                    let root = tree.root_node();
+                    let file_str = file.to_str().unwrap_or("unknown");
+
+                    // First, extract known entities with aliases from metadata
+                    let alias_map = premise_core::notes::extract_entities_with_aliases(&root, &content, file_str);
+                    let known_entities: HashSet<String> = alias_map.keys().cloned().collect();
+
+                    // Discover new entities from narrative
+                    let mut candidates = premise_core::notes::discover_entities_from_narrative(
+                        &root,
+                        &content,
+                        file_str,
+                        &known_entities
+                    );
+
+                    // Filter by confidence and uncertain flag
+                    candidates.retain(|c| {
+                        c.confidence >= min_confidence && (include_uncertain || c.confidence >= 0.7)
+                    });
+
+                    // Merge aliases
+                    premise_core::notes::merge_aliases_with_candidates(&mut candidates, &alias_map);
+
+                    // Prefill uncertain references from existing beats
+                    let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
+                    let mut uncertain_refs: Vec<String> = Vec::new();
+                    if let Ok(existing_beats) = premise_core::notes::read_beats(story_root) {
+                        for b in existing_beats {
+                            let mut u = premise_core::notes::collect_uncertain_entities_from_text(&b.text);
+                            uncertain_refs.append(&mut u);
+                        }
+                    }
+                    uncertain_refs.sort();
+                    uncertain_refs.dedup();
+
+                    match cli.globals.format {
+                        Format::Json => {
+                            let output = serde_json::json!({
+                                "known_entities": alias_map,
+                                "discovered": candidates.iter().map(|c| {
+                                    serde_json::json!({
+                                        "canonical_name": c.canonical_name,
+                                        "type": c.entity_type.as_str(),
+                                        "aliases": c.aliases,
+                                        "description": c.description,
+                                        "evidence": c.evidence,
+                                        "confidence": c.confidence
+                                    })
+                                }).collect::<Vec<_>>(),
+                                "uncertain_references": uncertain_refs,
+                            });
+                            println!("{}", serde_json::to_string_pretty(&output).unwrap());
+                        }
+                        Format::Pretty => {
+                            println!("Known entities: {}", known_entities.len());
+                            for (name, aliases) in &alias_map {
+                                if !aliases.is_empty() {
+                                    println!("  {} (aliases: {})", name, aliases.join(", "));
+                                } else {
+                                    println!("  {}", name);
+                                }
+                            }
+
+                            println!("\nDiscovered {} new entity candidates:", candidates.len());
+                            for candidate in &candidates {
+                                println!("  {} [{}] (confidence: {:.2})",
+                                    candidate.canonical_name,
+                                    candidate.entity_type.as_str(),
+                                    candidate.confidence
+                                );
+                                if !candidate.aliases.is_empty() {
+                                    println!("    Aliases: {}", candidate.aliases.join(", "));
+                                }
+                                println!("    Evidence: {}", candidate.evidence.join(", "));
+                            }
+                            if !uncertain_refs.is_empty() {
+                                println!("\nUncertain entity references found in beats:");
+                                for name in &uncertain_refs {
+                                    println!("  {{?{}}}", name);
+                                }
+                            }
+                        }
+                    }
+                }
+                NotesCommands::ListEntities { path } => {
+                    let content = match fs::read_to_string(&path) {
+                        Ok(c) => c,
+                        Err(e) => {
+                            eprintln!("Error: Failed to read file {}: {}", path.display(), e);
+                            std::process::exit(1);
+                        }
+                    };
+
+                    let mut parser = Parser::new();
+                    let tree = match parser.internal.parse(&content, None) {
+                        Some(t) => t,
+                        None => {
+                            eprintln!("Error: Failed to parse file {}", path.display());
+                            std::process::exit(1);
+                        }
+                    };
+                    let root = tree.root_node();
+                    let file_str = path.to_str().unwrap_or("unknown");
+
+                    let alias_map = premise_core::notes::extract_entities_with_aliases(&root, &content, file_str);
+
+                    match cli.globals.format {
+                        Format::Json => {
+                            println!("{}", serde_json::to_string_pretty(&alias_map).unwrap());
+                        }
+                        Format::Pretty => {
+                            println!("Entities defined in {}:", path.display());
+                            for (name, aliases) in &alias_map {
+                                if !aliases.is_empty() {
+                                    println!("  {} (aliases: {})", name, aliases.join(", "));
+                                } else {
+                                    println!("  {}", name);
+                                }
+                            }
+                            println!("\nTotal: {} entities", alias_map.len());
                         }
                     }
                 }

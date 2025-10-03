@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NotesIndex",
+  "type": "object",
+  "required": [
+    "entity_index",
+    "file_index",
+    "last_updated",
+    "schema_version",
+    "stats",
+    "story_root"
+  ],
+  "properties": {
+    "entity_index": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "file_index": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "last_updated": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "stats": {
+      "$ref": "#/definitions/NotesStats"
+    },
+    "story_root": {
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "NotesStats": {
+      "type": "object",
+      "required": [
+        "beats",
+        "consistency_entries",
+        "entities_tracked",
+        "facts",
+        "timeline_events"
+      ],
+      "properties": {
+        "beats": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "consistency_entries": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "entities_tracked": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "facts": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "timeline_events": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    }
+  }
+}

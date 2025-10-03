@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "beat",
+  "type": "object",
+  "required": [
+    "added",
+    "entities",
+    "file",
+    "id",
+    "source",
+    "text"
+  ],
+  "properties": {
+    "added": {
+      "type": "string"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "file": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "line": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint",
+      "minimum": 0.0
+    },
+    "metadata": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/BeatMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provenance": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Provenance"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "section": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Section"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "$ref": "#/definitions/BeatSource"
+    },
+    "text": {
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "BeatMetadata": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "BeatSource": {
+      "type": "string",
+      "enum": [
+        "llm-generated",
+        "manual",
+        "imported"
+      ]
+    },
+    "Provenance": {
+      "description": "Per-record provenance details for transparency and repeatability",
+      "type": "object",
+      "properties": {
+        "aliases_applied": {
+          "description": "Mapping of alias -> canonical applied during normalization",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "normalization_steps": {
+          "description": "Freeform step names for normalization pipeline",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "normalized_with_aliases": {
+          "description": "Aliases considered during normalization (canonical names)",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Section": {
+      "type": "object",
+      "properties": {
+        "act": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scene": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

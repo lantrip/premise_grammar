@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Provenance",
+  "description": "Per-record provenance details for transparency and repeatability",
+  "type": "object",
+  "properties": {
+    "aliases_applied": {
+      "description": "Mapping of alias -> canonical applied during normalization",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "normalization_steps": {
+      "description": "Freeform step names for normalization pipeline",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "normalized_with_aliases": {
+      "description": "Aliases considered during normalization (canonical names)",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_file": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_line": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint",
+      "minimum": 0.0
+    }
+  }
+}

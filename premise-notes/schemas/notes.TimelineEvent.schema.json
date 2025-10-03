@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "timeline",
+  "type": "object",
+  "required": [
+    "added",
+    "entities",
+    "event",
+    "id",
+    "order",
+    "source"
+  ],
+  "properties": {
+    "added": {
+      "type": "string"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "event": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "order": {
+      "$ref": "#/definitions/TimelineOrder"
+    },
+    "provenance": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Provenance"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "relative_to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "definitions": {
+    "Provenance": {
+      "description": "Per-record provenance details for transparency and repeatability",
+      "type": "object",
+      "properties": {
+        "aliases_applied": {
+          "description": "Mapping of alias -> canonical applied during normalization",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "normalization_steps": {
+          "description": "Freeform step names for normalization pipeline",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "normalized_with_aliases": {
+          "description": "Aliases considered during normalization (canonical names)",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "TimelineOrder": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/TimelineOrderName"
+        },
+        {
+          "type": "integer",
+          "format": "int64"
+        }
+      ]
+    },
+    "TimelineOrderName": {
+      "type": "string",
+      "enum": [
+        "past",
+        "present",
+        "future"
+      ]
+    }
+  }
+}

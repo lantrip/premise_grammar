@@ -147,53 +147,104 @@ cd extensions/vscode && npm run compile && code --install-extension .
   - Command Palette: “Premise: Show Beats for Entity Under Cursor”
   - Context menu: right-click with a selection in a `.prem` file
   - “Premise: Scan Workspace” to force a full rescan
-- See `LSP_Roadmap.md` for detailed status and next steps
+- Shared notes schemas now live in `premise-notes/` (see `premise-notes/README.md`).
+- See `AI_ROADMAP.md` for consolidated status and next steps
 
 ### AI Features
 
-**Beat & Entity Generation**:
-- `Premise: Generate Beats…` - AI-generated `///` beats anchored to sections
-- `Premise: Update Entity Descriptions…` - Update `@entity` descriptions from story
+**Beat & Entity Generation**
+
+- `Premise: Generate Beats…` — AI-generated `///` beats anchored to sections
+- `Premise: Update Entity Descriptions…` — Update `@entity` descriptions from story
 - Provider: OpenRouter (Settings → `premise.ai.*`)
 
-**Story Notes System** (`.premise-notes/`) - **Production Ready**:
+**Story Notes System** (`.premise-notes/`) — Production Ready
 
-Structured story knowledge base with intelligent extraction and CLI-first architecture.
+Structured story knowledge base with intelligent extraction and CLI-first architecture. Supports modular sinks and alias/uncertainty normalization.
 
-**Key Features**:
-- ✅ **Entity trait extraction**: Auto-detect from `@character Name: Description` (confidence: 1.0)
-- ✅ **Co-occurrence relationships**: Discover entity interactions in scenes/dialogue (confidence: 0.7)
-- ✅ **Section context**: Track act/scene/cel metadata for all facts
-- ✅ **JSONL format**: Append-friendly, merge-friendly, tool-friendly
-- ✅ **Comprehensive testing**: 9 snapshot tests with deterministic output
-- ✅ **Error handling**: Clear error messages with actionable guidance
+**Key Features**
 
-**CLI Commands** (all production-ready):
-```bash
+- ✅ Entity trait extraction from `@character Name: Description` (1.0 confidence)
+- ✅ Co-occurrence relationship discovery from scenes/dialogue (≈0.7 confidence)
+- ✅ Section context for all records (act/scene/cel)
+- ✅ JSONL storage (append/merge/tool-friendly)
+- ✅ Deterministic outputs with snapshot tests
+- ✅ Actionable error messages
+
+**CLI Commands**
+
+````bash
 # Initialize notes directory
 premise notes init . --title "My Story"
 
-# Extract facts (traits + co-occurrence relationships)
-premise notes extract-facts story.prem
-# Output: Extracted 10 facts from story.prem
+# Export beats (with normalization of {Alias}→{Canonical}, unknown → {?Name})
+premise notes export-beats story/scene1.prem --sink notes [--dry-run] [--stable-ids]
+# Sinks: --sink stdout|jsonl-dir|dir (use with --out-dir ./out)
+# Ingest non-Premise text: --input plain|markdown --stdin; normalize with --aliases aliases.json
 
-# Query by entity
-premise notes query --entity Hero .
+# Extract facts (AI-enhanced heuristics + alias normalization)
+premise notes extract-facts story/scene1.prem --sink notes [--dry-run] [--stable-ids]
 
-# Rebuild index
-premise notes rebuild-index .
-# Output: Beats: 47 | Facts: 123 | Entities: 15
+# Extract timeline events
+premise notes extract-timeline story/scene1.prem --sink notes [--dry-run] [--stable-ids]
 
-# Advanced queries with standard tools
-grep '"Hero"' .premise-notes/facts.jsonl | jq 'select(.type=="trait")'
-jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
+# Normalize existing notes against current aliases
+premise notes normalize . [--dry-run]
+
+# Entity utilities
+premise notes discover-entities story/scene1.prem --format json
+premise notes list-entities story/scene1.prem
+
+# Unknowns & Aliases
+premise notes summarize-uncertain --path .
+premise notes merge-aliases --aliases aliases_update.json --path . [--dry-run]
+
+## Alias Workflow (Quick Reference)
+
+Keep aliases simple: map canonical names to a few nicknames.
+
+```json
+// .premise-notes/aliases.json
+{
+  "Maya Chen": ["Maya", "Chen"],
+  "Last Library": ["Library"]
+}
+````
+
+```json
+// alias-delta.json (additions only)
+{
+  "Maya Chen": ["M"],
+  "Kai Ito": ["Kai"]
+}
 ```
 
-**VSCode Commands**:
-- `Premise: Extract Facts to Notes…` (AI-enhanced extraction)
-- `Premise: Export Beats to Notes` (structural extraction)
+```bash
+# Preview changes
+premise notes apply-alias-delta --delta alias-delta.json --path . --dry-run
+# Apply changes
+premise notes apply-alias-delta --delta alias-delta.json --path .
+```
 
-📖 **Full documentation**: [NOTES_SYSTEM.md](./NOTES_SYSTEM.md) | **Roadmap**: [AI_ROADMAP.md](./AI_ROADMAP.md)
+# Query and index
+
+premise notes query --entity "Hero" .
+premise notes rebuild-index .
+
+# Handy shell queries
+
+grep '"Hero"' .premise-notes/facts.jsonl | jq 'select(.type=="trait")'
+jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
+
+````
+
+**VSCode Commands**
+
+- `Premise: Extract Facts to Notes…`
+- `Premise: Export Beats to Notes…`
+- `Premise: Discover Entities…` (planned UI; available via CLI today)
+
+📖 See `AI_ROADMAP.md` for full specs and policies. Notes schemas: `premise-notes/src/schema.rs`.
 
 ## Repository Structure
 
@@ -281,7 +332,7 @@ This repository includes editor extensions in `extensions/`:
 
 # Or manually:
 ./scripts/install-extensions.sh [vscode|cursor|zed|all]
-```
+````
 
 The extensions auto-build and install to your local editors for immediate testing.
 See `extensions/README.md` for detailed extension development workflow.

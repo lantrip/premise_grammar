@@ -1,0 +1,28 @@
+[package]
+name = "premise-notes"
+version = "0.1.0"
+edition = "2021"
+description = "Reusable notes schemas, I/O, sinks, and normalization for Premise and non-Premise text"
+license = "MIT OR Apache-2.0"
+exclude = ["/target/**"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+schemars = { version = "0.8", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1.10"
+rand = "0.8"
+anyhow = "1"
+sha2 = "0.10"
+base16ct = { version = "0.2", features = ["alloc"] }
+
+[package.metadata]
+documentation = "https://github.com/premise-lang/premise_grammar"
+
+[package.metadata.scripts]
+generate-schemas = "cargo run --bin generate_schemas"
+
+[[bin]]
+name = "generate_schemas"
+path = "src/bin/generate_schemas.rs"

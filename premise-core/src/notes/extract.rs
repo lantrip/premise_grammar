@@ -1,4 +1,4 @@
-use super::schema::*;
+use crate::notes::*;
 use crate::ast::AstNode;
 use crate::ir::IrAnalysis;
 use regex::Regex;
@@ -42,7 +42,7 @@ fn extract_beats_recursive(
             let text = extract_text_content(node);
             let entities = extract_entity_references(&text);
             let beat = Beat {
-                id: super::io::generate_id("beat_"),
+                id: crate::notes::generate_id("beat_"),
                 text,
                 file: file_path.to_string(),
                 line: Some(node.range.start.row + 1),
@@ -108,7 +108,7 @@ pub fn extract_facts_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Fact> {
     for act in &ir.ir.story.acts {
         let fact = Fact {
             fact_type: FactType::Event,
-            id: super::io::generate_id("fact_"),
+            id: crate::notes::generate_id("fact_"),
             entity: None,
             entities: None,
             category: Some("act".to_string()),
@@ -127,7 +127,7 @@ pub fn extract_facts_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Fact> {
     for scene in &ir.ir.story.scenes {
         let fact = Fact {
             fact_type: FactType::Event,
-            id: super::io::generate_id("fact_"),
+            id: crate::notes::generate_id("fact_"),
             entity: None,
             entities: None,
             category: Some("scene".to_string()),
