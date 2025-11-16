@@ -7,20 +7,19 @@ Tree-sitter grammar for the Premise language - a domain-specific language for st
 This repo now includes:
 
 - Grammar and editor integrations (this root)
-- Rust core crate `premise-core` with a CLI and JSON outputs
+- Rust core crate `premise-core` (library only; CLI split to `premise` crate)
 - Python bindings `premisecore` (PyO3/maturin)
 
 Note: Python packages cannot contain hyphens; the Python crate/module is named `premisecore` while the Rust crate is `premise-core`.
-
-Read the quick start guide: [QUICKSTART.md](./QUICKSTART.md)
 
 ### What we have now
 
 - Production-ready Tree-sitter grammar and queries
 - Editor extensions for VSCode/Cursor and Zed
-- Rust core (`premise-core`):
+- Rust CLI (`premise` crate):
   - `premise parse|validate|analyze|plan` with `--format json|pretty`
   - JSON Schemas via `premise schema --type <...>`
+  - Notes LLM overrides for text modes (`--extractor llm`): `--llm-provider`, `--model`, `--endpoint`, `--api-key-env`, `--temperature`, `--max-tokens`, `--llm-replay`
 - Python package (`premisecore`): `Parser.parse_json`, `validate_json`, `analyze_json`, `plan_json`, and `schema()`
 
 ### Adapter Framework (Foundation Complete ✅)
@@ -56,13 +55,12 @@ Read the quick start guide: [QUICKSTART.md](./QUICKSTART.md)
 tree-sitter parse examples/theming_showcase.prem
 ```
 
-Core CLI (premise-core)
+Core CLI (premise)
 
 ```bash
-cd premise-core
-cargo build
-cargo run -- --format json parse examples/theming_showcase.prem --ast --symbols --imports --resolved-imports
-cargo run -- schema --type all
+cargo build -p premise
+./target/debug/premise --format json parse examples/theming_showcase.prem --ast --symbols --imports --resolved-imports
+./target/debug/premise schema --type all
 ```
 
 Python (premisecore)
@@ -211,6 +209,20 @@ Keep aliases simple: map canonical names to a few nicknames.
 }
 ````
 
+### LLM flags and precedence (text modes)
+
+When using `--extractor llm` for plain/markdown inputs, you can override AI settings:
+
+```bash
+premise notes export-beats novel.md --input markdown --extractor llm \
+  --llm-provider openrouter --model openai/gpt-4o-mini --llm-replay read_write
+
+premise notes extract-facts novel.md --input markdown --extractor llm \
+  --api-key-env OPENROUTER_API_KEY --temperature 0.2 --max-tokens 1500
+```
+
+Precedence for AI config: CLI flags > `.premise-notes/ai.json` > `~/.config/premise/ai.json` > defaults.
+
 ```json
 // alias-delta.json (additions only)
 {
@@ -224,6 +236,18 @@ Keep aliases simple: map canonical names to a few nicknames.
 premise notes apply-alias-delta --delta alias-delta.json --path . --dry-run
 # Apply changes
 premise notes apply-alias-delta --delta alias-delta.json --path .
+```
+
+# Review & apply (non-interactive)
+
+```bash
+# Review a proposal (from prior extraction), auto-approve high-confidence
+premise notes review-extraction --proposal proposal.json --path . \
+  --strategy approve-high-confidence --min-confidence 0.7 --out-actions actions.json --format json
+
+# Apply the actions to notes (dry-run first)
+premise notes apply-actions --actions actions.json --path . --dry-run
+premise notes apply-actions --actions actions.json --path .
 ```
 
 # Query and index
@@ -253,7 +277,10 @@ jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
 - `examples/` - Reference `.prem` files for testing
 - `scripts/` - Build and validation utilities
 - `src/` - Generated parser artifacts
-- `premise-core/` - Rust core with CLI (`premise`) and JSON outputs/schemas
+- `premise-core/` - Rust core library (parser/IR/plan; Premise-specific extractors)
+- `premise/` - Rust CLI crate (was in `premise-core`), invokes `premise-core` and `premise-notes`
+- `premise-notes/` - Domain-agnostic notes (schemas, I/O, sinks, normalize, discovery, text extraction)
+- `premise-ai/` - Shared AI config/provider for LLM-backed extraction
 - `premisecore/` - Python bindings (PyO3/maturin)
 - `extensions/` - Editor extensions (Zed, VSCode)
   - `zed/` - Zed editor extension

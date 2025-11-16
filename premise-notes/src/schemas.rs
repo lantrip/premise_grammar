@@ -7,7 +7,10 @@ pub fn export_all() -> Vec<(String, RootSchema)> {
         ("Beat".into(), schemars::schema_for!(Beat)),
         ("Fact".into(), schemars::schema_for!(Fact)),
         ("TimelineEvent".into(), schemars::schema_for!(TimelineEvent)),
-        ("ConsistencyEntry".into(), schemars::schema_for!(ConsistencyEntry)),
+        (
+            "ConsistencyEntry".into(),
+            schemars::schema_for!(ConsistencyEntry),
+        ),
         ("NotesIndex".into(), schemars::schema_for!(NotesIndex)),
         ("NotesMetadata".into(), schemars::schema_for!(NotesMetadata)),
         ("NotesRecord".into(), schemars::schema_for!(NotesRecord)),
@@ -29,4 +32,3 @@ pub fn export_one(name: &str) -> Option<RootSchema> {
         _ => None,
     }
 }
-

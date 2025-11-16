@@ -19,6 +19,10 @@ pub struct Beat {
     pub metadata: Option<BeatMetadata>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub provenance: Option<Provenance>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub importance: Option<Importance>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub importance_assessments: Option<Vec<Importance>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -92,6 +96,10 @@ pub struct Fact {
     pub metadata: Option<FactMetadata>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub provenance: Option<Provenance>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub importance: Option<Importance>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub importance_assessments: Option<Vec<Importance>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -179,6 +187,23 @@ pub struct ConsistencyEntry {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum ImportanceSource {
+    User,
+    Ai,
+    Heuristic,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct Importance {
+    pub score: f64,
+    pub assessed_by: ImportanceSource,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub method: Option<String>,
+    pub updated: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct NotesIndex {
     pub schema_version: String,
     pub story_root: String,
@@ -222,4 +247,3 @@ pub enum NotesRecord {
     TimelineEvent(TimelineEvent),
     ConsistencyEntry(ConsistencyEntry),
 }
-

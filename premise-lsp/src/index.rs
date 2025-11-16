@@ -201,7 +201,6 @@ fn file_mtime_millis(path: &Path) -> Option<u128> {
 mod tests {
     use super::*;
     use crate::ast_utils;
-    use tower_lsp::lsp_types as lsp;
 
     fn smoke_root() -> PathBuf {
         PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -209,6 +208,7 @@ mod tests {
             .join("test-lsp-smoke")
     }
 
+    #[allow(dead_code)]
     fn story_file(name: &str) -> PathBuf {
         smoke_root().join("story").join(name)
     }
@@ -221,7 +221,7 @@ mod tests {
         idx.scan_root_from_disk(&story_root);
 
         let refs = idx.get_refs_in_root(&story_root, "Maya Chen");
-        assert!(refs.len() > 0, "expected refs for Maya Chen");
+        assert!(!refs.is_empty(), "expected refs for Maya Chen");
 
         // Ensure at least one reference reports a Beat context
         let mut saw_beat = false;
@@ -249,7 +249,7 @@ mod tests {
         idx.scan_root_from_disk(&story_root);
 
         let refs = idx.get_refs_in_root(&story_root, "Keeper Aldrich");
-        assert!(refs.len() > 0, "expected refs for Keeper Aldrich");
+        assert!(!refs.is_empty(), "expected refs for Keeper Aldrich");
 
         let mut saw_beat = false;
         for loc in refs {

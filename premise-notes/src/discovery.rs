@@ -42,7 +42,9 @@ pub fn discover_entities_from_text(
     for cap in proper_noun_re.captures_iter(text) {
         if let Some(m) = cap.get(1) {
             let name = m.as_str().to_string();
-            if known_entities.contains(&name) { continue; }
+            if known_entities.contains(&name) {
+                continue;
+            }
             let entity_type = infer_entity_type(&name, text);
             let confidence = calculate_confidence(&name, text, &entity_type);
             add_or_update(&mut candidates, name, entity_type, "stdin", 0, confidence);
@@ -54,7 +56,9 @@ pub fn discover_entities_from_text(
     for cap in single_name_re.captures_iter(text) {
         if let Some(m) = cap.get(1) {
             let name = m.as_str().to_string();
-            if known_entities.contains(&name) || is_common_word(&name) { continue; }
+            if known_entities.contains(&name) || is_common_word(&name) {
+                continue;
+            }
             let entity_type = infer_entity_type(&name, text);
             let mut confidence = calculate_confidence(&name, text, &entity_type);
             confidence *= 0.7;
@@ -75,7 +79,11 @@ fn add_or_update(
     line: usize,
     confidence: f64,
 ) {
-    let evidence = if line > 0 { format!("{}:{}", file, line) } else { file.to_string() };
+    let evidence = if line > 0 {
+        format!("{}:{}", file, line)
+    } else {
+        file.to_string()
+    };
     candidates
         .entry(name.clone())
         .and_modify(|c| {
@@ -154,17 +162,26 @@ fn calculate_confidence(_name: &str, context: &str, entity_type: &EntityType) ->
     let mut confidence: f64 = 0.5;
     match entity_type {
         EntityType::Character => {
-            if Regex::new(r"\b(said|asked|whispered)\b").unwrap().is_match(&context_lower) {
+            if Regex::new(r"\b(said|asked|whispered)\b")
+                .unwrap()
+                .is_match(&context_lower)
+            {
                 confidence += 0.3;
             }
         }
         EntityType::Location => {
-            if Regex::new(r"\b(in|at|through)\s+").unwrap().is_match(&context_lower) {
+            if Regex::new(r"\b(in|at|through)\s+")
+                .unwrap()
+                .is_match(&context_lower)
+            {
                 confidence += 0.3;
             }
         }
         EntityType::Object => {
-            if Regex::new(r"\b(glowed|hummed|shimmered)\b").unwrap().is_match(&context_lower) {
+            if Regex::new(r"\b(glowed|hummed|shimmered)\b")
+                .unwrap()
+                .is_match(&context_lower)
+            {
                 confidence += 0.3;
             }
         }
@@ -175,9 +192,33 @@ fn calculate_confidence(_name: &str, context: &str, entity_type: &EntityType) ->
 
 fn is_common_word(word: &str) -> bool {
     let common = [
-        "The", "This", "That", "These", "Those", "Here", "There", "When", "Where", "What",
-        "Which", "Who", "Why", "How", "Today", "Tomorrow", "Yesterday", "Never", "Always",
-        "Once", "Suddenly", "Finally", "First", "Last", "Next", "Before", "After",
+        "The",
+        "This",
+        "That",
+        "These",
+        "Those",
+        "Here",
+        "There",
+        "When",
+        "Where",
+        "What",
+        "Which",
+        "Who",
+        "Why",
+        "How",
+        "Today",
+        "Tomorrow",
+        "Yesterday",
+        "Never",
+        "Always",
+        "Once",
+        "Suddenly",
+        "Finally",
+        "First",
+        "Last",
+        "Next",
+        "Before",
+        "After",
     ];
     common.contains(&word)
 }
@@ -194,7 +235,10 @@ pub fn propose_alias_updates(
 ) -> AliasDelta {
     let mut additions: HashMap<String, Vec<String>> = HashMap::new();
     for c in candidates {
-        let existing = alias_map.get(&c.canonical_name).cloned().unwrap_or_default();
+        let existing = alias_map
+            .get(&c.canonical_name)
+            .cloned()
+            .unwrap_or_default();
         let mut to_add: Vec<String> = c
             .aliases
             .iter()
@@ -209,4 +253,3 @@ pub fn propose_alias_updates(
     }
     AliasDelta { additions }
 }
-

@@ -44,7 +44,15 @@
       "Bash(cargo insta:*)",
       "Bash(../../target/debug/premise notes query Hero .premise-notes)",
       "Bash(../../target/debug/premise notes rebuild-index .premise-notes)",
-      "Bash(../../target/debug/premise notes rebuild-index .)"
+      "Bash(../../target/debug/premise notes rebuild-index .)",
+      "Bash(../target/release/premise notes list-entities /tmp/test_discovery.prem)",
+      "Bash(../target/release/premise --format json notes list-entities /tmp/test_discovery.prem)",
+      "Bash(cargo run:*)",
+      "Bash(/Users/davidlantrip/repos/premise_grammar/target/release/premise notes list-entities /tmp/test_simple.prem)",
+      "Bash(/Users/davidlantrip/repos/premise_grammar/target/release/premise notes list-entities /tmp/test_discovery.prem)",
+      "Bash(/Users/davidlantrip/repos/premise_grammar/target/release/premise notes discover-entities /tmp/test_discovery.prem)",
+      "Bash(/Users/davidlantrip/repos/premise_grammar/target/release/premise --format json notes discover-entities /tmp/test_discovery.prem)",
+      "Read(//private/tmp/**)"
     ],
     "deny": [],
     "ask": []

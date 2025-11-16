@@ -555,15 +555,28 @@ impl LanguageServer for PremiseServer {
                         // Build hierarchical context using range containment
                         // Helper to find parent section by range containment
                         let find_parent_act = |range: premise_core::ast::Range| -> Option<String> {
-                            ir.ir.story.acts.iter()
-                                .find(|a| a.range.start.row <= range.start.row && a.range.end.row >= range.end.row)
+                            ir.ir
+                                .story
+                                .acts
+                                .iter()
+                                .find(|a| {
+                                    a.range.start.row <= range.start.row
+                                        && a.range.end.row >= range.end.row
+                                })
                                 .map(|a| a.title.clone())
                         };
-                        let find_parent_scene = |range: premise_core::ast::Range| -> Option<String> {
-                            ir.ir.story.scenes.iter()
-                                .find(|s| s.range.start.row <= range.start.row && s.range.end.row >= range.end.row)
-                                .map(|s| s.title.clone())
-                        };
+                        let find_parent_scene =
+                            |range: premise_core::ast::Range| -> Option<String> {
+                                ir.ir
+                                    .story
+                                    .scenes
+                                    .iter()
+                                    .find(|s| {
+                                        s.range.start.row <= range.start.row
+                                            && s.range.end.row >= range.end.row
+                                    })
+                                    .map(|s| s.title.clone())
+                            };
 
                         // Emit sections (Acts)
                         for a in ir.ir.story.acts.iter() {
@@ -616,7 +629,11 @@ impl LanguageServer for PremiseServer {
                             let range = crate::diagnostics::to_lsp_range(c.range);
                             let scene_title = find_parent_scene(c.range);
                             let act_title = find_parent_act(c.range);
-                            let id = make_id(act_title.as_deref(), scene_title.as_deref(), Some(c.title.as_str()));
+                            let id = make_id(
+                                act_title.as_deref(),
+                                scene_title.as_deref(),
+                                Some(c.title.as_str()),
+                            );
                             let mentions: Vec<String> = all_mentions
                                 .iter()
                                 .filter(|(_, r)| {

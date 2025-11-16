@@ -54,6 +54,25 @@
     "id": {
       "type": "string"
     },
+    "importance": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Importance"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "importance_assessments": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/definitions/Importance"
+      }
+    },
     "metadata": {
       "anyOf": [
         {
@@ -131,6 +150,40 @@
         "knowledge",
         "event",
         "state"
+      ]
+    },
+    "Importance": {
+      "type": "object",
+      "required": [
+        "assessed_by",
+        "score",
+        "updated"
+      ],
+      "properties": {
+        "assessed_by": {
+          "$ref": "#/definitions/ImportanceSource"
+        },
+        "method": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "score": {
+          "type": "number",
+          "format": "double"
+        },
+        "updated": {
+          "type": "string"
+        }
+      }
+    },
+    "ImportanceSource": {
+      "type": "string",
+      "enum": [
+        "user",
+        "ai",
+        "heuristic"
       ]
     },
     "Provenance": {

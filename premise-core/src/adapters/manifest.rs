@@ -2,8 +2,8 @@
 //
 // Defines the metadata and capabilities of a Premise adapter
 
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 /// Adapter manifest containing metadata and capabilities
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -84,7 +84,10 @@ impl AdapterManifest {
 
     /// Check if adapter can generate a specific output format
     pub fn supports_format(&self, format: &str) -> bool {
-        self.capabilities.output_formats.iter().any(|f| f.eq_ignore_ascii_case(format))
+        self.capabilities
+            .output_formats
+            .iter()
+            .any(|f| f.eq_ignore_ascii_case(format))
     }
 }
 

@@ -34,5 +34,28 @@ Thumbs.db
 .env
 .env.local
 *.local.json
+
+# Python virtual environments
 .venv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Build artifacts and binaries
+parser.dylib
+*.dylib
+*.so
+*.wasm
+tree-sitter-premise.wasm
+
+# Extension binaries
+extensions/vscode/server/
+extensions/vscode/*.vsix
+
+# Premise notes (local development)
+.premise-notes/
+
+# Additional Rust artifacts
 premisecore/target

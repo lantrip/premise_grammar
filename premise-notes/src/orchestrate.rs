@@ -1,17 +1,27 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::discovery::{discover_entities_from_text, EntityCandidate, propose_alias_updates, AliasDelta};
-use crate::normalize::{collect_uncertain_entities_from_text, collect_unknown_fact_entities, normalize_all};
+use crate::discovery::{
+    discover_entities_from_text, propose_alias_updates, AliasDelta, EntityCandidate,
+};
+use crate::normalize::{
+    collect_uncertain_entities_from_text, collect_unknown_fact_entities, normalize_all,
+};
 use crate::schema::{Beat, Fact};
 use crate::{read_beats, read_facts};
 
 /// One-shot helper: discover entity candidates from text
-pub fn discover_entities_from_text_api(text: &str, known: &HashSet<String>) -> Vec<EntityCandidate> {
+pub fn discover_entities_from_text_api(
+    text: &str,
+    known: &HashSet<String>,
+) -> Vec<EntityCandidate> {
     discover_entities_from_text(text, known)
 }
 
 /// One-shot helper: propose alias additions
-pub fn propose_alias_updates_api(candidates: &[EntityCandidate], alias_map: &HashMap<String, Vec<String>>) -> AliasDelta {
+pub fn propose_alias_updates_api(
+    candidates: &[EntityCandidate],
+    alias_map: &HashMap<String, Vec<String>>,
+) -> AliasDelta {
     propose_alias_updates(candidates, alias_map)
 }
 
@@ -40,23 +50,28 @@ pub fn summarize_uncertainties<P: AsRef<std::path::Path>>(
     }
 
     // Unknowns from facts using entities seen in beats as canonical fallback
-    let canonical: HashSet<String> = beats
-        .iter()
-        .flat_map(|b| b.entities.clone())
-        .collect();
+    let canonical: HashSet<String> = beats.iter().flat_map(|b| b.entities.clone()).collect();
     let mut unknowns_set: HashSet<String> = collect_unknown_fact_entities(&facts, &canonical)
         .into_iter()
         .collect();
 
     // Union
-    unknowns_set.extend(uncertain.into_iter());
+    unknowns_set.extend(uncertain);
 
     // Referenced files from beats and fact evidence
     let mut files_set: HashSet<String> = HashSet::new();
-    for b in &beats { if !b.file.is_empty() { files_set.insert(b.file.clone()); } }
+    for b in &beats {
+        if !b.file.is_empty() {
+            files_set.insert(b.file.clone());
+        }
+    }
     for f in &facts {
         for ev in &f.evidence {
-            if let Some(fp) = ev.split(':').next() { if !fp.is_empty() { files_set.insert(fp.to_string()); } }
+            if let Some(fp) = ev.split(':').next() {
+                if !fp.is_empty() {
+                    files_set.insert(fp.to_string());
+                }
+            }
         }
     }
 
@@ -66,4 +81,3 @@ pub fn summarize_uncertainties<P: AsRef<std::path::Path>>(
     files.sort();
     Ok((unknown_entities, files))
 }
-

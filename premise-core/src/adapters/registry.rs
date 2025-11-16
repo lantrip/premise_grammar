@@ -3,8 +3,8 @@
 // Provides functionality to discover, load, and manage adapters
 
 use super::manifest::AdapterManifest;
-use std::path::{Path, PathBuf};
 use std::io;
+use std::path::{Path, PathBuf};
 
 /// Adapter registry that manages available adapters
 #[derive(Debug, Clone)]
@@ -70,8 +70,7 @@ impl AdapterRegistry {
     /// Load a manifest from a JSON file
     fn load_manifest(path: &Path) -> io::Result<AdapterManifest> {
         let content = std::fs::read_to_string(path)?;
-        serde_json::from_str(&content)
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
+        serde_json::from_str(&content).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
     }
 
     /// Get all registered adapters
@@ -93,7 +92,10 @@ impl AdapterRegistry {
     }
 
     /// Find adapters by capability
-    pub fn find_by_capability(&self, predicate: impl Fn(&AdapterManifest) -> bool) -> Vec<&AdapterManifest> {
+    pub fn find_by_capability(
+        &self,
+        predicate: impl Fn(&AdapterManifest) -> bool,
+    ) -> Vec<&AdapterManifest> {
         self.adapters.iter().filter(|a| predicate(a)).collect()
     }
 

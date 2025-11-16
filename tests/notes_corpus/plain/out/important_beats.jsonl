@@ -1,0 +1,24 @@
+{
+  "type": "beat",
+  "id": "beat_483a24f40ea072c6ecbd2655",
+  "text": "The atrium of the {Last Library} breathed dust and morning light as {Maya Chen} crossed the tiled floor. The mezzanine loomed with shadows, and the old clock thudded in the rafters. A page slipped a note between catalogs.",
+  "file": "tests/notes_corpus/plain/novel.md",
+  "line": 4,
+  "section": {
+    "act": "Chapter 1",
+    "scene": "The Meeting"
+  },
+  "entities": [
+    "Last Library",
+    "Maya Chen"
+  ],
+  "added": "2025-10-03T16:39:11.636120+00:00",
+  "source": "imported",
+  "provenance": {
+    "source_file": "tests/notes_corpus/plain/novel.md",
+    "source_line": 4,
+    "normalization_steps": [
+      "normalize_beat_text"
+    ]
+  }
+}

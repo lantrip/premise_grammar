@@ -3,8 +3,9 @@
 // Provides adapters with read access to the notes system for context-aware generation
 
 use crate::notes::{Beat, Fact, FactType};
-use std::path::Path;
+use premise_notes::{read_beats, read_facts};
 use std::io;
+use std::path::Path;
 
 /// Notes context interface for adapters
 pub struct NotesContext {
@@ -21,21 +22,21 @@ impl NotesContext {
 
     /// Get all facts for a specific entity
     pub fn get_entity_facts(&self, entity: &str) -> io::Result<Vec<Fact>> {
-        let all_facts = crate::notes::read_facts(&self.story_root)?;
+        let all_facts = read_facts(&self.story_root)?;
         Ok(all_facts
             .into_iter()
             .filter(|f| {
                 f.entity.as_deref() == Some(entity)
-                    || f.entities.as_ref().map_or(false, |entities| {
-                        entities.iter().any(|e| e == entity)
-                    })
+                    || f.entities
+                        .as_ref()
+                        .is_some_and(|entities| entities.iter().any(|e| e == entity))
             })
             .collect())
     }
 
     /// Get facts filtered by type
     pub fn get_facts_by_type(&self, fact_type: FactType) -> io::Result<Vec<Fact>> {
-        let all_facts = crate::notes::read_facts(&self.story_root)?;
+        let all_facts = read_facts(&self.story_root)?;
         Ok(all_facts
             .into_iter()
             .filter(|f| f.fact_type == fact_type)
@@ -44,7 +45,7 @@ impl NotesContext {
 
     /// Get facts with minimum confidence threshold
     pub fn get_facts_with_confidence(&self, min_confidence: f64) -> io::Result<Vec<Fact>> {
-        let all_facts = crate::notes::read_facts(&self.story_root)?;
+        let all_facts = read_facts(&self.story_root)?;
         Ok(all_facts
             .into_iter()
             .filter(|f| f.confidence.unwrap_or(0.0) >= min_confidence)
@@ -53,12 +54,12 @@ impl NotesContext {
 
     /// Get relationship facts between two entities
     pub fn get_relationship(&self, entity1: &str, entity2: &str) -> io::Result<Vec<Fact>> {
-        let all_facts = crate::notes::read_facts(&self.story_root)?;
+        let all_facts = read_facts(&self.story_root)?;
         Ok(all_facts
             .into_iter()
             .filter(|f| {
                 f.fact_type == FactType::Relationship
-                    && f.entities.as_ref().map_or(false, |entities| {
+                    && f.entities.as_ref().is_some_and(|entities| {
                         entities.contains(&entity1.to_string())
                             && entities.contains(&entity2.to_string())
                     })
@@ -68,7 +69,7 @@ impl NotesContext {
 
     /// Get all beats for a specific entity
     pub fn get_entity_beats(&self, entity: &str) -> io::Result<Vec<Beat>> {
-        let all_beats = crate::notes::read_beats(&self.story_root)?;
+        let all_beats = read_beats(&self.story_root)?;
         Ok(all_beats
             .into_iter()
             .filter(|b| b.entities.contains(&entity.to_string()))
@@ -77,15 +78,15 @@ impl NotesContext {
 
     /// Get beats for a specific section
     pub fn get_section_beats(&self, section_id: &str) -> io::Result<Vec<Beat>> {
-        let all_beats = crate::notes::read_beats(&self.story_root)?;
+        let all_beats = read_beats(&self.story_root)?;
         Ok(all_beats
             .into_iter()
             .filter(|b| {
-                b.section.as_ref().map_or(false, |s| {
+                b.section.as_ref().is_some_and(|s| {
                     // Match by act, scene, or cel title
-                    s.act.as_deref().map_or(false, |a| a == section_id)
-                        || s.scene.as_deref().map_or(false, |sc| sc == section_id)
-                        || s.cel.as_deref().map_or(false, |c| c == section_id)
+                    (s.act.as_deref() == Some(section_id))
+                        || (s.scene.as_deref() == Some(section_id))
+                        || (s.cel.as_deref() == Some(section_id))
                 })
             })
             .collect())
@@ -93,7 +94,7 @@ impl NotesContext {
 
     /// Get all entity names mentioned in notes
     pub fn get_all_entities(&self) -> io::Result<Vec<String>> {
-        let all_facts = crate::notes::read_facts(&self.story_root)?;
+        let all_facts = read_facts(&self.story_root)?;
         let mut entities = std::collections::HashSet::new();
 
         for fact in all_facts {
@@ -163,7 +164,7 @@ impl FactQuery {
     }
 
     pub fn execute(&self, context: &NotesContext) -> io::Result<Vec<Fact>> {
-        let all_facts = crate::notes::read_facts(context.story_root())?;
+        let all_facts = read_facts(context.story_root())?;
 
         Ok(all_facts
             .into_iter()
@@ -171,9 +172,9 @@ impl FactQuery {
                 // Filter by entity
                 if let Some(ref entity) = self.entity {
                     let matches_entity = f.entity.as_deref() == Some(entity.as_str())
-                        || f.entities.as_ref().map_or(false, |entities| {
-                            entities.iter().any(|e| e == entity)
-                        });
+                        || f.entities
+                            .as_ref()
+                            .is_some_and(|entities| entities.iter().any(|e| e == entity));
                     if !matches_entity {
                         return false;
                     }

@@ -150,6 +150,25 @@ let delta = propose_alias_updates_api(&candidates, &alias_map);
 let (_beats, _facts, unknowns) = normalize_all_api(vec![], vec![], &alias_map);
 ```
 
+### Importance & Curation
+
+Attach and curate importance to surface high-signal records while preserving full fidelity.
+
+- Authoritative importance: `importance?: { score, assessed_by, method?, updated }`
+- Assessment history: `importance_assessments?: Importance[]`
+- Precedence: latest user > latest ai > latest heuristic
+
+CLI examples:
+
+```bash
+# Set importance for a record (append assessment and recompute authoritative importance)
+premise notes set-importance --id <recordId> --score 0.85 --source user --method "manual" --path .
+
+# Filter emitted records by importance when exporting beats/facts
+premise notes export-beats file.md --input markdown --sink stdout --stable-ids --min-importance 0.6
+premise notes extract-facts file.md --input markdown --sink stdout --stable-ids --min-importance 0.6
+```
+
 ### Sinks & I/O
 
 ```rust

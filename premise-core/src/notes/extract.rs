@@ -1,6 +1,9 @@
-use crate::notes::*;
 use crate::ast::AstNode;
 use crate::ir::IrAnalysis;
+use premise_notes::{
+    generate_id, Beat, BeatSource, Fact, FactSource, FactType, Section, TimelineEvent,
+    TimelineOrder,
+};
 use regex::Regex;
 
 /// Extract beats from AST (structural only, no AI)
@@ -42,7 +45,7 @@ fn extract_beats_recursive(
             let text = extract_text_content(node);
             let entities = extract_entity_references(&text);
             let beat = Beat {
-                id: crate::notes::generate_id("beat_"),
+                id: generate_id("beat_"),
                 text,
                 file: file_path.to_string(),
                 line: Some(node.range.start.row + 1),
@@ -51,6 +54,9 @@ fn extract_beats_recursive(
                 added: chrono::Utc::now().to_rfc3339(),
                 source: BeatSource::Imported,
                 metadata: None,
+                provenance: None,
+                importance: None,
+                importance_assessments: None,
             };
             beats.push(beat);
         }
@@ -84,7 +90,7 @@ fn extract_text_content(node: &AstNode) -> String {
 
     node.children
         .iter()
-        .map(|c| extract_text_content(c))
+        .map(extract_text_content)
         .filter(|s| !s.is_empty())
         .collect::<Vec<_>>()
         .join(" ")
@@ -108,7 +114,7 @@ pub fn extract_facts_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Fact> {
     for act in &ir.ir.story.acts {
         let fact = Fact {
             fact_type: FactType::Event,
-            id: crate::notes::generate_id("fact_"),
+            id: generate_id("fact_"),
             entity: None,
             entities: None,
             category: Some("act".to_string()),
@@ -120,6 +126,9 @@ pub fn extract_facts_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Fact> {
             timeline: None,
             source: FactSource::Imported,
             metadata: None,
+            provenance: None,
+            importance: None,
+            importance_assessments: None,
         };
         facts.push(fact);
     }
@@ -127,7 +136,7 @@ pub fn extract_facts_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Fact> {
     for scene in &ir.ir.story.scenes {
         let fact = Fact {
             fact_type: FactType::Event,
-            id: crate::notes::generate_id("fact_"),
+            id: generate_id("fact_"),
             entity: None,
             entities: None,
             category: Some("scene".to_string()),
@@ -139,6 +148,9 @@ pub fn extract_facts_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Fact> {
             timeline: None,
             source: FactSource::Imported,
             metadata: None,
+            provenance: None,
+            importance: None,
+            importance_assessments: None,
         };
         facts.push(fact);
     }
@@ -153,13 +165,14 @@ pub fn extract_timeline_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Timelin
 
     for act in &ir.ir.story.acts {
         let event = TimelineEvent {
-            id: super::io::generate_id("timeline_"),
+            id: generate_id("timeline_"),
             event: act.title.clone(),
             order: TimelineOrder::Numeric(order),
             relative_to: None,
             entities: vec![],
             source: vec![format!("{}:{}", file_path, act.range.start.row + 1)],
             added: chrono::Utc::now().to_rfc3339(),
+            provenance: None,
         };
         events.push(event);
         order += 1;
@@ -167,13 +180,14 @@ pub fn extract_timeline_from_ir(ir: &IrAnalysis, file_path: &str) -> Vec<Timelin
 
     for scene in &ir.ir.story.scenes {
         let event = TimelineEvent {
-            id: super::io::generate_id("timeline_"),
+            id: generate_id("timeline_"),
             event: scene.title.clone(),
             order: TimelineOrder::Numeric(order),
             relative_to: None,
             entities: vec![],
             source: vec![format!("{}:{}", file_path, scene.range.start.row + 1)],
             added: chrono::Utc::now().to_rfc3339(),
+            provenance: None,
         };
         events.push(event);
         order += 1;

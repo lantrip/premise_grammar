@@ -45,53 +45,50 @@ pub fn extract_entities_with_aliases(
     let mut last_entity: Option<String> = None;
 
     for node in root.children(&mut cursor) {
-        match node.kind() {
-            "line" => {
-                // Check if this line contains an entity_construct or metadata_line
-                let mut child_cursor = node.walk();
-                for child in node.children(&mut child_cursor) {
-                    match child.kind() {
-                        "entity_construct" => {
+        if node.kind() == "line" {
+            // Check if this line contains an entity_construct or metadata_line
+            let mut child_cursor = node.walk();
+            for child in node.children(&mut child_cursor) {
+                match child.kind() {
+                    "entity_construct" => {
+                        let text = slice_text(&child, source);
+                        if let Some(entity_name) = extract_entity_name_from_construct(&text) {
+                            last_entity = Some(entity_name.clone());
+                            entity_aliases.entry(entity_name).or_default();
+                        }
+                    }
+                    "entity_block" => {
+                        // Process entity block
+                        extract_aliases_from_block(&child, source, &mut entity_aliases);
+                        last_entity = None; // Reset after block
+                    }
+                    "metadata_line" => {
+                        // Metadata line follows an entity - associate it
+                        if let Some(entity) = &last_entity {
+                            // Parse metadata manually since fields aren't accessible
                             let text = slice_text(&child, source);
-                            if let Some(entity_name) = extract_entity_name_from_construct(&text) {
-                                last_entity = Some(entity_name.clone());
-                                entity_aliases.entry(entity_name).or_insert_with(Vec::new);
-                            }
-                        }
-                        "entity_block" => {
-                            // Process entity block
-                            extract_aliases_from_block(&child, source, &mut entity_aliases);
-                            last_entity = None; // Reset after block
-                        }
-                        "metadata_line" => {
-                            // Metadata line follows an entity - associate it
-                            if let Some(entity) = &last_entity {
-                                // Parse metadata manually since fields aren't accessible
-                                let text = slice_text(&child, source);
-                                if let Some((key, value)) = parse_metadata_line(&text) {
-                                    if key == "aliases" {
-                                        let aliases: Vec<String> = value
-                                            .split(',')
-                                            .map(|s| s.trim().to_string())
-                                            .filter(|s| !s.is_empty())
-                                            .collect();
+                            if let Some((key, value)) = parse_metadata_line(&text) {
+                                if key == "aliases" {
+                                    let aliases: Vec<String> = value
+                                        .split(',')
+                                        .map(|s| s.trim().to_string())
+                                        .filter(|s| !s.is_empty())
+                                        .collect();
 
-                                        entity_aliases
-                                            .entry(entity.clone())
-                                            .or_insert_with(Vec::new)
-                                            .extend(aliases);
-                                    }
+                                    entity_aliases
+                                        .entry(entity.clone())
+                                        .or_default()
+                                        .extend(aliases);
                                 }
                             }
                         }
-                        "act_header" | "scene_header" | "cel_header" => {
-                            last_entity = None; // Reset on structural break
-                        }
-                        _ => {}
                     }
+                    "act_header" | "scene_header" | "cel_header" => {
+                        last_entity = None; // Reset on structural break
+                    }
+                    _ => {}
                 }
             }
-            _ => {}
         }
     }
 
@@ -112,7 +109,7 @@ fn extract_aliases_from_block(
                 if let Some(name_node) = child.child_by_field_name("entity_name") {
                     let entity_name = slice_text(&name_node, source).trim().to_string();
                     last_entity = Some(entity_name.clone());
-                    aliases_map.entry(entity_name).or_insert_with(Vec::new);
+                    aliases_map.entry(entity_name).or_default();
                 }
             }
             "metadata_line" => {
@@ -128,7 +125,7 @@ fn extract_aliases_from_block(
 
                             aliases_map
                                 .entry(entity.clone())
-                                .or_insert_with(Vec::new)
+                                .or_default()
                                 .extend(aliases);
                         }
                     }
@@ -274,7 +271,14 @@ fn walk_for_narrative_entities(
     // Recurse
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {
-        walk_for_narrative_entities(&child, source, file_path, known_entities, candidates, context);
+        walk_for_narrative_entities(
+            &child,
+            source,
+            file_path,
+            known_entities,
+            candidates,
+            context,
+        );
     }
 }
 
@@ -339,7 +343,6 @@ fn discover_from_text(
 
 fn infer_entity_type(name: &str, context: &str) -> EntityType {
     let context_lower = context.to_lowercase();
-    let name_lower = name.to_lowercase();
 
     // Character indicators
     let character_patterns = [
@@ -451,9 +454,33 @@ fn calculate_confidence(name: &str, context: &str, entity_type: &EntityType) -> 
 
 fn is_common_word(word: &str) -> bool {
     let common = [
-        "The", "This", "That", "These", "Those", "Here", "There", "When", "Where", "What",
-        "Which", "Who", "Why", "How", "Today", "Tomorrow", "Yesterday", "Never", "Always",
-        "Once", "Suddenly", "Finally", "First", "Last", "Next", "Before", "After",
+        "The",
+        "This",
+        "That",
+        "These",
+        "Those",
+        "Here",
+        "There",
+        "When",
+        "Where",
+        "What",
+        "Which",
+        "Who",
+        "Why",
+        "How",
+        "Today",
+        "Tomorrow",
+        "Yesterday",
+        "Never",
+        "Always",
+        "Once",
+        "Suddenly",
+        "Finally",
+        "First",
+        "Last",
+        "Next",
+        "Before",
+        "After",
     ];
     common.contains(&word)
 }
@@ -505,11 +532,11 @@ pub fn merge_aliases_with_candidates(
 }
 
 /// Build reverse alias map (alias -> canonical name)
-pub use premise_notes::normalize::collect_uncertain_entities_from_text as collect_uncertain_entities_from_text;
-pub use premise_notes::normalize::collect_unknown_fact_entities as collect_unknown_fact_entities;
-pub use premise_notes::normalize::normalize_beat_text as normalize_beat_text;
-pub use premise_notes::normalize::normalize_beats as normalize_beats;
-pub use premise_notes::normalize::normalize_facts as normalize_facts;
+pub use premise_notes::normalize::collect_uncertain_entities_from_text;
+pub use premise_notes::normalize::collect_unknown_fact_entities;
+pub use premise_notes::normalize::normalize_beat_text;
+pub use premise_notes::normalize::normalize_beats;
+pub use premise_notes::normalize::normalize_facts;
 
 pub use premise_notes::io::build_reverse_alias_map;
 
@@ -548,7 +575,10 @@ mod tests {
     #[test]
     fn test_reverse_alias_map() {
         let mut aliases = HashMap::new();
-        aliases.insert("Maya Chen".to_string(), vec!["Chen".to_string(), "Maya".to_string()]);
+        aliases.insert(
+            "Maya Chen".to_string(),
+            vec!["Chen".to_string(), "Maya".to_string()],
+        );
 
         let reverse = build_reverse_alias_map(&aliases);
         assert_eq!(reverse.get("Chen"), Some(&"Maya Chen".to_string()));

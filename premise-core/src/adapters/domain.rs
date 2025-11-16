@@ -3,8 +3,8 @@
 // Provides domain-agnostic interfaces for working with Premise IR across different use cases
 
 use crate::ir::{Act, Cel, Scene};
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 /// Domain-agnostic entity representation
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]

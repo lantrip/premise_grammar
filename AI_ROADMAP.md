@@ -22,7 +22,7 @@
 
 ### Story Notes System
 
-- **Architecture**: CLI-first (Rust core), VSCode calls `premise notes` commands
+- **Architecture**: CLI-first (separate `premise` crate), VSCode calls `premise notes` commands
 - **Commands**:
   - VSCode: `premise.extractFacts` (AI-enhanced), `premise.exportBeats` (via CLI)
   - CLI: `init`, `extract-facts`, `export-beats`, `extract-timeline`, `query`, `rebuild-index`, `status`
@@ -77,8 +77,8 @@ Server-side commands for grounding AI operations:
 - Beat generation with section anchoring
 - Entity description updates with evidence
 - **Notes System (CLI-First Architecture)**:
-  - ✅ Rust core module: `premise-core/src/notes/` (schema, I/O, extraction)
-  - ✅ CLI commands: `init`, `extract-facts`, `export-beats`, `extract-timeline`, `query`, `rebuild-index`, `status`
+  - ✅ Shared notes crate: `premise-notes/` (schemas, I/O, sinks, normalization, discovery, text extraction)
+  - ✅ CLI commands (in `premise` crate): `init`, `extract-facts`, `export-beats`, `extract-timeline`, `query`, `rebuild-index`, `status`
   - ✅ VSCode integration via CLI execution (TypeScript → Rust CLI)
   - ✅ **Intelligent Extraction**:
     - Entity trait extraction from `@character Name: Description` (1.0 confidence)
@@ -308,6 +308,17 @@ JSON object: { known_entities: Record<name, string[]>, discovered: EntityCandida
 3. Re-validate against canonical list.
 4. If unresolved `{?Entity}` remain, surface for review or trigger discovery pass.
 5. Only after resolution, persist to notes (beats/facts) or chosen sink.
+
+### Importance Scoring & Curation
+
+- Goal: Surface high-signal beats/facts while keeping full fidelity.
+- Data model:
+  - Authoritative: `importance?: { score: f64, assessed_by: user|ai|heuristic, method?, updated }`
+  - History: `importance_assessments?: Importance[]` to capture multiple assessments over time.
+- Policy:
+  - Precedence: latest user > latest ai > latest heuristic (fallback uses heuristic aggregate).
+  - CLI curation: `premise notes set-importance --id <id> --score <0..1> --source user|ai|heuristic --method <text>` appends an assessment and recomputes authoritative `importance`.
+  - Filtering during emit: `--min-importance <score>` on `export-beats` and `extract-facts` selects only important records.
 
 ### Immediate next steps
 

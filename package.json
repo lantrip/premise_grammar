@@ -27,8 +27,6 @@
     "queries",
     "binding.gyp",
     "bindings/node",
-    "bindings/rust",
-    "bindings/python",
-    "tree-sitter-premise.wasm"
+    "bindings/rust"
   ]
 }

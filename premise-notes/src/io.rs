@@ -86,7 +86,10 @@ where
 pub fn stable_id(prefix: &str, parts: &[&str]) -> String {
     use sha2::{Digest, Sha256};
     let mut hasher = Sha256::new();
-    for p in parts { hasher.update(p.as_bytes()); hasher.update(b"\x1f"); }
+    for p in parts {
+        hasher.update(p.as_bytes());
+        hasher.update(b"\x1f");
+    }
     let hash = hasher.finalize();
     let short = base16ct::lower::encode_string(&hash[..12]);
     format!("{}{}", prefix, short)
@@ -131,7 +134,10 @@ pub fn write_metadata<P: AsRef<Path>>(
     Ok(())
 }
 
-pub fn initialize_notes<P: AsRef<Path>>(story_root: P, title: Option<String>) -> std::io::Result<()> {
+pub fn initialize_notes<P: AsRef<Path>>(
+    story_root: P,
+    title: Option<String>,
+) -> std::io::Result<()> {
     let notes_dir = ensure_notes_dir(&story_root)?;
     if read_metadata(&story_root)?.is_none() {
         let metadata = NotesMetadata {
@@ -160,7 +166,12 @@ pub fn initialize_notes<P: AsRef<Path>>(story_root: P, title: Option<String>) ->
         write_metadata(&story_root, &metadata)?;
     }
 
-    let files = ["beats.jsonl", "facts.jsonl", "timeline.jsonl", "consistency.jsonl"];
+    let files = [
+        "beats.jsonl",
+        "facts.jsonl",
+        "timeline.jsonl",
+        "consistency.jsonl",
+    ];
     for file in &files {
         let file_path = notes_dir.join(file);
         if !file_path.exists() {
@@ -225,28 +236,43 @@ pub fn rebuild_index<P: AsRef<Path>>(story_root: P) -> std::io::Result<NotesInde
 
     for beat in &beats {
         if !beat.file.is_empty() {
-            file_index.entry(beat.file.clone()).or_insert_with(Vec::new).push(beat.id.clone());
+            file_index
+                .entry(beat.file.clone())
+                .or_default()
+                .push(beat.id.clone());
         }
         for entity in &beat.entities {
-            entity_index.entry(entity.clone()).or_insert_with(Vec::new).push(beat.id.clone());
+            entity_index
+                .entry(entity.clone())
+                .or_default()
+                .push(beat.id.clone());
             entities_tracked.insert(entity.clone());
         }
     }
 
     for fact in &facts {
         if let Some(entity) = &fact.entity {
-            entity_index.entry(entity.clone()).or_insert_with(Vec::new).push(fact.id.clone());
+            entity_index
+                .entry(entity.clone())
+                .or_default()
+                .push(fact.id.clone());
             entities_tracked.insert(entity.clone());
         }
         if let Some(entities) = &fact.entities {
             for entity in entities {
-                entity_index.entry(entity.clone()).or_insert_with(Vec::new).push(fact.id.clone());
+                entity_index
+                    .entry(entity.clone())
+                    .or_default()
+                    .push(fact.id.clone());
                 entities_tracked.insert(entity.clone());
             }
         }
         for evidence in &fact.evidence {
             if let Some(file) = evidence.split(':').next() {
-                file_index.entry(file.to_string()).or_insert_with(Vec::new).push(fact.id.clone());
+                file_index
+                    .entry(file.to_string())
+                    .or_default()
+                    .push(fact.id.clone());
             }
         }
     }
@@ -270,10 +296,14 @@ pub fn rebuild_index<P: AsRef<Path>>(story_root: P) -> std::io::Result<NotesInde
     Ok(index)
 }
 
-pub fn get_notes_status<P: AsRef<Path>>(story_root: P) -> std::io::Result<(bool, bool, Option<NotesStats>)> {
+pub fn get_notes_status<P: AsRef<Path>>(
+    story_root: P,
+) -> std::io::Result<(bool, bool, Option<NotesStats>)> {
     let notes_dir = get_notes_dir(&story_root);
     let exists = notes_dir.exists();
-    if !exists { return Ok((false, false, None)); }
+    if !exists {
+        return Ok((false, false, None));
+    }
 
     let metadata = read_metadata(&story_root)?;
     let initialized = metadata.is_some();
@@ -332,11 +362,17 @@ pub fn load_aliases_with<P: AsRef<Path>>(
     extra_files: &[std::path::PathBuf],
 ) -> std::io::Result<(HashMap<String, Vec<String>>, AliasMergeReport)> {
     let mut base = read_alias_map(&story_root)?;
-    let mut total_report = AliasMergeReport { added: 0, conflicts: Vec::new() };
+    let mut total_report = AliasMergeReport {
+        added: 0,
+        conflicts: Vec::new(),
+    };
     for file in extra_files {
-        if !file.exists() { continue; }
+        if !file.exists() {
+            continue;
+        }
         let content = std::fs::read_to_string(file)?;
-        let incoming: HashMap<String, Vec<String>> = serde_json::from_str(&content).unwrap_or_default();
+        let incoming: HashMap<String, Vec<String>> =
+            serde_json::from_str(&content).unwrap_or_default();
         let report = merge_alias_maps(&mut base, &incoming);
         total_report.added += report.added;
         total_report.conflicts.extend(report.conflicts);
@@ -382,7 +418,7 @@ pub fn merge_alias_maps(
     canonicals.sort();
     for canon in canonicals {
         let aliases = incoming.get(&canon).cloned().unwrap_or_default();
-        let entry = base.entry(canon.clone()).or_insert_with(Vec::new);
+        let entry = base.entry(canon.clone()).or_default();
         for alias in aliases {
             if let Some(existing_canon) = reverse.get(&alias) {
                 if existing_canon != &canon {
@@ -419,4 +455,3 @@ pub struct AliasMergeReport {
     pub added: usize,
     pub conflicts: Vec<AliasConflict>,
 }
-

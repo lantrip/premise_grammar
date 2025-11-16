@@ -88,7 +88,7 @@ fn test_entity_cooccurrence_extraction() {
     let facts = extract_entity_cooccurrence(&root, source, "test.prem");
 
     // Should have relationships for entities appearing together in scenes
-    assert!(facts.len() > 0);
+    assert!(!facts.is_empty());
 
     // Check that we have Hero-Mentor relationship
     let has_hero_mentor = facts.iter().any(|f| {
@@ -173,8 +173,13 @@ fn test_all_facts_extraction() {
     assert!(has_trait, "Should have at least one trait fact");
 
     // Check relationship extraction
-    let has_relationship = facts.iter().any(|f| matches!(f.fact_type, FactType::Relationship));
-    assert!(has_relationship, "Should have at least one relationship fact");
+    let has_relationship = facts
+        .iter()
+        .any(|f| matches!(f.fact_type, FactType::Relationship));
+    assert!(
+        has_relationship,
+        "Should have at least one relationship fact"
+    );
 
     assert_json_snapshot!(normalize_facts(facts));
 }
@@ -212,7 +217,10 @@ fn test_section_context_preservation() {
         }
     });
 
-    assert!(hero_mentor_fact.is_some(), "Should find Hero-Mentor relationship");
+    assert!(
+        hero_mentor_fact.is_some(),
+        "Should find Hero-Mentor relationship"
+    );
 
     let fact = hero_mentor_fact.unwrap();
     assert!(fact.fact.contains("cel"), "Fact should mention cel context");
@@ -237,15 +245,27 @@ fn test_confidence_scoring() {
     let all_facts = extract_all_facts_from_tree(&root, source, "test.prem");
 
     // Trait facts should have confidence 1.0
-    let trait_fact = all_facts.iter().find(|f| matches!(f.fact_type, FactType::Trait));
+    let trait_fact = all_facts
+        .iter()
+        .find(|f| matches!(f.fact_type, FactType::Trait));
     if let Some(fact) = trait_fact {
-        assert_eq!(fact.confidence, Some(1.0), "Trait facts should have confidence 1.0");
+        assert_eq!(
+            fact.confidence,
+            Some(1.0),
+            "Trait facts should have confidence 1.0"
+        );
     }
 
     // Relationship facts should have confidence 0.7
-    let rel_fact = all_facts.iter().find(|f| matches!(f.fact_type, FactType::Relationship));
+    let rel_fact = all_facts
+        .iter()
+        .find(|f| matches!(f.fact_type, FactType::Relationship));
     if let Some(fact) = rel_fact {
-        assert_eq!(fact.confidence, Some(0.7), "Relationship facts should have confidence 0.7");
+        assert_eq!(
+            fact.confidence,
+            Some(0.7),
+            "Relationship facts should have confidence 0.7"
+        );
     }
 
     assert_json_snapshot!(normalize_facts(all_facts));
@@ -279,7 +299,11 @@ More text here.
     let root = tree.root_node();
 
     let facts = extract_all_facts_from_tree(&root, source, "test.prem");
-    assert_eq!(facts.len(), 0, "File without entities should produce no facts");
+    assert_eq!(
+        facts.len(),
+        0,
+        "File without entities should produce no facts"
+    );
 }
 
 #[test]

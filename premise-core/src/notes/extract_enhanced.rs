@@ -1,4 +1,4 @@
-use crate::notes::*;
+use premise_notes::{generate_id, Beat, BeatSource, Fact, FactSource, FactType, Section};
 use regex::Regex;
 use std::collections::HashSet;
 use tree_sitter::Node;
@@ -46,7 +46,7 @@ fn walk_for_beats(
             if !text.is_empty() {
                 let entities = extract_entity_references(&text);
                 let beat = Beat {
-                    id: crate::notes::generate_id("beat_"),
+                    id: generate_id("beat_"),
                     text,
                     file: file_path.to_string(),
                     line: Some(node.start_position().row + 1),
@@ -55,6 +55,9 @@ fn walk_for_beats(
                     added: chrono::Utc::now().to_rfc3339(),
                     source: BeatSource::Imported,
                     metadata: None,
+                    provenance: None,
+                    importance: None,
+                    importance_assessments: None,
                 };
                 beats.push(beat);
             }
@@ -120,18 +123,25 @@ fn walk_for_entities(node: &Node, source: &str, file_path: &str, facts: &mut Vec
                     if !entity_name.is_empty() && !description.is_empty() {
                         let fact = Fact {
                             fact_type: FactType::Trait,
-                            id: crate::notes::generate_id("fact_"),
+                            id: generate_id("fact_"),
                             entity: Some(entity_name.clone()),
                             entities: None,
                             category: Some("description".to_string()),
                             fact: description,
-                            evidence: vec![format!("{}:{}", file_path, node.start_position().row + 1)],
+                            evidence: vec![format!(
+                                "{}:{}",
+                                file_path,
+                                node.start_position().row + 1
+                            )],
                             confidence: Some(1.0),
                             added: chrono::Utc::now().to_rfc3339(),
                             status: None,
                             timeline: None,
                             source: FactSource::Imported,
                             metadata: None,
+                            provenance: None,
+                            importance: None,
+                            importance_assessments: None,
                         };
                         facts.push(fact);
                     }
@@ -148,18 +158,25 @@ fn walk_for_entities(node: &Node, source: &str, file_path: &str, facts: &mut Vec
                     if !description.is_empty() {
                         let fact = Fact {
                             fact_type: FactType::Trait,
-                            id: crate::notes::generate_id("fact_"),
+                            id: generate_id("fact_"),
                             entity: Some(entity_name.clone()),
                             entities: None,
                             category: Some("description".to_string()),
                             fact: description,
-                            evidence: vec![format!("{}:{}", file_path, node.start_position().row + 1)],
+                            evidence: vec![format!(
+                                "{}:{}",
+                                file_path,
+                                node.start_position().row + 1
+                            )],
                             confidence: Some(1.0),
                             added: chrono::Utc::now().to_rfc3339(),
                             status: None,
                             timeline: None,
                             source: FactSource::Imported,
                             metadata: None,
+                            provenance: None,
+                            importance: None,
+                            importance_assessments: None,
                         };
                         facts.push(fact);
                     }
@@ -184,7 +201,12 @@ pub fn extract_entity_cooccurrence(root: &Node, source: &str, file_path: &str) -
     walk_for_cooccurrence(root, source, file_path, &mut facts, &mut section_context);
 
     // Flush final section
-    generate_cooccurrence_facts(&section_context, file_path, root.end_position().row, &mut facts);
+    generate_cooccurrence_facts(
+        &section_context,
+        file_path,
+        root.end_position().row,
+        &mut facts,
+    );
 
     facts
 }
@@ -285,7 +307,7 @@ fn generate_cooccurrence_facts(
 
             let fact = Fact {
                 fact_type: FactType::Relationship,
-                id: crate::notes::generate_id("fact_"),
+                id: generate_id("fact_"),
                 entity: None,
                 entities: Some(vec![entities[i].clone(), entities[j].clone()]),
                 category: Some("co-occurrence".to_string()),
@@ -294,12 +316,15 @@ fn generate_cooccurrence_facts(
                     entities[i], entities[j], section_desc
                 ),
                 evidence: vec![format!("{}:{}", file_path, line + 1)],
-                confidence: Some(0.7), // Co-occurrence is moderate confidence
+                confidence: Some(0.7),
                 added: chrono::Utc::now().to_rfc3339(),
                 status: Some("developing".to_string()),
                 timeline: None,
                 source: FactSource::Imported,
                 metadata: None,
+                provenance: None,
+                importance: None,
+                importance_assessments: None,
             };
             facts.push(fact);
         }

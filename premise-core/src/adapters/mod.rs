@@ -6,12 +6,12 @@
 // - Track provenance of generated content
 // - Support multiple domains (narrative, sales, architecture, etc.)
 
-pub mod manifest;
-pub mod registry;
 pub mod context;
 pub mod domain;
+pub mod manifest;
+pub mod registry;
 
-pub use manifest::*;
-pub use registry::*;
 pub use context::*;
 pub use domain::*;
+pub use manifest::*;
+pub use registry::*;
