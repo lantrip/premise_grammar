@@ -1,9 +1,8 @@
 use std::fs;
 use std::path::PathBuf;
-use std::sync::Arc;
 
 use clap::{Args, Parser as ClapParser, Subcommand, ValueEnum};
-use premise_notes::{Extractor, NotesSink};
+use premise_notes::NotesSink;
 
 use premise_core::{api, Parser};
 use schemars::schema::RootSchema;
@@ -45,11 +44,6 @@ enum InputMode {
     Markdown,
 }
 
-#[derive(Copy, Clone, Debug, ValueEnum)]
-enum ExtractorKindArg { Heuristic, Llm }
-
-#[derive(Copy, Clone, Debug, ClapValueEnum)]
-enum LlmCacheModeArg { Off, ReadOnly, ReadWrite }
 
 #[derive(Copy, Clone, Debug, ClapValueEnum)]
 enum ImportanceOrigin {
@@ -167,30 +161,6 @@ enum NotesCommands {
         /// Aliases file (JSON: canonical -> [aliases]) for normalization in text modes
         #[arg(long)]
         aliases: Option<PathBuf>,
-        /// Extraction strategy for text modes: heuristic|llm
-        #[arg(long, value_enum, default_value_t = ExtractorKindArg::Heuristic)]
-        extractor: ExtractorKindArg,
-        /// LLM cache mode: off|read-only|read-write
-        #[arg(long, value_enum, default_value_t = LlmCacheModeArg::Off, alias = "llm-replay")]
-        llm_cache: LlmCacheModeArg,
-        /// Override LLM provider (e.g., openrouter, noop)
-        #[arg(long = "llm-provider")]
-        llm_provider: Option<String>,
-        /// Override LLM model id
-        #[arg(long = "model")]
-        llm_model: Option<String>,
-        /// Override LLM endpoint URL
-        #[arg(long = "endpoint")]
-        llm_endpoint: Option<String>,
-        /// Override API key env var name
-        #[arg(long = "api-key-env")]
-        llm_api_key_env: Option<String>,
-        /// Override temperature
-        #[arg(long = "temperature")]
-        llm_temperature: Option<f64>,
-        /// Override max tokens
-        #[arg(long = "max-tokens")]
-        llm_max_tokens: Option<u32>,
         /// Dry-run: print beats instead of writing
         #[arg(long, default_value = "false")]
         dry_run: bool,
@@ -220,30 +190,6 @@ enum NotesCommands {
         /// Aliases file (JSON: canonical -> [aliases]) for normalization in text modes
         #[arg(long)]
         aliases: Option<PathBuf>,
-        /// Extraction strategy for text modes: heuristic|llm
-        #[arg(long, value_enum, default_value_t = ExtractorKindArg::Heuristic)]
-        extractor: ExtractorKindArg,
-        /// LLM cache mode: off|read-only|read-write
-        #[arg(long, value_enum, default_value_t = LlmCacheModeArg::Off, alias = "llm-replay")]
-        llm_cache: LlmCacheModeArg,
-        /// Override LLM provider (e.g., openrouter, noop)
-        #[arg(long = "llm-provider")]
-        llm_provider: Option<String>,
-        /// Override LLM model id
-        #[arg(long = "model")]
-        llm_model: Option<String>,
-        /// Override LLM endpoint URL
-        #[arg(long = "endpoint")]
-        llm_endpoint: Option<String>,
-        /// Override API key env var name
-        #[arg(long = "api-key-env")]
-        llm_api_key_env: Option<String>,
-        /// Override temperature
-        #[arg(long = "temperature")]
-        llm_temperature: Option<f64>,
-        /// Override max tokens
-        #[arg(long = "max-tokens")]
-        llm_max_tokens: Option<u32>,
         /// Dry-run: print facts instead of writing
         #[arg(long, default_value = "false")]
         dry_run: bool,
@@ -253,9 +199,6 @@ enum NotesCommands {
         /// Minimum importance threshold to include
         #[arg(long)]
         min_importance: Option<f64>,
-        /// Minimum confidence threshold to include (LLM only)
-        #[arg(long)]
-        min_confidence: Option<f64>,
     },
     /// Extract timeline from a file
     ExtractTimeline {
@@ -285,27 +228,6 @@ enum NotesCommands {
         /// Minimum importance threshold to include (not used for timeline yet)
         #[arg(long)]
         min_importance: Option<f64>,
-        /// LLM cache mode (reserved for future LLM extraction)
-        #[arg(long, value_enum, default_value_t = LlmCacheModeArg::Off, alias = "llm-replay")]
-        llm_cache: LlmCacheModeArg,
-        /// Override LLM provider (reserved)
-        #[arg(long = "llm-provider")]
-        llm_provider: Option<String>,
-        /// Override LLM model (reserved)
-        #[arg(long = "model")]
-        llm_model: Option<String>,
-        /// Override LLM endpoint (reserved)
-        #[arg(long = "endpoint")]
-        llm_endpoint: Option<String>,
-        /// Override API key env (reserved)
-        #[arg(long = "api-key-env")]
-        llm_api_key_env: Option<String>,
-        /// Override temperature (reserved)
-        #[arg(long = "temperature")]
-        llm_temperature: Option<f64>,
-        /// Override max tokens (reserved)
-        #[arg(long = "max-tokens")]
-        llm_max_tokens: Option<u32>,
     },
     /// Rebuild the notes index
     RebuildIndex {
@@ -601,7 +523,7 @@ fn main() {
                         Err(e) => { eprintln!("Error: Failed to initialize notes directory at {}: {}", path.display(), e); std::process::exit(1); }
                     }
                 }
-                NotesCommands::ExportBeats { file, append: _, sink, out_dir, input, stdin, aliases, extractor, llm_cache, llm_provider, llm_model, llm_endpoint, llm_api_key_env, llm_temperature, llm_max_tokens, dry_run, stable_ids, min_importance } => {
+                NotesCommands::ExportBeats { file, append: _, sink, out_dir, input, stdin, aliases, dry_run, stable_ids, min_importance } => {
                     let file_str = file.to_str().unwrap_or("unknown");
                     let content = if stdin { use std::io::Read; let mut buf = String::new(); std::io::stdin().read_to_string(&mut buf).expect("failed to read stdin"); buf } else { match fs::read_to_string(&file) { Ok(c) => c, Err(e) => { eprintln!("Error: Failed to read file {}: {}", file.display(), e); std::process::exit(1);} } };
 
@@ -625,69 +547,15 @@ fn main() {
                             canonical = alias_map.keys().cloned().collect();
                             reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
 
-                            match extractor {
-                                ExtractorKindArg::Heuristic => {
-                                    let params = premise_notes::extract_pipeline::BeatParams{
-                                        content: &content,
-                                        file_label: file_str,
-                                        markdown_sections: matches!(input, InputMode::Markdown),
-                                        aliases: Some(&alias_map),
-                                        min_importance,
-                                        stable_ids
-                                    };
-                                    premise_notes::ExtractPipeline::beats_from_text(params)
-                                }
-                                ExtractorKindArg::Llm => {
-                                    // Load config with precedence and apply CLI overrides
-                                    let mut cfg = premise_notes::load_ai_config(None, Some(story_root));
-                                    if let Some(v) = llm_provider.as_ref() { cfg.provider = v.clone(); }
-                                    if let Some(v) = llm_model.as_ref() { cfg.model = Some(v.clone()); }
-                                    if let Some(v) = llm_endpoint.as_ref() { cfg.endpoint = Some(v.clone()); }
-                                    if let Some(v) = llm_api_key_env.as_ref() { cfg.api_key_env = Some(v.clone()); }
-                                    if let Some(v) = llm_temperature { cfg.temperature = Some(v); }
-                                    if let Some(v) = llm_max_tokens { cfg.max_tokens = Some(v); }
-
-                                    let cache_mode = match llm_cache { LlmCacheModeArg::Off => premise_notes::CacheMode::Off, LlmCacheModeArg::ReadOnly => premise_notes::CacheMode::ReadOnly, LlmCacheModeArg::ReadWrite => premise_notes::CacheMode::ReadWrite };
-                                    let provider: Arc<dyn premise_notes::LlmProvider> = match cfg.provider.as_str() {
-                                        "openrouter" => {
-                                            let p = if cache_mode == premise_notes::CacheMode::Off {
-                                                premise_notes::OpenRouterProvider::new(cfg)
-                                            } else {
-                                                let cache = premise_notes::LlmCache::new(story_root, cache_mode);
-                                                premise_notes::OpenRouterProvider::with_cache(cfg, cache)
-                                            };
-                                            Arc::new(p)
-                                        }
-                                        _ => Arc::new(premise_notes::NoopProvider::new(cfg)),
-                                    };
-                                    let llm = premise_notes::LlmExtractor::new_with(provider);
-                                    let opts = premise_notes::TextExtractionOptions { file_label: Some(file_str.to_string()), section_headers: matches!(input, InputMode::Markdown) };
-                                    let mut beats = llm.extract_beats(&content, &opts);
-                                    // Importance heuristic and filtering similar to pipeline
-                                    for b in &mut beats {
-                                        if b.importance.is_none() {
-                                            let score = (b.entities.len() as f64).min(3.0) / 3.0 + ((b.text.len() as f64).min(300.0) / 600.0);
-                                            if score >= 0.5 {
-                                                b.importance = Some(premise_notes::schema::Importance { score, assessed_by: premise_notes::schema::ImportanceSource::Heuristic, method: Some("entities_count+length".to_string()), updated: chrono::Utc::now().to_rfc3339() });
-                                                if let Some(list) = &mut b.importance_assessments { list.push(b.importance.clone().unwrap()); } else { b.importance_assessments = Some(vec![b.importance.clone().unwrap()]); }
-                                            }
-                                        }
-                                    }
-                                    if let Some(threshold) = min_importance { beats.retain(|b| b.importance.as_ref().map(|i| i.score >= threshold).unwrap_or(false)); }
-                                    let beats = premise_core::notes::normalize_beats(beats, &canonical, &reverse);
-                                    if stable_ids {
-                                        let mut beats = beats;
-                                        for b in &mut beats {
-                                            let line_str = b.line.map(|n| n.to_string()).unwrap_or_default();
-                                            let id = premise_notes::io::stable_id("beat_", &[&b.file, &line_str, &b.text]);
-                                            b.id = id;
-                                        }
-                                        beats
-                                    } else {
-                                        beats
-                                    }
-                                }
-                            }
+                            let params = premise_notes::extract_pipeline::BeatParams{
+                                content: &content,
+                                file_label: file_str,
+                                markdown_sections: matches!(input, InputMode::Markdown),
+                                aliases: Some(&alias_map),
+                                min_importance,
+                                stable_ids
+                            };
+                            premise_notes::ExtractPipeline::beats_from_text(params)
                         }
                     };
 
@@ -794,7 +662,7 @@ fn main() {
                         }
                     }
                 }
-                NotesCommands::ExtractFacts { file, sink, out_dir, input, stdin, aliases, extractor, llm_cache, llm_provider, llm_model, llm_endpoint, llm_api_key_env, llm_temperature, llm_max_tokens, dry_run, stable_ids, min_importance, min_confidence } => {
+                NotesCommands::ExtractFacts { file, sink, out_dir, input, stdin, aliases, dry_run, stable_ids, min_importance } => {
                     let file_str = file.to_str().unwrap_or("unknown");
                     let content = if stdin { use std::io::Read; let mut buf = String::new(); std::io::stdin().read_to_string(&mut buf).expect("failed to read stdin"); buf } else { match fs::read_to_string(&file) { Ok(c) => c, Err(e) => { eprintln!("Error: Failed to read file {}: {}", file.display(), e); std::process::exit(1);} } };
 
@@ -812,60 +680,13 @@ fn main() {
                         InputMode::Plain | InputMode::Markdown => {
                             let story_root = file.parent().unwrap_or_else(|| std::path::Path::new("."));
                             alias_map = if let Some(path) = aliases { std::fs::read_to_string(&path).ok().and_then(|s| serde_json::from_str(&s).ok()).unwrap_or_default() } else { let (map, _) = premise_notes::io::load_aliases_with(story_root, &[]).unwrap_or((std::collections::HashMap::new(), premise_notes::io::AliasMergeReport{ added:0, conflicts: vec![] })); map };
-                            match extractor {
-                                ExtractorKindArg::Heuristic => {
-                                    let params = premise_notes::extract_pipeline::FactParams{ content: &content, file_label: file_str, aliases: Some(&alias_map), min_importance, min_confidence, stable_ids };
-                                    premise_notes::ExtractPipeline::facts_from_text(params)
-                                }
-                                ExtractorKindArg::Llm => {
-                                    let mut cfg = premise_notes::load_ai_config(None, Some(story_root));
-                                    if let Some(v) = llm_provider.as_ref() { cfg.provider = v.clone(); }
-                                    if let Some(v) = llm_model.as_ref() { cfg.model = Some(v.clone()); }
-                                    if let Some(v) = llm_endpoint.as_ref() { cfg.endpoint = Some(v.clone()); }
-                                    if let Some(v) = llm_api_key_env.as_ref() { cfg.api_key_env = Some(v.clone()); }
-                                    if let Some(v) = llm_temperature { cfg.temperature = Some(v); }
-                                    if let Some(v) = llm_max_tokens { cfg.max_tokens = Some(v); }
-
-                                    let cache_mode = match llm_cache { LlmCacheModeArg::Off => premise_notes::CacheMode::Off, LlmCacheModeArg::ReadOnly => premise_notes::CacheMode::ReadOnly, LlmCacheModeArg::ReadWrite => premise_notes::CacheMode::ReadWrite };
-                                    let provider: Arc<dyn premise_notes::LlmProvider> = match cfg.provider.as_str() {
-                                        "openrouter" => {
-                                            let p = if cache_mode == premise_notes::CacheMode::Off {
-                                                premise_notes::OpenRouterProvider::new(cfg)
-                                            } else {
-                                                let cache = premise_notes::LlmCache::new(story_root, cache_mode);
-                                                premise_notes::OpenRouterProvider::with_cache(cfg, cache)
-                                            };
-                                            Arc::new(p)
-                                        }
-                                        _ => Arc::new(premise_notes::NoopProvider::new(cfg)),
-                                    };
-                                    let llm = premise_notes::LlmExtractor::new_with(provider);
-                                    let mut facts = llm.extract_facts(&content, file_str);
-                                    // Apply confidence/importance gating and stable IDs similar to pipeline
-                                    if let Some(threshold) = min_confidence { facts.retain(|f| f.confidence.unwrap_or(0.0) >= threshold); }
-                                    for f in &mut facts {
-                                        if f.importance.is_none() {
-                                            let base = if matches!(f.fact_type, premise_notes::schema::FactType::Event | premise_notes::schema::FactType::Relationship) { 0.8 } else { 0.4 };
-                                            let conf = f.confidence.unwrap_or(0.6);
-                                            let score = (base + conf) / 2.0;
-                                            if score >= 0.5 {
-                                                f.importance = Some(premise_notes::schema::Importance { score, assessed_by: premise_notes::schema::ImportanceSource::Heuristic, method: Some("type_weight+confidence".to_string()), updated: chrono::Utc::now().to_rfc3339() });
-                                                if let Some(list) = &mut f.importance_assessments { list.push(f.importance.clone().unwrap()); } else { f.importance_assessments = Some(vec![f.importance.clone().unwrap()]); }
-                                            }
-                                        }
-                                    }
-                                    if let Some(threshold) = min_importance { facts.retain(|f| f.importance.as_ref().map(|i| i.score >= threshold).unwrap_or(false)); }
-                                    if stable_ids { for f in &mut facts { let ev = f.evidence.first().cloned().unwrap_or_default(); let id = premise_notes::io::stable_id("fact_", &[&ev, &f.fact]); f.id = id; } }
-                                    facts
-                                }
-                            }
+                            let params = premise_notes::extract_pipeline::FactParams{ content: &content, file_label: file_str, aliases: Some(&alias_map), min_importance, min_confidence: None, stable_ids };
+                            premise_notes::ExtractPipeline::facts_from_text(params)
                         }
                     };
 
                     let reverse = premise_core::notes::build_reverse_alias_map(&alias_map);
                     let mut facts = premise_core::notes::normalize_facts(facts, &reverse);
-
-                    if let Some(threshold) = min_confidence { facts.retain(|f| f.confidence.unwrap_or(0.0) >= threshold); }
 
                     if stable_ids { for f in &mut facts { let ev = f.evidence.first().cloned().unwrap_or_default(); let id = premise_notes::io::stable_id("fact_", &[&ev, &f.fact]); f.id = id; } }
 

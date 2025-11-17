@@ -15,6 +15,5 @@ regex = "1.10"
 dirs = "5.0"
 premise-core = { path = "../premise-core" }
 premise-notes = { path = "../premise-notes" }
-premise-ai = { path = "../premise-ai" }
 
 

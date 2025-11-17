@@ -28,5 +28,7 @@ cc = "1.0"
 [workspace]
 members = [
   "premise-core",
-  "premise-lsp", "premise-notes",
+  "premise-lsp",
+  "premise-notes",
+  "premise-cli",
 ]

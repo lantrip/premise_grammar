@@ -146,17 +146,19 @@ cd extensions/vscode && npm run compile && code --install-extension .
   - Context menu: right-click with a selection in a `.prem` file
   - “Premise: Scan Workspace” to force a full rescan
 - Shared notes schemas now live in `premise-notes/` (see `premise-notes/README.md`).
-- See `AI_ROADMAP.md` for consolidated status and next steps
 
-### AI Features
+## AI Features Moved
 
-**Beat & Entity Generation**
+**AI-powered features have been moved to [premise-studio](https://github.com/yourusername/premise-studio)**, a Hedgerow-based application that provides:
 
-- `Premise: Generate Beats…` — AI-generated `///` beats anchored to sections
-- `Premise: Update Entity Descriptions…` — Update `@entity` descriptions from story
-- Provider: OpenRouter (Settings → `premise.ai.*`)
+- Beat generation via LLM
+- Entity discovery and extraction
+- Fact extraction with evidence tracking
+- Story bootstrapping workflows
 
-**Story Notes System** (`.premise-notes/`) — Production Ready
+This repository now focuses exclusively on the **language foundation**: grammar, parser, LSP, and editor integrations.
+
+### Story Notes System** (`.premise-notes/`) — Production Ready
 
 Structured story knowledge base with intelligent extraction and CLI-first architecture. Supports modular sinks and alias/uncertainty normalization.
 
@@ -180,7 +182,7 @@ premise notes export-beats story/scene1.prem --sink notes [--dry-run] [--stable-
 # Sinks: --sink stdout|jsonl-dir|dir (use with --out-dir ./out)
 # Ingest non-Premise text: --input plain|markdown --stdin; normalize with --aliases aliases.json
 
-# Extract facts (AI-enhanced heuristics + alias normalization)
+# Extract facts (heuristic analysis + alias normalization)
 premise notes extract-facts story/scene1.prem --sink notes [--dry-run] [--stable-ids]
 
 # Extract timeline events
@@ -209,19 +211,6 @@ Keep aliases simple: map canonical names to a few nicknames.
 }
 ````
 
-### LLM flags and precedence (text modes)
-
-When using `--extractor llm` for plain/markdown inputs, you can override AI settings:
-
-```bash
-premise notes export-beats novel.md --input markdown --extractor llm \
-  --llm-provider openrouter --model openai/gpt-4o-mini --llm-replay read_write
-
-premise notes extract-facts novel.md --input markdown --extractor llm \
-  --api-key-env OPENROUTER_API_KEY --temperature 0.2 --max-tokens 1500
-```
-
-Precedence for AI config: CLI flags > `.premise-notes/ai.json` > `~/.config/premise/ai.json` > defaults.
 
 ```json
 // alias-delta.json (additions only)
@@ -272,20 +261,37 @@ jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
 
 ## Repository Structure
 
-- `grammar.js` - Grammar definition
-- `queries/` - Editor queries (highlights, brackets, indentation)
+**📂 Core Grammar:**
+- `grammar.js` - Tree-sitter grammar definition
+- `src/` - Generated parser (C code, auto-generated)
+- `queries/` - Editor queries (highlights, brackets, indentation, outline)
 - `examples/` - Reference `.prem` files for testing
+- `tests/` - Grammar test cases
 - `scripts/` - Build and validation utilities
-- `src/` - Generated parser artifacts
-- `premise-core/` - Rust core library (parser/IR/plan; Premise-specific extractors)
-- `premise/` - Rust CLI crate (was in `premise-core`), invokes `premise-core` and `premise-notes`
-- `premise-notes/` - Domain-agnostic notes (schemas, I/O, sinks, normalize, discovery, text extraction)
-- `premise-ai/` - Shared AI config/provider for LLM-backed extraction
+
+**🦀 Rust Workspace:**
+- `premise-core/` - Core library (AST, IR, validation, planning)
+- `premise-notes/` - Domain-agnostic notes system (JSONL, schemas, extractors)
+- `premise-ai/` - AI provider interfaces (OpenRouter, config)
+- `premise-cli/` - CLI binary (`premise` command)
+- `premise-lsp/` - Language Server Protocol implementation
+
+**🔌 Bindings:**
+- `bindings/rust/` - Rust Tree-sitter bindings
+- `bindings/node/` - Node.js bindings
 - `premisecore/` - Python bindings (PyO3/maturin)
-- `extensions/` - Editor extensions (Zed, VSCode)
-  - `zed/` - Zed editor extension
-  - `vscode/` - VSCode extension
-  - `README.md` - Extension development guide
+  - **Note**: `premisecore` (no hyphen) due to Python naming constraints
+
+**🎨 Extensions:**
+- `extensions/vscode/` - VSCode/Cursor extension
+- `extensions/zed/` - Zed editor extension
+- `extensions/README.md` - Extension development guide
+
+**🔧 Other:**
+- `adapters/` - Example adapter manifests
+- `Makefile` - Build targets for convenience
+
+📖 See [CLAUDE.md](CLAUDE.md#repository-navigation) for detailed navigation guide.
 
 ## Grammar Status
 

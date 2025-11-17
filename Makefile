@@ -1,24 +1,25 @@
 SHELL := /bin/bash
 
-# Default STORY_ROOT; override when invoking: make run-server STORY_ROOT=/abs/path
-STORY_ROOT ?= $(PWD)/tests/notes_corpus/prem
+.PHONY: build test validate-queries sync-extensions
 
-.PHONY: run-server dev-frontend openapi gen-openapi install-cargo-watch watch-server
+# Build grammar and WASM
+build:
+	./build.sh
 
-run-server:
-	STORY_ROOT=$(STORY_ROOT) cargo run -p premise-server
+# Run tests
+test:
+	tree-sitter test
 
-install-cargo-watch:
-	cargo install cargo-watch || true
+# Validate query files
+validate-queries:
+	./test_queries.sh
 
-watch-server: install-cargo-watch
-	STORY_ROOT=$(STORY_ROOT) cargo watch -x 'run -p premise-server'
+# Sync grammar artifacts to extensions
+sync-extensions:
+	./scripts/sync-extensions.sh
 
-dev-frontend:
-	cd frontend && npm run dev
-
-openapi:
-	cd frontend && npm run openapi:gen
+# Full development cycle
+dev: build validate-queries sync-extensions
 
 
 

@@ -52,7 +52,8 @@
       "Bash(/Users/davidlantrip/repos/premise_grammar/target/release/premise notes list-entities /tmp/test_discovery.prem)",
       "Bash(/Users/davidlantrip/repos/premise_grammar/target/release/premise notes discover-entities /tmp/test_discovery.prem)",
       "Bash(/Users/davidlantrip/repos/premise_grammar/target/release/premise --format json notes discover-entities /tmp/test_discovery.prem)",
-      "Read(//private/tmp/**)"
+      "Read(//private/tmp/**)",
+      "Read(//Users/davidlantrip/repos/hedgerow/**)"
     ],
     "deny": [],
     "ask": []
