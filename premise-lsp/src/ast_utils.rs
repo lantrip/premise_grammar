@@ -251,9 +251,9 @@ pub fn story_context_at(ast: &AstNode, line: u32, _character: u32, text: &str) -
                 }
             }
             "content_type_beat" => {
-                // Use the raw line content after the leading '///'
+                // Use the raw line content after the leading '###'
                 let raw = slice_text(text, &n.range);
-                let beat = raw.trim_start_matches('/').trim().to_string();
+                let beat = raw.trim_start_matches('#').trim().to_string();
                 if !beat.is_empty() {
                     ctx.beat = Some(beat);
                 }

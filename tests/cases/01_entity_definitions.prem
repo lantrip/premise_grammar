@@ -1,4 +1,4 @@
-# Test: Entity definitions (inline)
+// Test: Entity definitions (inline)
 @character Hero: A brave adventurer
 @location Castle: Ancient fortress
 @item Sword: Sharp blade

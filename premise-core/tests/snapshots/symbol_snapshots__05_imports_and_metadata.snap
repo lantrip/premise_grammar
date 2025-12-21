@@ -18,8 +18,8 @@ expression: analysis
             "row": 4,
             "column": 29
           },
-          "start_byte": 82,
-          "end_byte": 154
+          "start_byte": 84,
+          "end_byte": 156
         }
       }
     ],
@@ -36,8 +36,8 @@ expression: analysis
             "row": 1,
             "column": 30
           },
-          "start_byte": 29,
-          "end_byte": 59
+          "start_byte": 30,
+          "end_byte": 60
         }
       }
     ],
@@ -54,8 +54,8 @@ expression: analysis
             "row": 5,
             "column": 19
           },
-          "start_byte": 155,
-          "end_byte": 174
+          "start_byte": 157,
+          "end_byte": 176
         }
       },
       {
@@ -70,8 +70,8 @@ expression: analysis
             "row": 8,
             "column": 25
           },
-          "start_byte": 200,
-          "end_byte": 225
+          "start_byte": 203,
+          "end_byte": 228
         }
       }
     ]

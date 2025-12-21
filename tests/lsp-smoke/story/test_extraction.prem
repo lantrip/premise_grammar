@@ -20,7 +20,7 @@ WORLD: Fantasy
   (thoughtfully)
   This is a dangerous path you're choosing, young {Hero}.
 
-/// {Hero} decides to embark on a quest to defeat {Villain}
+### {Hero} decides to embark on a quest to defeat {Villain}
 
 === Training Montage
 
@@ -38,4 +38,4 @@ WORLD: Fantasy
 {Hero}
   I have to try, for my family!
 
-/// {Hero} defeats {Villain} using the skills learned from {Mentor}
+### {Hero} defeats {Villain} using the skills learned from {Mentor}

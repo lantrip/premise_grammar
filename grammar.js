@@ -2,12 +2,12 @@
 module.exports = grammar({
   name: "premise",
 
-  extras: ($) => [/[ \t]/, $.line_comment],
+  extras: ($) => [/[ \t]/, $.line_comment, $.block_comment],
 
   conflicts: ($) => [],
 
   rules: {
-    source_file: ($) => repeat(choice($.line, $.newline, $.line_comment)),
+    source_file: ($) => repeat(choice($.line, $.newline, $.line_comment, $.block_comment)),
 
     // Entity block rule - handle balanced braces (like @eras {...})
     entity_block: ($) =>
@@ -131,7 +131,7 @@ module.exports = grammar({
         $.prose_line // Last resort - lowest precedence
       ),
 
-    line_comment: ($) => token(seq("#", /.*/)),
+    line_comment: ($) => token(seq("//", /.*/)),
 
     file_header: ($) =>
       prec(
@@ -186,15 +186,17 @@ module.exports = grammar({
 
     // Enhanced content types with multi-line support and labels
     content_type_beat: ($) =>
-      prec.right(9, seq("///", optional(field("content", /.*/)))),
+      prec.right(9, seq("###", optional(field("content", /.*/)))),
 
     content_type_treatment: ($) =>
-      prec.right(9, seq("//", optional(field("content", /.*/)))),
+      prec.right(9, seq("##", optional(field("content", /.*/)))),
 
     content_type_narrative: ($) =>
-      prec.right(9, seq("/", optional(field("content", /.*/)))),
+      prec.right(9, seq("#", optional(field("content", /.*/)))),
 
-    block_comment: ($) => seq(/\s*/, "#", /[^\r\n]*/),
+    // Multi-line C-style block comments
+    block_comment: ($) =>
+      token(seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/")),
 
     import_statement: ($) =>
       prec(
@@ -209,7 +211,7 @@ module.exports = grammar({
           ),
           optional(seq(/\s+as\s+/, field("alias", /\w+/))),
           optional(alias(")", $.close_paren)),
-          optional(seq(/\s*#/, field("selector", /[^\r\n]+/)))
+          optional(seq(/\s*\/\//, field("selector", /[^\r\n]+/)))
         )
       ),
 
@@ -301,7 +303,7 @@ module.exports = grammar({
         alias(")", $.close_paren)
       ),
 
-    prose_text: ($) => prec(-10, /[^\r\n{}()=@+\/]+/),
+    prose_text: ($) => prec(-10, /[^\r\n{}()=@+#]+/),
 
     newline: ($) => /\r?\n/,
 

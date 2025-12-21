@@ -1,9 +1,9 @@
-# Test: Imports and metadata
-@import "shared_entities.yaml" #characters|locations
+// Test: Imports and metadata
+@import "shared_entities.yaml" //characters|locations
 @adapter "custom_adapter.yaml" timing=pre
 
 +structure_mode: hierarchical
 +content_level: cel
 
-# Test metadata parsing
+// Test metadata parsing
 +custom_field: some value

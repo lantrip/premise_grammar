@@ -199,12 +199,12 @@ premise schema --type all
 
 - **Hierarchical Headers**: Acts (`=`), Scenes (`==`), Cels (`===`) with optional location/time markers
 - **Screenplay Dialogue**: Character names as speakers (`{Hero}`), indented dialogue, parentheticals `(whisper)`
-- **Content Types**: Beat (`///`), Treatment (`//`), Narrative (`/`) prefixes
+- **Content Types**: Beat (`###`), Treatment (`##`), Narrative (`#`) prefixes
 - **Entity System**: Definitions (`@character Name`) and blocks (`@characters { }`), references (`{Name}`)
 - **File Headers**: `TITLE:`, `WORLD:`, `FORMAT:` declarations
 - **Imports/Adapters**: `@import` statements and `@adapter` configurations
 - **Metadata**: `+key: value` pairs (note: `+` prefix, not `@`)
-- **Comments**: `#` prefixed lines
+- **Comments**: Line comments (`//`) and block comments (`/* */`)
 
 ### Repository Structure
 
@@ -229,9 +229,9 @@ The semantic scopes are designed specifically for story authors and enable rich 
 
 **Content Type Layers:**
 
-- `keyword.control.content.beat` - Structural story beats (`///`)
-- `keyword.control.content.treatment` - Scene direction (`//`)
-- `keyword.control.content.narrative` - Final story text (`/`)
+- `keyword.control.content.beat` - Structural story beats (`###`)
+- `keyword.control.content.treatment` - Scene direction (`##`)
+- `keyword.control.content.narrative` - Final story text (`#`)
 
 **Dialogue & Screenplay Elements:**
 

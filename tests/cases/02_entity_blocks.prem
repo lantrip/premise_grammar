@@ -1,4 +1,4 @@
-# Test: Entity blocks (simple)
+// Test: Entity blocks (simple)
 @characters {
     - Hero: A brave adventurer
     - Villain: Dark sorcerer

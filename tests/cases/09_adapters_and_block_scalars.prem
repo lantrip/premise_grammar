@@ -1,12 +1,12 @@
-# Adapters and Block Scalars Test
+// Adapters and Block Scalars Test
 
-# External adapter with inline value
+// External adapter with inline value
 @adapter "adapters/text_enhancement.yaml": after_generation
 
-# External adapter with object spec
+// External adapter with object spec
 @adapter "adapters/post_processing.yaml": { timing: during_generation }
 
-# Named adapter with object and YAML block scalar
+// Named adapter with object and YAML block scalar
 @adapter style_adapter: {
   type: text
   timing: after_generation
@@ -15,7 +15,7 @@
     Applies only to narrative prose.
 }
 
-# Adapters block list with nested objects and scalar notes
+// Adapters block list with nested objects and scalar notes
 @adapters {
   - representation_adapter: {
     type: character

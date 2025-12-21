@@ -59,3 +59,4 @@ extensions/vscode/*.vsix
 
 # Additional Rust artifacts
 premisecore/target
+extensions/vscode/node_modules

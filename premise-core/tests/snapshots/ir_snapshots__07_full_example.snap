@@ -18,8 +18,8 @@ expression: analysis
               "row": 5,
               "column": 9
             },
-            "start_byte": 93,
-            "end_byte": 102
+            "start_byte": 92,
+            "end_byte": 101
           }
         }
       ],
@@ -34,10 +34,10 @@ expression: analysis
             },
             "end": {
               "row": 6,
-              "column": 14
+              "column": 12
             },
-            "start_byte": 103,
-            "end_byte": 117
+            "start_byte": 102,
+            "end_byte": 114
           }
         }
       ],
@@ -56,8 +56,8 @@ expression: analysis
               "row": 7,
               "column": 12
             },
-            "start_byte": 118,
-            "end_byte": 130
+            "start_byte": 115,
+            "end_byte": 127
           }
         }
       ]

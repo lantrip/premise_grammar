@@ -205,7 +205,8 @@ mod tests {
     fn smoke_root() -> PathBuf {
         PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("..")
-            .join("test-lsp-smoke")
+            .join("tests")
+            .join("lsp-smoke")
     }
 
     #[allow(dead_code)]

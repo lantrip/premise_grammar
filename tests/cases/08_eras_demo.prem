@@ -1,5 +1,5 @@
-# Test: Eras blocks syntax and highlighting
-# Shows @eras usage in different contexts
+// Test: Eras blocks syntax and highlighting
+// Shows @eras usage in different contexts
 
 @characters {
     - Hero: Young adventurer seeking their destiny

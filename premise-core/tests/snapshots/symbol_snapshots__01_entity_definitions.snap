@@ -17,8 +17,8 @@ expression: analysis
             "row": 1,
             "column": 35
           },
-          "start_byte": 36,
-          "end_byte": 71
+          "start_byte": 37,
+          "end_byte": 72
         }
       },
       {
@@ -33,8 +33,8 @@ expression: analysis
             "row": 2,
             "column": 34
           },
-          "start_byte": 72,
-          "end_byte": 106
+          "start_byte": 73,
+          "end_byte": 107
         }
       },
       {
@@ -49,8 +49,8 @@ expression: analysis
             "row": 3,
             "column": 24
           },
-          "start_byte": 107,
-          "end_byte": 131
+          "start_byte": 108,
+          "end_byte": 132
         }
       },
       {
@@ -65,8 +65,8 @@ expression: analysis
             "row": 4,
             "column": 41
           },
-          "start_byte": 132,
-          "end_byte": 173
+          "start_byte": 133,
+          "end_byte": 174
         }
       }
     ],

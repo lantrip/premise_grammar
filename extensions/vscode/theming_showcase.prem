@@ -1,33 +1,33 @@
-# Premise Theming Showcase
-# This file demonstrates all semantic scopes for theme development
+// Premise Theming Showcase
+// This file demonstrates all semantic scopes for theme development
 
-# ============================================================================
-# FILE HEADERS AND DIRECTIVES
-# ============================================================================
+// ============================================================================
+// FILE HEADERS AND DIRECTIVES
+// ============================================================================
 
 +premise: novel
 +setting: fantasy
 +tone: epic`
 
-# ============================================================================
-# IMPORT STATEMENTS
-# ============================================================================
+// ============================================================================
+// IMPORT STATEMENTS
+// ============================================================================
 
 @import "entities/fantasy_world.yaml"
-@import "templates/hero_journey.yaml" #acts|scenes
+@import "templates/hero_journey.yaml" //acts|scenes
 
 @adapter "./story-adapter.ts": after_generation
 
-# ============================================================================
-# ENTITY DEFINITIONS - INLINE STYLE
-# ============================================================================
+// ============================================================================
+// ENTITY DEFINITIONS - INLINE STYLE
+// ============================================================================
 
-# Single entity definitions with descriptions
+// Single entity definitions with descriptions
 @character Hero: A brave young farmer with a mysterious past
 @location Castle: An ancient fortress perched on a cliff
 @item Sword: The legendary blade of kings
 
-# Block entity definitions
+// Block entity definitions
 @characters {
   - Mentor: A wise old wizard who guides the hero
   - Villain: The dark sorcerer threatening the realm
@@ -46,7 +46,7 @@
   - Book: The tome of ancient knowledge
 }
 
-# Nested eras definition (special entity type)
+// Nested eras definition (special entity type)
 @eras {
   - ancient: {
     description: "The time of legends"
@@ -58,9 +58,9 @@
   }
 }
 
-# ============================================================================
-# STORY STRUCTURE - HIERARCHICAL HEADERS
-# ============================================================================
+// ============================================================================
+// STORY STRUCTURE - HIERARCHICAL HEADERS
+// ============================================================================
 
 = Act One: The Beginning
 This act introduces our hero and sets up the central conflict.
@@ -70,23 +70,23 @@ The story begins in a quiet farming village at dawn.
 
 === INT. Hero's Cottage - Morning
 
-# Metadata for the cel
+// Metadata for the cel
 +location: Hero's humble cottage
 +time: Early morning
 +mood: Peaceful transitioning to urgent
 
-# Content types demonstration - all three layers
+// Content types demonstration - all three layers
 
-/// Beat - High-level story beat
+### Beat - High-level story beat
 {Hero} discovers the {Sword} and must leave {Village} to save the realm.
 
-// Treatment - Detailed scene description
+## Treatment - Detailed scene description
 The morning sun filters through worn curtains as our young hero
 wakes to distant thunder. But this is no storm - it's the sound
 of the {Villain}'s army approaching. The ancient {Sword} hidden
 in the cottage begins to glow with ethereal light.
 
-/ Narrative - Final prose
+# Narrative - Final prose
 The first rays of dawn crept through the thatched roof of the cottage,
 painting golden streaks across the rough wooden floor. {Hero} stirred
 from uneasy dreams, haunted by visions of fire and shadow.
@@ -97,15 +97,15 @@ starlight. Today, everything would change.
 
 === EXT. Village Square - Morning
 
-/// Beat
+### Beat
 {Hero} meets {Mentor} who reveals the prophecy.
 
-// Treatment
+## Treatment
 In the village square, panic spreads as dark clouds gather unnaturally
 fast. The {Mentor} appears from the shadows, staff in hand, to guide
 {Hero} on the journey ahead.
 
-/ Narrative with dialogue examples
+# Narrative with dialogue examples
 
 The village square erupted in chaos.
 
@@ -127,15 +127,15 @@ MENTOR: The one that names you as our salvation.
 
 === EXT. Forest Path - Afternoon
 
-/// Beat
+### Beat
 {Hero} and {Mentor} enter the {Forest} and face first challenges.
 
-// Treatment
+## Treatment
 The ancient forest seems to resist their passage, with twisted
 branches and moving shadows. {Sidekick} joins them unexpectedly,
 providing comic relief in the dark woods.
 
-/ Narrative
+# Narrative
 The path into the {Forest} was barely visible, overgrown with thorns
 and shadowed by towering oaks that seemed to lean inward, blocking
 out the sun.
@@ -153,15 +153,15 @@ SIDEKICK: (dropping from a tree)
 
 === EXT. Deep Woods - Midnight
 
-/// Beat
+### Beat
 {Hero} faces inner demons while navigating the enchanted {Forest}.
 
-// Treatment
+## Treatment
 In the deepest part of the forest, reality bends. Trees whisper
 secrets, and shadows take form. {Hero} must confront fears made
 manifest to continue the journey.
 
-/ Narrative
+# Narrative
 The darkness was absolute, pressing in from all sides like a living
 thing. {Hero}'s breath came in short gasps as the {Sword}'s light
 flickered weakly against the oppressive gloom.
@@ -174,10 +174,10 @@ of everyone {Hero} had ever disappointed. The {Amulet} around
 
 === EXT. Mountain Trail - Sunrise
 
-/// Beat
+### Beat
 The party climbs toward {Mountain} peak where {Villain} waits.
 
-// Treatment
+## Treatment
 The ascent is treacherous, with narrow paths and sheer drops.
 Ancient ruins dot the mountainside, remnants of the old kingdom.
 The air grows thin and cold as they approach the summit.
@@ -188,16 +188,16 @@ The air grows thin and cold as they approach the summit.
 
 === EXT. Mountain Peak - High Noon
 
-/// Beat
+### Beat
 {Hero} confronts {Villain} in an epic battle for the realm's fate.
 
-// Treatment
+## Treatment
 At the mountain's peak, surrounded by swirling storms and crackling
 magic, {Hero} and {Villain} clash. The {Sword} blazes with righteous
 fire as ancient magics collide. {Mentor} and {Sidekick} fight off
 the {Villain}'s minions while {Hero} faces the dark sorcerer alone.
 
-/ Narrative
+# Narrative
 The summit was a chaos of wind and lightning. {Villain} stood at the
 precipice, dark robes billowing, staff raised to the storm-torn sky.
 
@@ -223,15 +223,15 @@ SIDEKICK: (fighting with surprising skill)
           (dodging an attack)
           But here we are!
 
-# ============================================================================
-# ADDITIONAL SCOPE DEMONSTRATIONS
-# ============================================================================
-# Adapter examples
+// ============================================================================
+// ADDITIONAL SCOPE DEMONSTRATIONS
+// ============================================================================
+// Adapter examples
 
-# External adapter reference
+// External adapter reference
 @adapter "adapters/text_enhancement.yaml": { timing: after_generation }
 
-# Adapter block list (mirrors @eras style)
+// Adapter block list (mirrors @eras style)
 @adapters {
   - style_adapter: {
     type: text
@@ -243,14 +243,14 @@ SIDEKICK: (fighting with surprising skill)
   }
 }
 
-# Inline adapter definitions with nested properties
+// Inline adapter definitions with nested properties
 @adapter style_adapter: {
   type: text
   timing: after_generation
   description: |
     Replace select verbs with elevated synonyms during post-processing.
     Applies only to narrative prose.
-  
+
   pattern_rules:
     - source_pattern: "walk"
       target_pattern: "stride"
@@ -268,7 +268,7 @@ SIDEKICK: (fighting with surprising skill)
   notes: |
     Map narrative labels to canonical entity names while generating text.
     Dialogue lines are updated when update_dialogue is true.
-  
+
   character_mappings: {
     source_name: "Protagonist"
     target_name: "Hero"
@@ -276,28 +276,28 @@ SIDEKICK: (fighting with surprising skill)
   }
 }
 
-# Parenthetical examples in various contexts
+// Parenthetical examples in various contexts
 CHARACTER: (whispering urgently)
            (drawing weapon slowly)
            (eyes widening in fear)
 
-# Entity references in different contexts
+// Entity references in different contexts
 The {Hero} picked up the {Map} and studied the route to {Castle}.
 In the {Forest}, the {Amulet} glowed whenever {Villain} was near.
 The {Book} contained secrets about the {Sword}'s true power.
 
-# Mixed content with all elements
+// Mixed content with all elements
 === INT. Ancient Library - Night
 
-/// Beat
+### Beat
 {Hero} discovers the truth about their heritage in the {Book}.
 
-// Treatment
+## Treatment
 Dusty tomes line endless shelves. By candlelight, {Hero} reads the
 ancient {Book} that reveals their royal bloodline and connection to
 the {Sword}. {Mentor} watches knowingly from the shadows.
 
-/ Narrative
+# Narrative
 The library was older than memory, its shelves reaching up into
 darkness. {Hero} traced fingers along faded spines until one book
 seemed to pulse with warmth - the {Book} of royal lineages.
@@ -312,18 +312,18 @@ MENTOR: A farmer raised in secret to protect you from {Villain}.
         But royal blood flows in your veins, and the {Sword}
         recognizes its true master.
 
-# ============================================================================
-# ERROR EXAMPLES (for testing error recovery)
-# ============================================================================
+// ============================================================================
+// ERROR EXAMPLES (for testing error recovery)
+// ============================================================================
 
-# These should trigger error scopes in the grammar:
-# @malformed entity without name or description
-# Unclosed {entity reference
-# Multiple === without proper structure
+// These should trigger error scopes in the grammar:
+// @malformed entity without name or description
+// Unclosed {entity reference
+// Multiple === without proper structure
 
-# ============================================================================
-# END OF THEMING SHOWCASE
-# ============================================================================
+// ============================================================================
+// END OF THEMING SHOWCASE
+// ============================================================================
 
-# This file demonstrates every semantic scope defined in the grammar.
-# Use this as a reference when developing themes or testing highlighting.
+// This file demonstrates every semantic scope defined in the grammar.
+// Use this as a reference when developing themes or testing highlighting.

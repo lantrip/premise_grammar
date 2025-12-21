@@ -1,11 +1,11 @@
 = Act One
 == Scene: The Meeting
-/// {Maya} enters the {Last Library} at dawn, the atrium echoing with distant footsteps.
-/// {Maya} scans the mezzanine for {?Kai}, gripping the {Archivist Badge} concealed beneath her coat.
-/// A notice board lists restricted sections: the {Night District} is sealed after curfew.
-/// A page whispers: "Check the index vault," and {Maya} nods.
-/// {Maya} meets {?Kai} near the central catalog, exchanging a coded phrase.
-/// The pair agree to recover the lost index before {The Council} archives it forever.
+### {Maya} enters the {Last Library} at dawn, the atrium echoing with distant footsteps.
+### {Maya} scans the mezzanine for {?Kai}, gripping the {Archivist Badge} concealed beneath her coat.
+### A notice board lists restricted sections: the {Night District} is sealed after curfew.
+### A page whispers: "Check the index vault," and {Maya} nods.
+### {Maya} meets {?Kai} near the central catalog, exchanging a coded phrase.
+### The pair agree to recover the lost index before {The Council} archives it forever.
 
 @character Maya Chen: A persistent archivist with a knack for patterns
 +aliases: Maya, Chen
@@ -16,12 +16,12 @@
 }
 
 == Scene: The Interruption
-/// Bells toll. {Sentinel Guards} arrive to question visitors about missing folios.
-/// {Maya} distracts the guards while {?Kai} slips into a service stairwell.
-/// A hidden map behind shelf {C-17} shows a route to the index vault beneath the {Night District}.
+### Bells toll. {Sentinel Guards} arrive to question visitors about missing folios.
+### {Maya} distracts the guards while {?Kai} slips into a service stairwell.
+### A hidden map behind shelf {C-17} shows a route to the index vault beneath the {Night District}.
 
 = Act Two
 == Scene: Descent
-/// {Maya} navigates service corridors, marking turns with chalk sigils.
-/// {?Kai} messages a single word on a scrap: "Diversion".
-/// The smell of ozone grows stronger near a humming grate; beneath it, the index vault thrums.
+### {Maya} navigates service corridors, marking turns with chalk sigils.
+### {?Kai} messages a single word on a scrap: "Diversion".
+### The smell of ozone grows stronger near a humming grate; beneath it, the index vault thrums.

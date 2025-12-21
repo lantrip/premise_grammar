@@ -18,11 +18,11 @@ expression: value
         "column": 0
       },
       "end": {
-        "row": 8,
-        "column": 25
+        "row": 9,
+        "column": 0
       },
       "start_byte": 0,
-      "end_byte": 225
+      "end_byte": 229
     },
     "children": [
       {
@@ -35,10 +35,10 @@ expression: value
           },
           "end": {
             "row": 0,
-            "column": 28
+            "column": 29
           },
           "start_byte": 0,
-          "end_byte": 28
+          "end_byte": 29
         },
         "children": []
       },
@@ -48,14 +48,14 @@ expression: value
         "range": {
           "start": {
             "row": 0,
-            "column": 28
+            "column": 29
           },
           "end": {
             "row": 1,
             "column": 0
           },
-          "start_byte": 28,
-          "end_byte": 29
+          "start_byte": 29,
+          "end_byte": 30
         },
         "children": []
       },
@@ -71,8 +71,8 @@ expression: value
             "row": 1,
             "column": 30
           },
-          "start_byte": 29,
-          "end_byte": 59
+          "start_byte": 30,
+          "end_byte": 60
         },
         "children": [
           {
@@ -87,8 +87,8 @@ expression: value
                 "row": 1,
                 "column": 30
               },
-              "start_byte": 29,
-              "end_byte": 59
+              "start_byte": 30,
+              "end_byte": 60
             },
             "children": [
               {
@@ -103,8 +103,8 @@ expression: value
                     "row": 1,
                     "column": 7
                   },
-                  "start_byte": 29,
-                  "end_byte": 36
+                  "start_byte": 30,
+                  "end_byte": 37
                 },
                 "children": []
               },
@@ -120,8 +120,8 @@ expression: value
                     "row": 1,
                     "column": 9
                   },
-                  "start_byte": 37,
-                  "end_byte": 38
+                  "start_byte": 38,
+                  "end_byte": 39
                 },
                 "children": []
               },
@@ -137,8 +137,8 @@ expression: value
                     "row": 1,
                     "column": 30
                   },
-                  "start_byte": 58,
-                  "end_byte": 59
+                  "start_byte": 59,
+                  "end_byte": 60
                 },
                 "children": []
               }
@@ -156,10 +156,10 @@ expression: value
           },
           "end": {
             "row": 1,
-            "column": 52
+            "column": 53
           },
-          "start_byte": 59,
-          "end_byte": 81
+          "start_byte": 60,
+          "end_byte": 83
         },
         "children": []
       },
@@ -169,14 +169,14 @@ expression: value
         "range": {
           "start": {
             "row": 1,
-            "column": 52
+            "column": 53
           },
           "end": {
             "row": 2,
             "column": 0
           },
-          "start_byte": 81,
-          "end_byte": 82
+          "start_byte": 83,
+          "end_byte": 84
         },
         "children": []
       },
@@ -192,8 +192,8 @@ expression: value
             "row": 4,
             "column": 29
           },
-          "start_byte": 82,
-          "end_byte": 154
+          "start_byte": 84,
+          "end_byte": 156
         },
         "children": [
           {
@@ -208,8 +208,8 @@ expression: value
                 "row": 4,
                 "column": 29
               },
-              "start_byte": 82,
-              "end_byte": 154
+              "start_byte": 84,
+              "end_byte": 156
             },
             "children": [
               {
@@ -224,8 +224,8 @@ expression: value
                     "row": 2,
                     "column": 10
                   },
-                  "start_byte": 91,
-                  "end_byte": 92
+                  "start_byte": 93,
+                  "end_byte": 94
                 },
                 "children": []
               },
@@ -241,8 +241,8 @@ expression: value
                     "row": 2,
                     "column": 29
                   },
-                  "start_byte": 92,
-                  "end_byte": 111
+                  "start_byte": 94,
+                  "end_byte": 113
                 },
                 "children": []
               },
@@ -258,8 +258,8 @@ expression: value
                     "row": 2,
                     "column": 30
                   },
-                  "start_byte": 111,
-                  "end_byte": 112
+                  "start_byte": 113,
+                  "end_byte": 114
                 },
                 "children": []
               },
@@ -275,8 +275,8 @@ expression: value
                     "row": 4,
                     "column": 15
                   },
-                  "start_byte": 113,
-                  "end_byte": 140
+                  "start_byte": 115,
+                  "end_byte": 142
                 },
                 "children": [
                   {
@@ -291,8 +291,8 @@ expression: value
                         "row": 2,
                         "column": 38
                       },
-                      "start_byte": 119,
-                      "end_byte": 120
+                      "start_byte": 121,
+                      "end_byte": 122
                     },
                     "children": []
                   },
@@ -308,8 +308,8 @@ expression: value
                         "row": 4,
                         "column": 1
                       },
-                      "start_byte": 125,
-                      "end_byte": 126
+                      "start_byte": 127,
+                      "end_byte": 128
                     },
                     "children": []
                   }
@@ -327,8 +327,8 @@ expression: value
                     "row": 4,
                     "column": 16
                   },
-                  "start_byte": 140,
-                  "end_byte": 141
+                  "start_byte": 142,
+                  "end_byte": 143
                 },
                 "children": []
               },
@@ -344,8 +344,8 @@ expression: value
                     "row": 4,
                     "column": 29
                   },
-                  "start_byte": 142,
-                  "end_byte": 154
+                  "start_byte": 144,
+                  "end_byte": 156
                 },
                 "children": [
                   {
@@ -360,8 +360,8 @@ expression: value
                         "row": 4,
                         "column": 29
                       },
-                      "start_byte": 142,
-                      "end_byte": 154
+                      "start_byte": 144,
+                      "end_byte": 156
                     },
                     "children": []
                   }
@@ -383,8 +383,8 @@ expression: value
             "row": 5,
             "column": 0
           },
-          "start_byte": 154,
-          "end_byte": 155
+          "start_byte": 156,
+          "end_byte": 157
         },
         "children": []
       },
@@ -400,8 +400,8 @@ expression: value
             "row": 5,
             "column": 19
           },
-          "start_byte": 155,
-          "end_byte": 174
+          "start_byte": 157,
+          "end_byte": 176
         },
         "children": [
           {
@@ -416,8 +416,8 @@ expression: value
                 "row": 5,
                 "column": 19
               },
-              "start_byte": 155,
-              "end_byte": 174
+              "start_byte": 157,
+              "end_byte": 176
             },
             "children": [
               {
@@ -432,8 +432,8 @@ expression: value
                     "row": 5,
                     "column": 1
                   },
-                  "start_byte": 155,
-                  "end_byte": 156
+                  "start_byte": 157,
+                  "end_byte": 158
                 },
                 "children": []
               },
@@ -449,8 +449,8 @@ expression: value
                     "row": 5,
                     "column": 15
                   },
-                  "start_byte": 169,
-                  "end_byte": 170
+                  "start_byte": 171,
+                  "end_byte": 172
                 },
                 "children": []
               }
@@ -470,8 +470,8 @@ expression: value
             "row": 6,
             "column": 0
           },
-          "start_byte": 174,
-          "end_byte": 175
+          "start_byte": 176,
+          "end_byte": 177
         },
         "children": []
       },
@@ -487,8 +487,8 @@ expression: value
             "row": 7,
             "column": 0
           },
-          "start_byte": 175,
-          "end_byte": 176
+          "start_byte": 177,
+          "end_byte": 178
         },
         "children": []
       },
@@ -502,10 +502,10 @@ expression: value
           },
           "end": {
             "row": 7,
-            "column": 23
+            "column": 24
           },
-          "start_byte": 176,
-          "end_byte": 199
+          "start_byte": 178,
+          "end_byte": 202
         },
         "children": []
       },
@@ -515,14 +515,14 @@ expression: value
         "range": {
           "start": {
             "row": 7,
-            "column": 23
+            "column": 24
           },
           "end": {
             "row": 8,
             "column": 0
           },
-          "start_byte": 199,
-          "end_byte": 200
+          "start_byte": 202,
+          "end_byte": 203
         },
         "children": []
       },
@@ -538,8 +538,8 @@ expression: value
             "row": 8,
             "column": 25
           },
-          "start_byte": 200,
-          "end_byte": 225
+          "start_byte": 203,
+          "end_byte": 228
         },
         "children": [
           {
@@ -554,8 +554,8 @@ expression: value
                 "row": 8,
                 "column": 25
               },
-              "start_byte": 200,
-              "end_byte": 225
+              "start_byte": 203,
+              "end_byte": 228
             },
             "children": [
               {
@@ -570,8 +570,8 @@ expression: value
                     "row": 8,
                     "column": 1
                   },
-                  "start_byte": 200,
-                  "end_byte": 201
+                  "start_byte": 203,
+                  "end_byte": 204
                 },
                 "children": []
               },
@@ -587,14 +587,31 @@ expression: value
                     "row": 8,
                     "column": 14
                   },
-                  "start_byte": 213,
-                  "end_byte": 214
+                  "start_byte": 216,
+                  "end_byte": 217
                 },
                 "children": []
               }
             ]
           }
         ]
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 8,
+            "column": 25
+          },
+          "end": {
+            "row": 9,
+            "column": 0
+          },
+          "start_byte": 228,
+          "end_byte": 229
+        },
+        "children": []
       }
     ]
   }

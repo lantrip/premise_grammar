@@ -41,7 +41,7 @@ fn walk_for_beats(
             }
         }
         "beat_content" => {
-            // Extract beat text (after ///)
+            // Extract beat text (after ###)
             let text = slice_text(node, source).trim().to_string();
             if !text.is_empty() {
                 let entities = extract_entity_references(&text);

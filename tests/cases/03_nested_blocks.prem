@@ -1,4 +1,4 @@
-# Test: Nested blocks (@eras within entities)
+// Test: Nested blocks (@eras within entities)
 @characters {
     - Hero: Main protagonist
       role: hero

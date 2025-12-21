@@ -21,8 +21,8 @@ expression: analysis
             "row": 2,
             "column": 29
           },
-          "start_byte": 92,
-          "end_byte": 111
+          "start_byte": 94,
+          "end_byte": 113
         }
       }
     ]

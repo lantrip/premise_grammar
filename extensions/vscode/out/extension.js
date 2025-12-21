@@ -66,7 +66,10 @@ async function execPremiseCli(args, cwd) {
     const cli = findPremiseCli();
     const command = `${cli} ${args.join(" ")}`;
     try {
-        const { stdout } = await execAsync(command, { cwd, maxBuffer: 10 * 1024 * 1024 });
+        const { stdout } = await execAsync(command, {
+            cwd,
+            maxBuffer: 10 * 1024 * 1024,
+        });
         return stdout;
     }
     catch (err) {
@@ -961,9 +964,7 @@ async function activate(context) {
                 const provider = cfg.get("ai.provider", "openrouter");
                 const model = cfg.get("ai.model", "openai/gpt-4o-mini");
                 const endpoint = cfg.get("ai.endpoint", "https://openrouter.ai/api/v1/chat/completions");
-                const apiKey = cfg.get("ai.apiKey") ||
-                    process.env.OPENROUTER_API_KEY ||
-                    "";
+                const apiKey = cfg.get("ai.apiKey") || process.env.OPENROUTER_API_KEY || "";
                 if (provider !== "openrouter") {
                     vscode.window.showWarningMessage("Only OpenRouter is supported in this preview.");
                     return;
@@ -978,7 +979,12 @@ async function activate(context) {
                 ]).catch(() => ({ sections: [] }));
                 // Get fact categories from settings
                 const cfg_notes = vscode.workspace.getConfiguration("premise.notes");
-                const factCategories = cfg_notes.get("factCategories", ["trait", "relationship", "knowledge", "event"]);
+                const factCategories = cfg_notes.get("factCategories", [
+                    "trait",
+                    "relationship",
+                    "knowledge",
+                    "event",
+                ]);
                 const system = getFactExtractionSystemPrompt(factCategories);
                 const schema = getFactExtractionSchemaPrompt(factCategories);
                 let textToProcess = doc.getText();
@@ -1161,19 +1167,19 @@ async function pickBeatGenerationMode() {
             label: "Add New Beats",
             val: "add-new",
             detail: "Generate new beats without changing existing ones (default behavior)",
-            picked: defaultMode === "add-new"
+            picked: defaultMode === "add-new",
         },
         {
             label: "Update/Fix Beats",
             val: "update-fix",
             detail: "Analyze and improve existing beats based on current narrative",
-            picked: defaultMode === "update-fix"
+            picked: defaultMode === "update-fix",
         },
         {
             label: "Recreate All Beats",
             val: "recreate-all",
             detail: "Replace all existing beats with completely new ones",
-            picked: defaultMode === "recreate-all"
+            picked: defaultMode === "recreate-all",
         },
     ];
     const pick = await vscode.window.showQuickPick(items, {
@@ -1211,9 +1217,11 @@ NEVER copy text. Summarize ONLY the most important story events. Return ONLY str
     }
 }
 function getBeatSchemaPrompt(mode, qualityLevel) {
-    const lengthConstraint = qualityLevel === "concise" ? "10-50" :
-        qualityLevel === "detailed" ? "30-80" :
-            "50-120";
+    const lengthConstraint = qualityLevel === "concise"
+        ? "10-50"
+        : qualityLevel === "detailed"
+            ? "30-80"
+            : "50-120";
     const baseSchema = `Schema: { "beats": [ string, string, ... ] }
 
 CRITICAL RULES:
@@ -1351,7 +1359,7 @@ async function applyBeatsToSection(editor, beats, regionStart, regionEnd, entity
 async function showBeatPreview(beats, mode, sectionInfo, existingBeats = []) {
     const newBeatsText = beats.join("\n");
     const existingBeatsText = existingBeats.length > 0
-        ? existingBeats.map(b => `/// ${b}`).join("\n")
+        ? existingBeats.map((b) => `/// ${b}`).join("\n")
         : "(No existing beats)";
     let previewText = "";
     if (mode === "add-new") {
@@ -1367,13 +1375,17 @@ async function showBeatPreview(beats, mode, sectionInfo, existingBeats = []) {
     const message = `Apply ${mode} mode to ${sectionInfo.kind || "section"}${sectionTitle}?`;
     const choice = await vscode.window.showInformationMessage(message, {
         modal: true,
-        detail: previewText
+        detail: previewText,
     }, "Apply", "Skip", "Apply All", "Cancel");
     switch (choice) {
-        case "Apply": return "apply";
-        case "Skip": return "skip";
-        case "Apply All": return "apply-all";
-        default: return "cancel";
+        case "Apply":
+            return "apply";
+        case "Skip":
+            return "skip";
+        case "Apply All":
+            return "apply-all";
+        default:
+            return "cancel";
     }
 }
 function getEntitySystemPrompt(updateScope, isFile) {
@@ -1551,7 +1563,7 @@ async function listUncommittedPremFilesUnderRoot(rootPath) {
         // Deduplicate
         const set = new Set(files);
         const result = Array.from(set).map((p) => normalizeFileUri(vscode.Uri.file(p)));
-        console.log("🐛 listUncommittedPremFilesUnderRoot - final URIs:", result.map(u => u.toString()));
+        console.log("🐛 listUncommittedPremFilesUnderRoot - final URIs:", result.map((u) => u.toString()));
         return result;
     }
     catch (err) {
@@ -1767,6 +1779,96 @@ function extractEntityTokens(beat) {
             out.push(name);
     }
     return out;
+}
+function buildAliasMapFromDocument(doc, canonical) {
+    const map = new Map();
+    // 1) Inline +aliases: lines associated with the most recent @entity line
+    let currentEntity;
+    const lines = doc.getText().split(/\r?\n/);
+    for (const line of lines) {
+        const entMatch = line.match(/^@(\w+)\s+([^:]+):/);
+        if (entMatch) {
+            currentEntity = entMatch[2].trim();
+            continue;
+        }
+        const aliasMatch = line.match(/^\s*\+aliases:\s*(.*)$/);
+        if (aliasMatch && currentEntity) {
+            const aliases = aliasMatch[1]
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean);
+            for (const a of aliases) {
+                map.set(a, currentEntity);
+            }
+        }
+    }
+    // 2) Heuristic alias mapping: first/last tokens if unique across canonical set
+    const firstTokenMap = new Map();
+    const lastTokenMap = new Map();
+    for (const c of canonical) {
+        const parts = c.split(/\s+/).filter(Boolean);
+        if (parts.length > 0) {
+            const first = parts[0];
+            const last = parts[parts.length - 1];
+            firstTokenMap.set(first, [...(firstTokenMap.get(first) || []), c]);
+            lastTokenMap.set(last, [...(lastTokenMap.get(last) || []), c]);
+        }
+    }
+    for (const [token, names] of firstTokenMap) {
+        if (names.length === 1 && !map.has(token))
+            map.set(token, names[0]);
+    }
+    for (const [token, names] of lastTokenMap) {
+        if (names.length === 1 && !map.has(token))
+            map.set(token, names[0]);
+    }
+    return map;
+}
+function normalizeAliasesInBeat(beat, aliasMap) {
+    return beat.replace(/\{([^}]+)\}/g, (m, inner) => {
+        const name = String(inner || "").trim();
+        if (!name || name.startsWith("?"))
+            return m; // keep uncertain or empty as-is
+        const canonical = aliasMap.get(name);
+        return canonical ? `{${canonical}}` : m;
+    });
+}
+function convertUnknownEntitiesToUncertain(beat, canon) {
+    return beat.replace(/\{([^}]+)\}/g, (m, inner) => {
+        const name = String(inner || "").trim();
+        if (!name)
+            return m;
+        if (name.startsWith("?"))
+            return m; // already uncertain
+        if (canon.has(name))
+            return m; // known canonical
+        return `{?${name}}`;
+    });
+}
+function partitionBeatsForReview(beats, canon) {
+    if (!canon)
+        return { valid: Array.from(new Set(beats)), uncertain: [], unknown: [] };
+    const valid = [];
+    const uncertain = [];
+    const unknown = [];
+    for (const b of beats) {
+        const tokens = extractEntityTokens(b);
+        const hasUncertain = tokens.some((t) => t.startsWith("?"));
+        const unknownTokens = tokens.filter((t) => !t.startsWith("?") && !canon.has(t));
+        if (unknownTokens.length === 0 && !hasUncertain)
+            valid.push(b);
+        else if (unknownTokens.length === 0 && hasUncertain)
+            uncertain.push(b);
+        else
+            unknown.push(b);
+    }
+    // Deduplicate within categories
+    const dedupe = (arr) => arr.filter((x, i) => arr.indexOf(x) === i);
+    return {
+        valid: dedupe(valid),
+        uncertain: dedupe(uncertain),
+        unknown: dedupe(unknown),
+    };
 }
 function getBeatInsertPosition() {
     const cfg = vscode.workspace.getConfiguration("premise.ai");

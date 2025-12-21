@@ -3,6 +3,7 @@
 
 ; Comments - distinguish from story content
 (line_comment) @comment.line
+(block_comment) @comment.block
 
 ; File headers - metadata about the story
 (file_header) @keyword.directive
@@ -23,9 +24,9 @@
 (content_type_narrative) @keyword.control.content.narrative
 
 ; Content type punctuation - visual cues for story layers
-"///" @punctuation.definition.content.beat
-"//" @punctuation.definition.content.treatment
-"/" @punctuation.definition.content.narrative
+"###" @punctuation.definition.content.beat
+"##" @punctuation.definition.content.treatment
+"#" @punctuation.definition.content.narrative
 
 ; Entity definitions
 (entity_construct) @variable.special

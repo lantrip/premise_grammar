@@ -96,11 +96,6 @@
     }
   },
   {
-    "type": "block_comment",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "block_scalar",
     "named": true,
     "fields": {},
@@ -543,6 +538,10 @@
       "required": false,
       "types": [
         {
+          "type": "block_comment",
+          "named": true
+        },
+        {
           "type": "line",
           "named": true
         },
@@ -566,6 +565,14 @@
     "named": false
   },
   {
+    "type": "##",
+    "named": false
+  },
+  {
+    "type": "###",
+    "named": false
+  },
+  {
     "type": "'",
     "named": false
   },
@@ -575,18 +582,6 @@
   },
   {
     "type": "-",
-    "named": false
-  },
-  {
-    "type": "/",
-    "named": false
-  },
-  {
-    "type": "//",
-    "named": false
-  },
-  {
-    "type": "///",
     "named": false
   },
   {
@@ -620,6 +615,11 @@
   {
     "type": "adapter_path",
     "named": true
+  },
+  {
+    "type": "block_comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "close_brace",
