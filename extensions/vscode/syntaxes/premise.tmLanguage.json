@@ -4,32 +4,32 @@
   "fileTypes": ["prem"],
   "patterns": [
     {
-      "name": "comment.line.hash.premise",
-      "match": "#.*$"
-    },
-    {
-      "name": "markup.heading.1.premise",
-      "match": "^=\\s+.*$"
-    },
-    {
-      "name": "markup.heading.2.premise",
-      "match": "^==\\s+.*$"
+      "name": "comment.line.double-slash.premise",
+      "match": "//.*$"
     },
     {
       "name": "markup.heading.3.premise",
       "match": "^===\\s+.*$"
     },
     {
+      "name": "markup.heading.2.premise",
+      "match": "^==\\s+.*$"
+    },
+    {
+      "name": "markup.heading.1.premise",
+      "match": "^=\\s+.*$"
+    },
+    {
       "name": "keyword.control.content.beat.premise",
-      "match": "^///\\s.*$"
+      "match": "^###\\s.*$"
     },
     {
       "name": "keyword.control.content.treatment.premise",
-      "match": "^//\\s.*$"
+      "match": "^##(?!#)\\s.*$"
     },
     {
       "name": "keyword.control.content.narrative.premise",
-      "match": "^/\\s.*$"
+      "match": "^#(?!#)\\s.*$"
     },
     {
       "name": "keyword.directive.premise",
