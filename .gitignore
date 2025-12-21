@@ -12,7 +12,6 @@ yarn-error.log*
 
 # Rust/Cargo
 /target
-/Cargo.lock
 
 # Tree-sitter generated files (these should be committed)
 # /src/parser.c
