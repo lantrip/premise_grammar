@@ -8,6 +8,126 @@ A minimal, incremental path to support CYOA/interactive fiction in Premise gramm
 
 ---
 
+## Phase 0: Characters with Metadata (Teams & Personas)
+
+Before interactive mechanics, we need richer character definitions to support:
+- **Teams:** red team / blue team, adversarial groups
+- **Personas:** DM, player, NPC, proctor roles
+- **Fulfillment:** who/what controls this character (user, llm, system)
+
+### Current Syntax (Simple)
+
+```prem
+@characters {
+  - Dispatcher: Call taker (PLAYER)
+  - Caller: Member of public (PROCTOR)
+}
+```
+
+### Extended Syntax (Object Form)
+
+Use the existing `entity_object` pattern for richer metadata:
+
+```prem
+@characters {
+  - Attacker: {
+      desc: Red team hacker attempting breach
+      team: red
+      role: adversary
+      controlled_by: user
+    }
+  - Defender: {
+      desc: Blue team analyst monitoring systems
+      team: blue
+      role: protagonist
+      controlled_by: user
+    }
+  - SystemAI: {
+      desc: Automated threat detection
+      team: blue
+      role: npc
+      controlled_by: llm
+    }
+  - DungeonMaster: {
+      desc: Narrator and world controller
+      role: dm
+      controlled_by: user
+    }
+}
+```
+
+**Key properties:**
+
+| Property | Values | Purpose |
+|----------|--------|---------|
+| `desc` | string | Character description |
+| `team` | `red`, `blue`, custom | Group affiliation |
+| `role` | `player`, `npc`, `dm`, `proctor`, `adversary`, custom | Persona type |
+| `controlled_by` | `user`, `llm`, `system`, `user_1`, `user_2` | Who provides input |
+
+**Grammar change:** None needed - `entity_object` already supports `{ key: value }` blocks.
+
+The grammar already parses this via `entity_line` -> `entity_object` -> `object_property`.
+
+### Linking Characters to Slots
+
+The `actor` property on slots references who provides input. The `character` property specifies which character speaks:
+
+```prem
+@slot player_move {
+  type: input
+  prompt: "What does the Attacker do?"
+  actor: user           // Who provides the input
+  character: Attacker   // Which character is speaking/acting
+  as: action
+}
+
+@slot ai_response {
+  type: input
+  prompt: "SystemAI responds to the intrusion"
+  actor: system
+  controlled_by: llm    // Runtime fulfills via LLM
+  character: SystemAI
+  as: dialogue
+}
+```
+
+### Multi-User Scenarios
+
+For training simulations with multiple human participants:
+
+```prem
++actors: {
+  user_1: "Trainee dispatcher"
+  user_2: "Trainer/proctor"
+}
+
+@characters {
+  - Dispatcher: {
+      desc: 911 call taker
+      role: player
+      controlled_by: user_1
+    }
+  - Caller: {
+      desc: Distressed caller
+      role: npc
+      controlled_by: user_2
+    }
+}
+```
+
+### Why This Matters
+
+1. **Training scenarios:** Red/blue team exercises need clear team affiliations
+2. **Multi-user CYOA:** Different players control different characters
+3. **LLM roleplay:** Mark which characters are LLM-driven vs human
+4. **DM/Narrator:** Distinguish the orchestrator from in-world characters
+5. **Scoring/evaluation:** Runtime can assess by team or role
+
+**No grammar changes required** - this uses existing object syntax. The semantic meaning is interpreted by the runtime.
+
+---
+
 ## Phase 1: Section Navigation (Foundation)
 
 The core of any branching story is the ability to name sections and jump between them.
