@@ -86,7 +86,7 @@ This directory contains editor extensions that consume the Premise Tree-sitter g
 ## AI Features (Preview)
 
 - VSCode commands:
-  - “Premise: Generate Beats…” — adds `///` beats with `{Entity}` references.
+  - "Premise: Generate Beats…" — adds `###` beats with `{Entity}` references.
   - “Premise: Update Entity Descriptions…” — updates `@entity` lines.
 - Scopes: current file, story root, uncommitted (file/root).
 - Chunking: per-run picker (section/file) and default setting `premise.ai.chunkingMode`.

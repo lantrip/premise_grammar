@@ -24,7 +24,7 @@ All domains share:
 
 - **Entities**: Definitions with references `{Entity}`
 - **Hierarchy**: Act/Scene/Cel (or mapped equivalents)
-- **Content Types**: Beats (`///`), treatment (`//`), narrative (`/`)
+- **Content Types**: Beats (`###`), treatment (`##`), narrative (`#`)
 - **Notes System**: Facts, relationships, timeline, consistency
 
 ## Adapter Manifest
@@ -302,43 +302,12 @@ premise adapters show my-adapter
 # premise run my-adapter input.prem -o output.html
 ```
 
-## Adapter Execution (Future)
+## Planned Features
 
-**Planned workflow**:
-
-```bash
-# Run adapter on a file
-premise run <adapter-id> <file.prem> [options]
-
-# Examples
-premise run premise-screenplay-pdf story.prem -o screenplay.pdf
-premise run premise-sales-report call.prem --format html
-premise run premise-architecture-diagram arch.prem -o diagram.svg
-```
-
-**Execution flow**:
-
-1. Parse `.prem` file to IR (JSON)
-2. Pass IR to adapter via stdin
-3. Provide notes context via environment/API
-4. Capture adapter output
-5. Track provenance (which adapter generated what)
-
-## Provenance Tracking (Future)
-
-**Goal**: Track which adapter generated content
-
-```jsonl
-{"type":"fact","id":"f123","fact":"Hero is brave","source":"adapter:premise-screenplay-pdf","adapter_version":"1.0.0"}
-{"type":"beat","id":"b456","text":"Hero confronts villain","source":"adapter:premise-screenplay-pdf"}
-```
-
-**Benefits**:
-
-- **Trust**: Know the source of generated content
-- **Rollback**: Remove all facts from a specific adapter
-- **Reproducibility**: Re-run specific adapter versions
-- **Debugging**: Trace issues to specific adapters
+See [docs/ADAPTERS_ROADMAP.md](./docs/ADAPTERS_ROADMAP.md) for planned features including:
+- Adapter execution engine
+- Provenance tracking
+- Notes contribution
 
 ## Example Use Cases
 
@@ -448,33 +417,6 @@ Use `"*"` to support all domains:
 }
 ```
 
-### Adapter Composition
-
-Chain adapters together:
-
-```bash
-# Future feature
-premise run analyzer input.prem | premise run visualizer -o output.html
-```
-
-### Notes Contribution (Future)
-
-Adapters can write facts back to notes:
-
-```json
-{
-  "capabilities": {
-    "contributes_facts": true
-  }
-}
-```
-
-Example contributions:
-
-- **Screenplay adapter**: Extract dialogue patterns, scene lengths
-- **Sales adapter**: Detect objections, commitment signals
-- **Architecture adapter**: Identify dependencies, complexity metrics
-
 ## Best Practices
 
 ### 1. Design for Reusability
@@ -578,6 +520,7 @@ premise --format json adapters list
 
 ## See Also
 
-- [AI_ROADMAP.md](./AI_ROADMAP.md) - Consolidated roadmap and notes reference
+- [docs/AI_ROADMAP.md](./docs/AI_ROADMAP.md) - Notes system reference
+- [docs/ADAPTERS_ROADMAP.md](./docs/ADAPTERS_ROADMAP.md) - Planned features
 - [premise-core/src/adapters/](./premise-core/src/adapters/) - Implementation source
 - [adapters/](./adapters/) - Example adapter manifests

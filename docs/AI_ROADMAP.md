@@ -1,6 +1,6 @@
 # Premise AI Features
 
-> NOTE: This document is the sole source of truth for our AI roadmap. All prior planning docs have been consolidated here.
+> **Note**: AI-powered features have been moved to [premise-studio](https://github.com/yourusername/premise-studio). This document is retained as historical reference for the notes system architecture and LSP helpers that remain in this repository.
 
 ## Current Features
 

@@ -83,7 +83,7 @@ PY
 **Story Structure**
 
 - Hierarchical headers: `= Act`, `== Scene`, `=== Cel`
-- Content types: `///` (beats), `//` (treatment), `/` (narrative)
+- Content types: `###` (beats), `##` (treatment), `#` (narrative)
 - File headers: `TITLE:`, `WORLD:`, `FORMAT:`
 
 **Entity System**
@@ -103,7 +103,7 @@ PY
 - Metadata: `+key: value` (note: `+` prefix)
 - Imports: `@import "file.yaml"`
 - Adapters: `@adapter "path.ts"`
-- Comments: `# text`
+- Comments: `// line` and `/* block */`
 
 ## Development
 
@@ -257,7 +257,7 @@ jq 'select(.confidence >= 0.9)' .premise-notes/facts.jsonl
 - `Premise: Export Beats to Notes…`
 - `Premise: Discover Entities…` (planned UI; available via CLI today)
 
-📖 See `AI_ROADMAP.md` for full specs and policies. Notes schemas: `premise-notes/src/schema.rs`.
+📖 See `docs/AI_ROADMAP.md` for notes system details. Schemas: `premise-notes/src/schema.rs`.
 
 ## Repository Structure
 

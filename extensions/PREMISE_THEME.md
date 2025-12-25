@@ -6,8 +6,8 @@
 
   - **Indigo Dye** (`#003D5B`): base prose, punctuation, strings
   - **Amaranth** (`#D1495B`): adapter keywords and important delimiters
-  - **Purple** (`#b86798`): content markers (///, //, /)
-  - **Blue** (`#0e87d0`): hierarchy markers (###, ##, #)
+  - **Purple** (`#b86798`): content markers (###, ##, #)
+  - **Blue** (`#0e87d0`): hierarchy markers (=, ==, ===)
   - **BluePurple** (`#7089b4`): entities and references
 
 - **VS Code theme file**: `extensions/vscode/themes/premise-prose.json`
