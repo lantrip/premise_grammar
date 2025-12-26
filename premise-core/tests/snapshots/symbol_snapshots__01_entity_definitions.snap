@@ -68,6 +68,54 @@ expression: analysis
           "start_byte": 133,
           "end_byte": 174
         }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 7,
+            "column": 0
+          },
+          "end": {
+            "row": 7,
+            "column": 75
+          },
+          "start_byte": 217,
+          "end_byte": 292
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 8,
+            "column": 0
+          },
+          "end": {
+            "row": 8,
+            "column": 82
+          },
+          "start_byte": 293,
+          "end_byte": 375
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 9,
+            "column": 0
+          },
+          "end": {
+            "row": 9,
+            "column": 72
+          },
+          "start_byte": 376,
+          "end_byte": 448
+        }
       }
     ],
     "adapters": [],
