@@ -334,6 +334,27 @@
             }
           },
           {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "\\s+"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "entity_alias"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
             "type": "STRING",
             "value": ":"
           },
@@ -359,6 +380,27 @@
           }
         ]
       }
+    },
+    "entity_alias": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "alias",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^)]+"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
     },
     "line": {
       "type": "CHOICE",

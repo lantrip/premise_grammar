@@ -32,6 +32,9 @@
 (entity_construct) @variable.special
 "@" @punctuation.special
 
+; Entity alias - parenthetical alternate name: @character Hero (The Chosen One): ...
+(entity_alias) @string.special.alias
+
 ; Entity blocks
 (entity_block) @type
 

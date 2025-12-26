@@ -154,6 +154,11 @@
     }
   },
   {
+    "type": "entity_alias",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "entity_block",
     "named": true,
     "fields": {},
@@ -179,7 +184,17 @@
   {
     "type": "entity_construct",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "entity_alias",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "entity_desc",
@@ -574,6 +589,14 @@
   },
   {
     "type": "'",
+    "named": false
+  },
+  {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
     "named": false
   },
   {

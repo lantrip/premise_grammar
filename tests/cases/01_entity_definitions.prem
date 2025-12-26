@@ -3,3 +3,8 @@
 @location Castle: Ancient fortress
 @item Sword: Sharp blade
 @world_era Colony Days: Before the rescue
+
+// Test: Entity definitions with aliases
+@character Hero (The Chosen One): A brave adventurer with a mysterious past
+@location Castle Dracula (The Dark Fortress): An ancient fortress in the mountains
+@item Excalibur (The Sword of Kings): A legendary blade of immense power

@@ -100,6 +100,7 @@ module.exports = grammar({
       ),
 
     // Entity definition only (not unified anymore)
+    // Supports optional parenthetical alias: @character Hero (The Chosen One): Description
     entity_construct: ($) =>
       prec.dynamic(
         10,
@@ -108,11 +109,16 @@ module.exports = grammar({
           field("entity_type", /\w+/),
           /\s+/,
           field("name", /[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*/), // Allow multi-word names
+          optional(seq(/\s+/, $.entity_alias)), // Optional alias with required space before
           ":",
           optional(/\s*/),
           field("description", /.+/)
         )
       ),
+
+    // Parenthetical alias for entities: (The Chosen One)
+    entity_alias: ($) =>
+      seq("(", field("alias", /[^)]+/), ")"),
 
     line: ($) =>
       choice(
