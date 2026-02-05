@@ -8,7 +8,7 @@ FORMAT: story
 +setting: Last Library - Memory Garden
 +time: Morning
 
-### Beat - A whisper from the stacks
+# Beat - A whisper from the stacks
 A whisper from the stacks
 The {Last Library} stands tall amidst the {Burned District}, a beacon of hope.
 {Keeper Aldrich} guards the entrance, wary of intruders.
@@ -18,6 +18,6 @@ The {Last Library} stands tall amidst the {Burned District}, a beacon of hope.
 ## Treatment - A quiet start
 The air hums softly with latent magic as {Maya Chen} pauses. The {Burned District} still bears scars from the Great Burning.
 
-# Narrative - A choice ahead
+### Narrative - A choice ahead
 {Maya Chen} grips a page etched with spirit runes and wonders if the {Keeper Aldrich} will support her plan.
 

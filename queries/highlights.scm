@@ -24,9 +24,9 @@
 (content_type_narrative) @keyword.control.content.narrative
 
 ; Content type punctuation - visual cues for story layers
-"###" @punctuation.definition.content.beat
+"#" @punctuation.definition.content.beat
 "##" @punctuation.definition.content.treatment
-"#" @punctuation.definition.content.narrative
+"###" @punctuation.definition.content.narrative
 
 ; Entity definitions
 (entity_construct) @variable.special

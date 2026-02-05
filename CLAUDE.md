@@ -199,7 +199,7 @@ premise schema --type all
 
 - **Hierarchical Headers**: Acts (`=`), Scenes (`==`), Cels (`===`) with optional location/time markers
 - **Screenplay Dialogue**: Character names as speakers (`{Hero}`), indented dialogue, parentheticals `(whisper)`
-- **Content Types**: Beat (`###`), Treatment (`##`), Narrative (`#`) prefixes
+- **Content Types**: Beat (`#`), Treatment (`##`), Narrative (`###`) prefixes (ordinality matches structure)
 - **Entity System**: Definitions (`@character Name`) and blocks (`@characters { }`), references (`{Name}`)
 - **File Headers**: `TITLE:`, `WORLD:`, `FORMAT:` declarations
 - **Imports/Adapters**: `@import` statements and `@adapter` configurations

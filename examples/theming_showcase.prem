@@ -77,7 +77,7 @@ The story begins in a quiet farming village at dawn.
 
 // Content types demonstration - all three layers
 
-### Beat - High-level story beat
+# Beat - High-level story beat
 {Hero} discovers the {Sword} and must leave {Village} to save the realm.
 
 ## Treatment - Detailed scene description
@@ -86,7 +86,7 @@ wakes to distant thunder. But this is no storm - it's the sound
 of the {Villain}'s army approaching. The ancient {Sword} hidden
 in the cottage begins to glow with ethereal light.
 
-# Narrative - Final prose
+### Narrative - Final prose
 The first rays of dawn crept through the thatched roof of the cottage,
 painting golden streaks across the rough wooden floor. {Hero} stirred
 from uneasy dreams, haunted by visions of fire and shadow.
@@ -97,7 +97,7 @@ starlight. Today, everything would change.
 
 === EXT. Village Square - Morning
 
-### Beat
+# Beat
 {Hero} meets {Mentor} who reveals the prophecy.
 
 ## Treatment
@@ -105,7 +105,7 @@ In the village square, panic spreads as dark clouds gather unnaturally
 fast. The {Mentor} appears from the shadows, staff in hand, to guide
 {Hero} on the journey ahead.
 
-# Narrative with dialogue examples
+### Narrative with dialogue examples
 
 The village square erupted in chaos.
 
@@ -127,7 +127,7 @@ MENTOR: The one that names you as our salvation.
 
 === EXT. Forest Path - Afternoon
 
-### Beat
+# Beat
 {Hero} and {Mentor} enter the {Forest} and face first challenges.
 
 ## Treatment
@@ -135,7 +135,7 @@ The ancient forest seems to resist their passage, with twisted
 branches and moving shadows. {Sidekick} joins them unexpectedly,
 providing comic relief in the dark woods.
 
-# Narrative
+### Narrative
 The path into the {Forest} was barely visible, overgrown with thorns
 and shadowed by towering oaks that seemed to lean inward, blocking
 out the sun.
@@ -153,7 +153,7 @@ SIDEKICK: (dropping from a tree)
 
 === EXT. Deep Woods - Midnight
 
-### Beat
+# Beat
 {Hero} faces inner demons while navigating the enchanted {Forest}.
 
 ## Treatment
@@ -161,7 +161,7 @@ In the deepest part of the forest, reality bends. Trees whisper
 secrets, and shadows take form. {Hero} must confront fears made
 manifest to continue the journey.
 
-# Narrative
+### Narrative
 The darkness was absolute, pressing in from all sides like a living
 thing. {Hero}'s breath came in short gasps as the {Sword}'s light
 flickered weakly against the oppressive gloom.
@@ -174,7 +174,7 @@ of everyone {Hero} had ever disappointed. The {Amulet} around
 
 === EXT. Mountain Trail - Sunrise
 
-### Beat
+# Beat
 The party climbs toward {Mountain} peak where {Villain} waits.
 
 ## Treatment
@@ -188,7 +188,7 @@ The air grows thin and cold as they approach the summit.
 
 === EXT. Mountain Peak - High Noon
 
-### Beat
+# Beat
 {Hero} confronts {Villain} in an epic battle for the realm's fate.
 
 ## Treatment
@@ -197,7 +197,7 @@ magic, {Hero} and {Villain} clash. The {Sword} blazes with righteous
 fire as ancient magics collide. {Mentor} and {Sidekick} fight off
 the {Villain}'s minions while {Hero} faces the dark sorcerer alone.
 
-# Narrative
+### Narrative
 The summit was a chaos of wind and lightning. {Villain} stood at the
 precipice, dark robes billowing, staff raised to the storm-torn sky.
 
@@ -289,7 +289,7 @@ The {Book} contained secrets about the {Sword}'s true power.
 // Mixed content with all elements
 === INT. Ancient Library - Night
 
-### Beat
+# Beat
 {Hero} discovers the truth about their heritage in the {Book}.
 
 ## Treatment
@@ -297,7 +297,7 @@ Dusty tomes line endless shelves. By candlelight, {Hero} reads the
 ancient {Book} that reveals their royal bloodline and connection to
 the {Sword}. {Mentor} watches knowingly from the shadows.
 
-# Narrative
+### Narrative
 The library was older than memory, its shelves reaching up into
 darkness. {Hero} traced fingers along faded spines until one book
 seemed to pulse with warmth - the {Book} of royal lineages.

@@ -191,14 +191,15 @@ module.exports = grammar({
       ),
 
     // Enhanced content types with multi-line support and labels
+    // Ordinality matches structure: # (beat/abstract) → ## (treatment) → ### (narrative/detailed)
     content_type_beat: ($) =>
-      prec.right(9, seq("###", optional(field("content", /.*/)))),
+      prec.right(9, seq("#", optional(field("content", /.*/)))),
 
     content_type_treatment: ($) =>
       prec.right(9, seq("##", optional(field("content", /.*/)))),
 
     content_type_narrative: ($) =>
-      prec.right(9, seq("#", optional(field("content", /.*/)))),
+      prec.right(9, seq("###", optional(field("content", /.*/)))),
 
     // Multi-line C-style block comments
     block_comment: ($) =>

@@ -20,7 +20,7 @@
       "match": "^=\\s+.*$"
     },
     {
-      "name": "keyword.control.content.beat.premise",
+      "name": "keyword.control.content.narrative.premise",
       "match": "^###\\s.*$"
     },
     {
@@ -28,7 +28,7 @@
       "match": "^##(?!#)\\s.*$"
     },
     {
-      "name": "keyword.control.content.narrative.premise",
+      "name": "keyword.control.content.beat.premise",
       "match": "^#(?!#)\\s.*$"
     },
     {

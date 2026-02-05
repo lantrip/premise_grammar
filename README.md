@@ -83,7 +83,7 @@ PY
 **Story Structure**
 
 - Hierarchical headers: `= Act`, `== Scene`, `=== Cel`
-- Content types: `###` (beats), `##` (treatment), `#` (narrative)
+- Content types: `#` (beats), `##` (treatment), `###` (narrative)
 - File headers: `TITLE:`, `WORLD:`, `FORMAT:`
 
 **Entity System**

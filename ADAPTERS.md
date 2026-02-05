@@ -24,7 +24,7 @@ All domains share:
 
 - **Entities**: Definitions with references `{Entity}`
 - **Hierarchy**: Act/Scene/Cel (or mapped equivalents)
-- **Content Types**: Beats (`###`), treatment (`##`), narrative (`#`)
+- **Content Types**: Beats (`#`), treatment (`##`), narrative (`###`)
 - **Notes System**: Facts, relationships, timeline, consistency
 
 ## Adapter Manifest

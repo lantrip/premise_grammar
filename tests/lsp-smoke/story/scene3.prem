@@ -9,7 +9,7 @@ FORMAT: story
 +time: Evening
 
 === Cel 1: The Tide's Voice
-###
+#
 The {Burned District} looms, a shadow of its former self.
 {Keeper Aldrich} guards the entrance to the {Last Library}.
 {Maya Chen} searches for answers among the ruins of the {House}.
@@ -18,5 +18,5 @@ At the {Old Quay}, the river murmurs in cadence with the {Last Library - Memory 
 ## Treatment - Water, wood, and warding
 Barnacled posts groan as the tide turns. A warded lantern sputters, then steadies.
 
-# Narrative - Path forward
+### Narrative - Path forward
 {Maya Chen} reads the water's pattern and realizes the sigils point upstream, toward the lockworks.
