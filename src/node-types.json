@@ -31,6 +31,11 @@
     }
   },
   {
+    "type": "adapter_name",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "adapter_statement",
     "named": true,
     "fields": {
@@ -389,6 +394,10 @@
         {
           "type": "scene_header",
           "named": true
+        },
+        {
+          "type": "template_block",
+          "named": true
         }
       ]
     }
@@ -534,6 +543,57 @@
     "fields": {}
   },
   {
+    "type": "role_desc",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "role_line",
+    "named": true,
+    "fields": {
+      "role_desc": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "role_desc",
+            "named": true
+          }
+        ]
+      },
+      "role_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "role_name",
+            "named": true
+          }
+        ]
+      },
+      "role_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "role_type_hint",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "role_name",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "role_type_hint",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "scene_header",
     "named": true,
     "fields": {}
@@ -566,6 +626,25 @@
         },
         {
           "type": "newline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "template_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "newline",
+          "named": true
+        },
+        {
+          "type": "role_line",
           "named": true
         }
       ]
@@ -632,8 +711,12 @@
     "named": false
   },
   {
-    "type": "adapter_name",
-    "named": true
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
   },
   {
     "type": "adapter_path",

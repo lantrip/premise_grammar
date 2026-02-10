@@ -46,6 +46,47 @@ module.exports = grammar({
         "}"
       ),
 
+    // Template block for abstract story templates with role definitions
+    // @template { @role Name [type]: description }
+    template_block: ($) =>
+      seq(
+        "@",
+        field("block_type", /template\s*\{/),
+        repeat(
+          choice(
+            prec(3, $.role_line), // Role definitions
+            $.newline
+          )
+        ),
+        "}"
+      ),
+
+    // Role line within template block: @role Name [type]: Description
+    role_line: ($) =>
+      seq(
+        /[ \t]*@role\s+/,
+        field("role_name", $.role_name),
+        optional(field("role_type", $.role_type_hint)),
+        ":",
+        /[ \t]*/,
+        field("role_desc", $.role_desc)
+      ),
+
+    // Role name (similar to entity name)
+    role_name: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
+
+    // Optional type hint in brackets: [character], [location], etc.
+    role_type_hint: ($) =>
+      seq(
+        /\s*/,
+        "[",
+        field("type", /[a-z]+/),
+        "]"
+      ),
+
+    // Role description (rest of line)
+    role_desc: ($) => /[^\r\n]+/,
+
     // Entity line for structured parsing within entity blocks
     // Supports either a simple description or a nested object value
     entity_line: ($) =>
@@ -132,6 +173,7 @@ module.exports = grammar({
         $.metadata_line,
         $.entity_construct, // Entity definitions
         $.entity_block, // Entity blocks with braces
+        $.template_block, // Template blocks with role definitions
         $.import_statement,
         $.adapter_statement,
         $.prose_line // Last resort - lowest precedence
