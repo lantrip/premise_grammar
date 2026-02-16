@@ -59,6 +59,26 @@
 }
 
 // ============================================================================
+// IMAGE ASSOCIATIONS
+// ============================================================================
+
+// Inline image associations (quick one-off references)
+@image Hero [portrait]: characters/hero/portrait.png | Determined expression, dark hair, angular features
+@image Hero [body]: characters/hero/full-body.png | Medium build, leather armor, travel-worn boots
+@image Castle [establishing]: locations/castle/exterior.png | Ancient fortress on cliff, stormy sky
+
+// Image block for grouped associations with rich metadata
+@images {
+  - Mentor [portrait]: characters/mentor/portrait.png | Elderly wizard, long white beard, kind eyes
+  - Mentor [body]: characters/mentor/full-body.png | Flowing robes, wooden staff, hunched posture
+  - Villain [portrait]: characters/villain/portrait.png | Sharp features, glowing red eyes, scarred face
+  - Villain [concept]: characters/villain/sketches/ | Early concept art explorations
+  - Village [wide]: locations/village/panorama.png | Peaceful farming community, golden wheat fields
+  - Forest [mood]: locations/forest/mood-board/ | Dark atmosphere, twisted trees, dappled light
+  - Act One [mood]: act1/references/ | Tone references for opening sequence
+}
+
+// ============================================================================
 // STORY STRUCTURE - HIERARCHICAL HEADERS
 // ============================================================================
 

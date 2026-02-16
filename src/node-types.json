@@ -243,6 +243,11 @@
     }
   },
   {
+    "type": "entity_name",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "entity_object",
     "named": true,
     "fields": {},
@@ -298,6 +303,121 @@
   },
   {
     "type": "file_header",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "image_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "block_comment",
+          "named": true
+        },
+        {
+          "type": "image_line",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "image_caption",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "image_construct",
+    "named": true,
+    "fields": {
+      "image_tags": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "image_tags",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "image_line",
+    "named": true,
+    "fields": {
+      "image_caption": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "image_caption",
+            "named": true
+          }
+        ]
+      },
+      "image_path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "image_path",
+            "named": true
+          }
+        ]
+      },
+      "image_tags": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "image_tags",
+            "named": true
+          }
+        ]
+      },
+      "image_target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "image_target",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "image_pipe",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "image_pipe",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "image_tags",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "image_target",
     "named": true,
     "fields": {}
   },
@@ -377,6 +497,14 @@
         },
         {
           "type": "file_header",
+          "named": true
+        },
+        {
+          "type": "image_block",
+          "named": true
+        },
+        {
+          "type": "image_construct",
           "named": true
         },
         {
@@ -736,7 +864,7 @@
     "named": true
   },
   {
-    "type": "entity_name",
+    "type": "image_path",
     "named": true
   },
   {

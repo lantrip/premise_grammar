@@ -98,6 +98,18 @@
 (open_paren) @punctuation.definition.parenthetical.begin
 (close_paren) @punctuation.definition.parenthetical.end
 
+; Image blocks and directives
+(image_block) @meta.image.block
+(image_construct) @meta.image.directive
+(image_line) @meta.image.line
+(image_line (image_target) @entity.name.reference.image)
+(image_line (image_tags) @string.special.tags)
+(image_line (image_path) @string.path.image)
+(image_line (image_caption) @comment.caption)
+(image_construct (image_tags) @string.special.tags)
+(image_construct (image_path) @string.path.image)
+(image_construct (image_caption) @comment.caption)
+
 ; General punctuation
 ":" @punctuation.delimiter
 "{" @punctuation.bracket

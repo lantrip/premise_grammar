@@ -61,6 +61,49 @@ module.exports = grammar({
         "}"
       ),
 
+    // Image block for grouping image associations with rich metadata
+    // @images { - Target [tags]: path | caption }
+    image_block: ($) =>
+      seq(
+        token.immediate(seq("@", "images")),
+        /\s*\{/,
+        repeat(
+          choice(
+            prec(3, $.image_line), // Image association lines
+            $.block_comment,
+            $.newline
+          )
+        ),
+        "}"
+      ),
+
+    // Image line within @images block: - Target [tags]: path | caption
+    image_line: ($) =>
+      seq(
+        /[ \t]*-\s+/,
+        field("image_target", $.image_target),
+        optional(field("image_tags", $.image_tags)),
+        ":",
+        /[ \t]*/,
+        field("image_path", $.image_path),
+        optional(seq($.image_pipe, field("image_caption", $.image_caption)))
+      ),
+
+    // Image target name (entity, scene, or label)
+    image_target: ($) => /[A-Za-z_][A-Za-z0-9_ ]*/,
+
+    // Optional bracket tags: [portrait, close-up]
+    image_tags: ($) => seq("[", field("tags", /[^\]]+/), "]"),
+
+    // Image file path (everything up to | or end of line, trimmed)
+    image_path: ($) => /[^\r\n|]+/,
+
+    // Pipe separator for caption
+    image_pipe: ($) => "|",
+
+    // Image caption (rest of line after |)
+    image_caption: ($) => /[^\r\n]+/,
+
     // Role line within template block: @role Name [type]: Description
     role_line: ($) =>
       seq(
@@ -157,6 +200,23 @@ module.exports = grammar({
         )
       ),
 
+    // Inline image association: @image Target [tags]: path/to/image.png | optional caption
+    // Uses token.immediate to create a single @image token (like @adapter)
+    // Description field contains "path | caption" or just "path" - service layer splits on |
+    image_construct: ($) =>
+      prec(
+        12,
+        seq(
+          token.immediate(seq("@", "image")),
+          /\s+/,
+          field("name", /[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*/),
+          optional(field("image_tags", $.image_tags)),
+          ":",
+          optional(/\s*/),
+          field("description", /.+/)
+        )
+      ),
+
     // Parenthetical alias for entities: (The Chosen One)
     entity_alias: ($) =>
       seq("(", field("alias", /[^)]+/), ")"),
@@ -171,9 +231,11 @@ module.exports = grammar({
         $.content_type_treatment,
         $.content_type_narrative,
         $.metadata_line,
+        $.image_construct, // Inline image associations (before entity_construct)
         $.entity_construct, // Entity definitions
         $.entity_block, // Entity blocks with braces
         $.template_block, // Template blocks with role definitions
+        $.image_block, // Image association blocks
         $.import_statement,
         $.adapter_statement,
         $.prose_line // Last resort - lowest precedence

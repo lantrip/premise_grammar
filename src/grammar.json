@@ -185,6 +185,170 @@
         }
       ]
     },
+    "image_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "@"
+              },
+              {
+                "type": "STRING",
+                "value": "images"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\s*\\{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PREC",
+                "value": 3,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "image_line"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "block_comment"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "newline"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "image_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]*-\\s+"
+        },
+        {
+          "type": "FIELD",
+          "name": "image_target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "image_target"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "image_tags",
+              "content": {
+                "type": "SYMBOL",
+                "name": "image_tags"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]*"
+        },
+        {
+          "type": "FIELD",
+          "name": "image_path",
+          "content": {
+            "type": "SYMBOL",
+            "name": "image_path"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "image_pipe"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "image_caption",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "image_caption"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "image_target": {
+      "type": "PATTERN",
+      "value": "[A-Za-z_][A-Za-z0-9_ ]*"
+    },
+    "image_tags": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "FIELD",
+          "name": "tags",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\]]+"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "image_path": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n|]+"
+    },
+    "image_pipe": {
+      "type": "STRING",
+      "value": "|"
+    },
+    "image_caption": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n]+"
+    },
     "role_line": {
       "type": "SEQ",
       "members": [
@@ -504,6 +668,83 @@
         ]
       }
     },
+    "image_construct": {
+      "type": "PREC",
+      "value": 12,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "IMMEDIATE_TOKEN",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "@"
+                },
+                {
+                  "type": "STRING",
+                  "value": "image"
+                }
+              ]
+            }
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\s+"
+          },
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "PATTERN",
+              "value": "[A-Za-z0-9]+(?:\\s+[A-Za-z0-9]+)*"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "image_tags",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "image_tags"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ":"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "\\s*"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "FIELD",
+            "name": "description",
+            "content": {
+              "type": "PATTERN",
+              "value": ".+"
+            }
+          }
+        ]
+      }
+    },
     "entity_alias": {
       "type": "SEQ",
       "members": [
@@ -562,6 +803,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "image_construct"
+        },
+        {
+          "type": "SYMBOL",
           "name": "entity_construct"
         },
         {
@@ -571,6 +816,10 @@
         {
           "type": "SYMBOL",
           "name": "template_block"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "image_block"
         },
         {
           "type": "SYMBOL",
