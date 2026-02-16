@@ -978,10 +978,10 @@ expression: value
           },
           "end": {
             "row": 18,
-            "column": 9
+            "column": 10
           },
           "start_byte": 465,
-          "end_byte": 537
+          "end_byte": 538
         },
         "children": [
           {
@@ -1026,14 +1026,14 @@ expression: value
         "range": {
           "start": {
             "row": 18,
-            "column": 9
+            "column": 10
           },
           "end": {
-            "row": 25,
-            "column": 3
+            "row": 26,
+            "column": 0
           },
-          "start_byte": 537,
-          "end_byte": 775
+          "start_byte": 538,
+          "end_byte": 776
         },
         "children": [
           {
@@ -1042,35 +1042,18 @@ expression: value
             "range": {
               "start": {
                 "row": 18,
-                "column": 9
+                "column": 10
               },
               "end": {
-                "row": 25,
-                "column": 3
+                "row": 26,
+                "column": 0
               },
-              "start_byte": 537,
-              "end_byte": 775
+              "start_byte": 538,
+              "end_byte": 776
             },
             "children": [
               {
-                "kind": "prose_text",
-                "field": null,
-                "range": {
-                  "start": {
-                    "row": 18,
-                    "column": 9
-                  },
-                  "end": {
-                    "row": 18,
-                    "column": 10
-                  },
-                  "start_byte": 537,
-                  "end_byte": 538
-                },
-                "children": []
-              },
-              {
-                "kind": "entity_reference",
+                "kind": "dialogue_speaker",
                 "field": null,
                 "range": {
                   "start": {
@@ -1078,11 +1061,11 @@ expression: value
                     "column": 10
                   },
                   "end": {
-                    "row": 25,
-                    "column": 3
+                    "row": 26,
+                    "column": 0
                   },
                   "start_byte": 538,
-                  "end_byte": 775
+                  "end_byte": 776
                 },
                 "children": [
                   {
@@ -1124,23 +1107,6 @@ expression: value
             ]
           }
         ]
-      },
-      {
-        "kind": "newline",
-        "field": null,
-        "range": {
-          "start": {
-            "row": 25,
-            "column": 3
-          },
-          "end": {
-            "row": 26,
-            "column": 0
-          },
-          "start_byte": 775,
-          "end_byte": 776
-        },
-        "children": []
       },
       {
         "kind": "ERROR",
