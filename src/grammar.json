@@ -102,6 +102,26 @@
               {
                 "type": "PATTERN",
                 "value": "eras\\s*\\{"
+              },
+              {
+                "type": "PATTERN",
+                "value": "concepts?\\s*\\{"
+              },
+              {
+                "type": "PATTERN",
+                "value": "organizations?\\s*\\{"
+              },
+              {
+                "type": "PATTERN",
+                "value": "events?\\s*\\{"
+              },
+              {
+                "type": "PATTERN",
+                "value": "relationships?\\s*\\{"
+              },
+              {
+                "type": "PATTERN",
+                "value": "factions?\\s*\\{"
               }
             ]
           }
@@ -117,6 +137,14 @@
                 "content": {
                   "type": "SYMBOL",
                   "name": "entity_line"
+                }
+              },
+              {
+                "type": "PREC",
+                "value": 2,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "block_free_line"
                 }
               },
               {
@@ -143,6 +171,85 @@
           "value": "}"
         }
       ]
+    },
+    "lore_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@"
+        },
+        {
+          "type": "FIELD",
+          "name": "block_type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "lore\\s*\\{"
+              },
+              {
+                "type": "PATTERN",
+                "value": "facts?\\s*\\{"
+              }
+            ]
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PREC",
+                "value": 2,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "block_free_line"
+                }
+              },
+              {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "lore_entry"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "newline"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "lore_entry": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]*-\\s+"
+        },
+        {
+          "type": "FIELD",
+          "name": "lore_text",
+          "content": {
+            "type": "SYMBOL",
+            "name": "lore_text"
+          }
+        }
+      ]
+    },
+    "lore_text": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n{}]+"
     },
     "template_block": {
       "type": "SEQ",
@@ -314,7 +421,7 @@
     },
     "image_target": {
       "type": "PATTERN",
-      "value": "[A-Za-z_][A-Za-z0-9_ ]*"
+      "value": "[A-Za-z_][A-Za-z0-9_' ]*"
     },
     "image_tags": {
       "type": "SEQ",
@@ -477,6 +584,35 @@
         }
       ]
     },
+    "block_free_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]*-\\s+"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "entity_reference"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "entity_reference"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "entity_name"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "balanced_braces": {
       "type": "SEQ",
       "members": [
@@ -617,7 +753,7 @@
             "name": "name",
             "content": {
               "type": "PATTERN",
-              "value": "[A-Za-z0-9]+(?:\\s+[A-Za-z0-9]+)*"
+              "value": "[A-Za-z0-9']+(?:\\s+[A-Za-z0-9']+)*"
             }
           },
           {
@@ -812,6 +948,10 @@
         {
           "type": "SYMBOL",
           "name": "entity_block"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "lore_block"
         },
         {
           "type": "SYMBOL",
@@ -1701,7 +1841,7 @@
     },
     "entity_name": {
       "type": "PATTERN",
-      "value": "[A-Za-z_][A-Za-z0-9_ ]*"
+      "value": "[A-Za-z_][A-Za-z0-9_' ]*"
     },
     "entity_desc": {
       "type": "PATTERN",
@@ -1855,7 +1995,11 @@
       "name": "block_comment"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "block_free_line"
+    ]
+  ],
   "precedences": [],
   "externals": [],
   "inline": [],

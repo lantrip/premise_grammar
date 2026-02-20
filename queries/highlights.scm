@@ -47,6 +47,14 @@
 (entity_line (entity_desc) @string.description.entity)
 (entity_line ":" @punctuation.separator.entity)
 
+; Free-form lines in entity blocks (relationships)
+(block_free_line) @text.reference.entity
+
+; Lore/facts blocks and entries
+(lore_block) @type
+(lore_entry) @string.description.entity
+(lore_entry (lore_text) @string.description.entity)
+
 ; New: object values for nested entity properties
 (entity_line (entity_object) @meta.object.entity)
 (entity_object (open_brace) @punctuation.bracket)

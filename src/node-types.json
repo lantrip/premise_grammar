@@ -101,6 +101,25 @@
     }
   },
   {
+    "type": "block_free_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "entity_name",
+          "named": true
+        },
+        {
+          "type": "entity_reference",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "block_scalar",
     "named": true,
     "fields": {},
@@ -173,6 +192,10 @@
       "types": [
         {
           "type": "balanced_braces",
+          "named": true
+        },
+        {
+          "type": "block_free_line",
           "named": true
         },
         {
@@ -512,6 +535,10 @@
           "named": true
         },
         {
+          "type": "lore_block",
+          "named": true
+        },
+        {
           "type": "metadata_line",
           "named": true
         },
@@ -529,6 +556,50 @@
         }
       ]
     }
+  },
+  {
+    "type": "lore_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "block_free_line",
+          "named": true
+        },
+        {
+          "type": "lore_entry",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "lore_entry",
+    "named": true,
+    "fields": {
+      "lore_text": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "lore_text",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "lore_text",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "metadata_line",

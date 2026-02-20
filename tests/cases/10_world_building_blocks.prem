@@ -1,0 +1,69 @@
+// Test: World-building entity blocks, relationships, lore, and apostrophes
+
+@concepts {
+  - Magic System: Elemental magic drawn from nature
+  - The Accord: Ancient treaty between nations
+}
+
+@organizations {
+  - The Guild: Merchant collective controlling trade routes
+  - The Order: Religious organization preserving ancient knowledge
+}
+
+@events {
+  - The Great Fracture: Cataclysm that split the continent in two
+  - The Unification: Peace treaty ending centuries of war
+}
+
+@factions {
+  - Northern Alliance: Coalition of mountain clans
+  - Coastal Federation: Trading nations united under one banner
+}
+
+@relationships {
+  - {The Guild} trades with {Coastal Federation}
+  - {The Order} preserves knowledge of {Magic System}
+  - {Northern Alliance} opposes {The Guild}
+  - {The Accord} established {Coastal Federation}
+}
+
+// Test: Lore block with optional labels (colon not required)
+@lore {
+  - Dragons once ruled the skies but vanished during The Great Fracture
+  - The magic system weakens during solar eclipses
+  - Bloodline Rule: Only descendants of the original signatories can invoke The Accord
+}
+
+// Test: Facts block with mixed formats
+@facts {
+  - Iron is sacred to the Northern Alliance
+  - Trade Control: The Guild controls all trade south of the Iron Bridge
+}
+
+// Test: Apostrophes in entity names (block style)
+@items {
+  - Gearford's Pocket Watch: An heirloom timepiece with mysterious properties
+  - King's Crown: Royal regalia passed down through generations
+  - Captain O'Malley's Compass: Navigation artifact that always points to treasure
+}
+
+@characters {
+  - Captain O'Malley: A seafaring merchant with a mysterious past
+  - St Mary's Priest: Church official tending the ancient cathedral
+}
+
+// Test: Apostrophe in inline entity definition
+@character Gearford's Apprentice: A young tinker learning the watchmaker's trade
+
+// Test: Singular block type variants
+@concept The Void: An absence of all magic, feared by practitioners
+
+@organization The Watchers: Secret society monitoring magical activity
+
+@event The Convergence: Annual alignment of the three moons
+
+@faction The Remnant: Survivors of the old world clinging to forgotten ways
+
+@relationship {
+  - {Captain O'Malley} sails for {Coastal Federation}
+}

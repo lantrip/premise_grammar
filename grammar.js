@@ -4,7 +4,7 @@ module.exports = grammar({
 
   extras: ($) => [/[ \t]/, $.line_comment, $.block_comment],
 
-  conflicts: ($) => [],
+  conflicts: ($) => [[$.block_free_line]],
 
   rules: {
     source_file: ($) => repeat(choice($.line, $.newline, $.line_comment, $.block_comment)),
@@ -32,12 +32,19 @@ module.exports = grammar({
             /entity_eras\s*\{/,
             /character_eras\s*\{/,
             /location_eras\s*\{/,
-            /eras\s*\{/
+            /eras\s*\{/,
+            // World-building entity types
+            /concepts?\s*\{/,
+            /organizations?\s*\{/,
+            /events?\s*\{/,
+            /relationships?\s*\{/,
+            /factions?\s*\{/
           )
         ),
         repeat(
           choice(
             prec(3, $.entity_line), // Highest precedence for structured entity lines
+            prec(2, $.block_free_line), // Entity-reference lines (relationships)
             $.balanced_braces, // Handle { ... } patterns
             prec(-1, /[^{}\-\s][^{}]*/), // Fallback: Content not starting with dash/whitespace
             $.newline // Allow newlines
@@ -45,6 +52,38 @@ module.exports = grammar({
         ),
         "}"
       ),
+
+    // Lore/facts block - free-text entries that don't require Name: Description format
+    // Supports: "- Free text content", "- Label: Description", and "- {Entity} reference lines"
+    lore_block: ($) =>
+      seq(
+        "@",
+        field(
+          "block_type",
+          choice(
+            /lore\s*\{/,
+            /facts?\s*\{/
+          )
+        ),
+        repeat(
+          choice(
+            prec(2, $.block_free_line), // Entity-reference lines
+            prec(1, $.lore_entry), // Free-text lore/fact entries
+            $.newline
+          )
+        ),
+        "}"
+      ),
+
+    // Lore entry: "- Free text content" (any text, colons allowed)
+    lore_entry: ($) =>
+      seq(
+        /[ \t]*-\s+/, // Dash with surrounding whitespace
+        field("lore_text", $.lore_text)
+      ),
+
+    // Lore text content - captures entire line including colons
+    lore_text: ($) => /[^\r\n{}]+/,
 
     // Template block for abstract story templates with role definitions
     // @template { @role Name [type]: description }
@@ -90,7 +129,7 @@ module.exports = grammar({
       ),
 
     // Image target name (entity, scene, or label)
-    image_target: ($) => /[A-Za-z_][A-Za-z0-9_ ]*/,
+    image_target: ($) => /[A-Za-z_][A-Za-z0-9_' ]*/,
 
     // Optional bracket tags: [portrait, close-up]
     image_tags: ($) => seq("[", field("tags", /[^\]]+/), "]"),
@@ -144,6 +183,21 @@ module.exports = grammar({
         )
       ),
 
+    // Free-form line in entity blocks for relationship patterns with entity references
+    // e.g., - {Entity1} mentors {Entity2}
+    // Must start with entity reference (disambiguates from entity_line via initial token)
+    block_free_line: ($) =>
+      seq(
+        /[ \t]*-\s+/, // Dash with surrounding whitespace
+        $.entity_reference, // Must start with {Name}
+        repeat(
+          choice(
+            $.entity_reference, // More {Name} references
+            $.entity_name // Text between references
+          )
+        )
+      ),
+
     // Match balanced braces for nested patterns like @eras { ... }
     balanced_braces: ($) =>
       seq(
@@ -192,7 +246,7 @@ module.exports = grammar({
           "@",
           field("entity_type", /\w+/),
           /\s+/,
-          field("name", /[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*/), // Allow multi-word names
+          field("name", /[A-Za-z0-9']+(?:\s+[A-Za-z0-9']+)*/), // Allow multi-word names with apostrophes
           optional(seq(/\s+/, $.entity_alias)), // Optional alias with required space before
           ":",
           optional(/\s*/),
@@ -234,6 +288,7 @@ module.exports = grammar({
         $.image_construct, // Inline image associations (before entity_construct)
         $.entity_construct, // Entity definitions
         $.entity_block, // Entity blocks with braces
+        $.lore_block, // Lore/facts blocks with free-text entries
         $.template_block, // Template blocks with role definitions
         $.image_block, // Image association blocks
         $.import_statement,
@@ -419,7 +474,7 @@ module.exports = grammar({
     newline: ($) => /\r?\n/,
 
     // Named tokens for entity parts
-    entity_name: ($) => /[A-Za-z_][A-Za-z0-9_ ]*/,
+    entity_name: ($) => /[A-Za-z_][A-Za-z0-9_' ]*/,
     entity_desc: ($) => /[^\r\n{}]+/,
     prop_key: ($) => /[a-z_][a-z_0-9]*/,
     // Generic value for properties: supports inline simple values, nested objects, and YAML-style block scalars
