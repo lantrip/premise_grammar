@@ -1,0 +1,222 @@
+---
+source: premise-core/tests/symbol_snapshots.rs
+expression: analysis
+---
+{
+  "symbols": {
+    "entities": [
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 2,
+            "column": 0
+          },
+          "end": {
+            "row": 5,
+            "column": 1
+          },
+          "start_byte": 77,
+          "end_byte": 189
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 7,
+            "column": 0
+          },
+          "end": {
+            "row": 10,
+            "column": 1
+          },
+          "start_byte": 191,
+          "end_byte": 336
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 12,
+            "column": 0
+          },
+          "end": {
+            "row": 15,
+            "column": 1
+          },
+          "start_byte": 338,
+          "end_byte": 473
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 17,
+            "column": 0
+          },
+          "end": {
+            "row": 20,
+            "column": 1
+          },
+          "start_byte": 475,
+          "end_byte": 603
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 22,
+            "column": 0
+          },
+          "end": {
+            "row": 27,
+            "column": 1
+          },
+          "start_byte": 605,
+          "end_byte": 820
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 43,
+            "column": 0
+          },
+          "end": {
+            "row": 47,
+            "column": 1
+          },
+          "start_byte": 1325,
+          "end_byte": 1560
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 49,
+            "column": 0
+          },
+          "end": {
+            "row": 52,
+            "column": 1
+          },
+          "start_byte": 1562,
+          "end_byte": 1711
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 55,
+            "column": 0
+          },
+          "end": {
+            "row": 55,
+            "column": 80
+          },
+          "start_byte": 1761,
+          "end_byte": 1841
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 58,
+            "column": 0
+          },
+          "end": {
+            "row": 58,
+            "column": 67
+          },
+          "start_byte": 1881,
+          "end_byte": 1948
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 60,
+            "column": 0
+          },
+          "end": {
+            "row": 60,
+            "column": 70
+          },
+          "start_byte": 1950,
+          "end_byte": 2020
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 62,
+            "column": 0
+          },
+          "end": {
+            "row": 62,
+            "column": 59
+          },
+          "start_byte": 2022,
+          "end_byte": 2081
+        }
+      },
+      {
+        "kind": "EntityConstruct",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 64,
+            "column": 0
+          },
+          "end": {
+            "row": 64,
+            "column": 75
+          },
+          "start_byte": 2083,
+          "end_byte": 2158
+        }
+      },
+      {
+        "kind": "EntityBlock",
+        "name": null,
+        "range": {
+          "start": {
+            "row": 66,
+            "column": 0
+          },
+          "end": {
+            "row": 68,
+            "column": 1
+          },
+          "start_byte": 2160,
+          "end_byte": 2231
+        }
+      }
+    ],
+    "adapters": [],
+    "imports": [],
+    "metadata": []
+  },
+  "diagnostics": []
+}

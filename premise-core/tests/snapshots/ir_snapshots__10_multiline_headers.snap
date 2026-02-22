@@ -1,0 +1,49 @@
+---
+source: premise-core/tests/ir_snapshots.rs
+expression: analysis
+---
+{
+  "ir": {
+    "story": {
+      "acts": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 10,
+              "column": 0
+            },
+            "end": {
+              "row": 10,
+              "column": 7
+            },
+            "start_byte": 355,
+            "end_byte": 362
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 12,
+              "column": 0
+            },
+            "end": {
+              "row": 12,
+              "column": 10
+            },
+            "start_byte": 364,
+            "end_byte": 374
+          }
+        }
+      ],
+      "cels": []
+    },
+    "adapters": []
+  },
+  "diagnostics": []
+}
