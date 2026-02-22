@@ -302,12 +302,21 @@ module.exports = grammar({
       prec(
         100, // Very high precedence
         seq(
-          field("key", /[A-Z][A-Z_]*/), // One or more uppercase letters
+          field("key", alias(/[A-Z][A-Z_]*/, $.file_header_key)), // Named sub-node for highlighting
           ":",
           optional(/\s+/),
-          optional(field("value", /[^\r\n]+/))
+          optional(
+            choice(
+              field("block", $.block_scalar), // KEY: |\n  indented multiline...
+              field("value", alias(/[^\r\n]+/, $.file_header_value)) // Single-line value
+            )
+          )
         )
       ),
+
+    // Named node types for file header parts (used via alias for highlighting differentiation)
+    file_header_key: ($) => /[A-Z][A-Z_]*/,
+    file_header_value: ($) => /[^\r\n]+/,
 
     act_header: ($) =>
       prec(
