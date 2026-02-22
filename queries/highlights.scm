@@ -5,8 +5,11 @@
 (line_comment) @comment.line
 (block_comment) @comment.block
 
-; File headers - metadata about the story
+; File headers - metadata about the story (key and value differentiated)
 (file_header) @keyword.directive
+(file_header (file_header_key) @keyword.directive.key)
+(file_header (file_header_value) @string.directive.value)
+(file_header ":" @punctuation.delimiter.directive)
 
 ; Structure headers - story organization
 (act_header) @markup.heading.1.story.act
