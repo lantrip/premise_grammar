@@ -1,0 +1,26 @@
+// Test: Template blocks with role definitions
+
+// Basic template block with typed roles
+@template {
+  @role Protagonist [character]: The main character who lost something precious
+  @role Mentor [character]: A wise figure who guides the protagonist's search
+  @role Antagonist [character]: A force or person that blocks or complicates the recovery
+  @role MacGuffin [item]: The precious lost object being sought
+  @role HomeBase [location]: Where the protagonist starts their journey
+  @role Destination [location]: Where the MacGuffin is ultimately found
+}
+
+// Template block with roles that lack type hints
+@template {
+  @role Explorer: The main character who discovers something through experience
+  @role Companion: A friend along for the journey who witnesses the discovery
+}
+
+// Template block with single role
+@template {
+  @role Observer [character]: The main character who learns by watching
+}
+
+// Empty template block
+@template {
+}

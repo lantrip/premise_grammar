@@ -109,6 +109,16 @@
 (open_paren) @punctuation.definition.parenthetical.begin
 (close_paren) @punctuation.definition.parenthetical.end
 
+; Template blocks and role definitions
+(template_block) @type
+(role_line) @variable.definition.entity
+(role_line (role_name) @entity.name.definition)
+(role_line (role_type_hint) @meta.type.role)
+(role_line (role_type_hint "[" @punctuation.bracket))
+(role_line (role_type_hint "]" @punctuation.bracket))
+(role_line (role_desc) @string.description.entity)
+(role_line ":" @punctuation.separator.entity)
+
 ; Image blocks and directives
 (image_block) @meta.image.block
 (image_construct) @meta.image.directive

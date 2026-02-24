@@ -327,7 +327,38 @@
   {
     "type": "file_header",
     "named": true,
-    "fields": {}
+    "fields": {
+      "block": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "block_scalar",
+            "named": true
+          }
+        ]
+      },
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "file_header_key",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "file_header_value",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "image_block",
@@ -932,6 +963,14 @@
   },
   {
     "type": "close_paren",
+    "named": true
+  },
+  {
+    "type": "file_header_key",
+    "named": true
+  },
+  {
+    "type": "file_header_value",
     "named": true
   },
   {

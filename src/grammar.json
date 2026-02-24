@@ -513,10 +513,6 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\s*"
-        },
-        {
           "type": "STRING",
           "value": "["
         },
@@ -1001,8 +997,13 @@
             "type": "FIELD",
             "name": "key",
             "content": {
-              "type": "PATTERN",
-              "value": "[A-Z][A-Z_]*"
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": "[A-Z][A-Z_]*"
+              },
+              "named": true,
+              "value": "file_header_key"
             }
           },
           {
@@ -1025,12 +1026,30 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "FIELD",
-                "name": "value",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[^\\r\\n]+"
-                }
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "block",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "block_scalar"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "value",
+                    "content": {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[^\\r\\n]+"
+                      },
+                      "named": true,
+                      "value": "file_header_value"
+                    }
+                  }
+                ]
               },
               {
                 "type": "BLANK"
@@ -1039,6 +1058,14 @@
           }
         ]
       }
+    },
+    "file_header_key": {
+      "type": "PATTERN",
+      "value": "[A-Z][A-Z_]*"
+    },
+    "file_header_value": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n]+"
     },
     "act_header": {
       "type": "PREC",

@@ -158,9 +158,9 @@ module.exports = grammar({
     role_name: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
 
     // Optional type hint in brackets: [character], [location], etc.
+    // Note: no leading /\s*/ — extras handle inter-token whitespace
     role_type_hint: ($) =>
       seq(
-        /\s*/,
         "[",
         field("type", /[a-z]+/),
         "]"
