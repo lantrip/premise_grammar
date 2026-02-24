@@ -1,0 +1,1817 @@
+---
+source: premise-core/tests/ast_snapshots.rs
+expression: value
+---
+{
+  "diagnostics": [],
+  "ast": {
+    "kind": "source_file",
+    "field": null,
+    "range": {
+      "start": {
+        "row": 0,
+        "column": 0
+      },
+      "end": {
+        "row": 26,
+        "column": 0
+      },
+      "start_byte": 0,
+      "end_byte": 943
+    },
+    "children": [
+      {
+        "kind": "line_comment",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 0,
+            "column": 0
+          },
+          "end": {
+            "row": 0,
+            "column": 46
+          },
+          "start_byte": 0,
+          "end_byte": 46
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 0,
+            "column": 46
+          },
+          "end": {
+            "row": 1,
+            "column": 0
+          },
+          "start_byte": 46,
+          "end_byte": 47
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 1,
+            "column": 0
+          },
+          "end": {
+            "row": 2,
+            "column": 0
+          },
+          "start_byte": 47,
+          "end_byte": 48
+        },
+        "children": []
+      },
+      {
+        "kind": "line_comment",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 2,
+            "column": 0
+          },
+          "end": {
+            "row": 2,
+            "column": 40
+          },
+          "start_byte": 48,
+          "end_byte": 88
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 2,
+            "column": 40
+          },
+          "end": {
+            "row": 3,
+            "column": 0
+          },
+          "start_byte": 88,
+          "end_byte": 89
+        },
+        "children": []
+      },
+      {
+        "kind": "line",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 3,
+            "column": 0
+          },
+          "end": {
+            "row": 10,
+            "column": 1
+          },
+          "start_byte": 89,
+          "end_byte": 558
+        },
+        "children": [
+          {
+            "kind": "template_block",
+            "field": null,
+            "range": {
+              "start": {
+                "row": 3,
+                "column": 0
+              },
+              "end": {
+                "row": 10,
+                "column": 1
+              },
+              "start_byte": 89,
+              "end_byte": 558
+            },
+            "children": [
+              {
+                "kind": "@",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 3,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 3,
+                    "column": 1
+                  },
+                  "start_byte": 89,
+                  "end_byte": 90
+                },
+                "children": []
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 3,
+                    "column": 11
+                  },
+                  "end": {
+                    "row": 4,
+                    "column": 0
+                  },
+                  "start_byte": 100,
+                  "end_byte": 101
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 4,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 4,
+                    "column": 79
+                  },
+                  "start_byte": 101,
+                  "end_byte": 180
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 4,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 4,
+                        "column": 19
+                      },
+                      "start_byte": 109,
+                      "end_byte": 120
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_type_hint",
+                    "field": "role_type",
+                    "range": {
+                      "start": {
+                        "row": 4,
+                        "column": 19
+                      },
+                      "end": {
+                        "row": 4,
+                        "column": 31
+                      },
+                      "start_byte": 120,
+                      "end_byte": 132
+                    },
+                    "children": [
+                      {
+                        "kind": "[",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 4,
+                            "column": 19
+                          },
+                          "end": {
+                            "row": 4,
+                            "column": 21
+                          },
+                          "start_byte": 120,
+                          "end_byte": 122
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "]",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 4,
+                            "column": 30
+                          },
+                          "end": {
+                            "row": 4,
+                            "column": 31
+                          },
+                          "start_byte": 131,
+                          "end_byte": 132
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 4,
+                        "column": 31
+                      },
+                      "end": {
+                        "row": 4,
+                        "column": 32
+                      },
+                      "start_byte": 132,
+                      "end_byte": 133
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 4,
+                        "column": 33
+                      },
+                      "end": {
+                        "row": 4,
+                        "column": 79
+                      },
+                      "start_byte": 134,
+                      "end_byte": 180
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 4,
+                    "column": 79
+                  },
+                  "end": {
+                    "row": 5,
+                    "column": 0
+                  },
+                  "start_byte": 180,
+                  "end_byte": 181
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 5,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 5,
+                    "column": 77
+                  },
+                  "start_byte": 181,
+                  "end_byte": 258
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 5,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 5,
+                        "column": 14
+                      },
+                      "start_byte": 189,
+                      "end_byte": 195
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_type_hint",
+                    "field": "role_type",
+                    "range": {
+                      "start": {
+                        "row": 5,
+                        "column": 14
+                      },
+                      "end": {
+                        "row": 5,
+                        "column": 26
+                      },
+                      "start_byte": 195,
+                      "end_byte": 207
+                    },
+                    "children": [
+                      {
+                        "kind": "[",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 5,
+                            "column": 14
+                          },
+                          "end": {
+                            "row": 5,
+                            "column": 16
+                          },
+                          "start_byte": 195,
+                          "end_byte": 197
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "]",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 5,
+                            "column": 25
+                          },
+                          "end": {
+                            "row": 5,
+                            "column": 26
+                          },
+                          "start_byte": 206,
+                          "end_byte": 207
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 5,
+                        "column": 26
+                      },
+                      "end": {
+                        "row": 5,
+                        "column": 27
+                      },
+                      "start_byte": 207,
+                      "end_byte": 208
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 5,
+                        "column": 28
+                      },
+                      "end": {
+                        "row": 5,
+                        "column": 77
+                      },
+                      "start_byte": 209,
+                      "end_byte": 258
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 5,
+                    "column": 77
+                  },
+                  "end": {
+                    "row": 6,
+                    "column": 0
+                  },
+                  "start_byte": 258,
+                  "end_byte": 259
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 6,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 6,
+                    "column": 89
+                  },
+                  "start_byte": 259,
+                  "end_byte": 348
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 6,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 6,
+                        "column": 18
+                      },
+                      "start_byte": 267,
+                      "end_byte": 277
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_type_hint",
+                    "field": "role_type",
+                    "range": {
+                      "start": {
+                        "row": 6,
+                        "column": 18
+                      },
+                      "end": {
+                        "row": 6,
+                        "column": 30
+                      },
+                      "start_byte": 277,
+                      "end_byte": 289
+                    },
+                    "children": [
+                      {
+                        "kind": "[",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 6,
+                            "column": 18
+                          },
+                          "end": {
+                            "row": 6,
+                            "column": 20
+                          },
+                          "start_byte": 277,
+                          "end_byte": 279
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "]",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 6,
+                            "column": 29
+                          },
+                          "end": {
+                            "row": 6,
+                            "column": 30
+                          },
+                          "start_byte": 288,
+                          "end_byte": 289
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 6,
+                        "column": 30
+                      },
+                      "end": {
+                        "row": 6,
+                        "column": 31
+                      },
+                      "start_byte": 289,
+                      "end_byte": 290
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 6,
+                        "column": 32
+                      },
+                      "end": {
+                        "row": 6,
+                        "column": 89
+                      },
+                      "start_byte": 291,
+                      "end_byte": 348
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 6,
+                    "column": 89
+                  },
+                  "end": {
+                    "row": 7,
+                    "column": 0
+                  },
+                  "start_byte": 348,
+                  "end_byte": 349
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 7,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 7,
+                    "column": 63
+                  },
+                  "start_byte": 349,
+                  "end_byte": 412
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 7,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 7,
+                        "column": 17
+                      },
+                      "start_byte": 357,
+                      "end_byte": 366
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_type_hint",
+                    "field": "role_type",
+                    "range": {
+                      "start": {
+                        "row": 7,
+                        "column": 17
+                      },
+                      "end": {
+                        "row": 7,
+                        "column": 24
+                      },
+                      "start_byte": 366,
+                      "end_byte": 373
+                    },
+                    "children": [
+                      {
+                        "kind": "[",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 7,
+                            "column": 17
+                          },
+                          "end": {
+                            "row": 7,
+                            "column": 19
+                          },
+                          "start_byte": 366,
+                          "end_byte": 368
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "]",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 7,
+                            "column": 23
+                          },
+                          "end": {
+                            "row": 7,
+                            "column": 24
+                          },
+                          "start_byte": 372,
+                          "end_byte": 373
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 7,
+                        "column": 24
+                      },
+                      "end": {
+                        "row": 7,
+                        "column": 25
+                      },
+                      "start_byte": 373,
+                      "end_byte": 374
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 7,
+                        "column": 26
+                      },
+                      "end": {
+                        "row": 7,
+                        "column": 63
+                      },
+                      "start_byte": 375,
+                      "end_byte": 412
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 7,
+                    "column": 63
+                  },
+                  "end": {
+                    "row": 8,
+                    "column": 0
+                  },
+                  "start_byte": 412,
+                  "end_byte": 413
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 8,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 8,
+                    "column": 71
+                  },
+                  "start_byte": 413,
+                  "end_byte": 484
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 8,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 8,
+                        "column": 16
+                      },
+                      "start_byte": 421,
+                      "end_byte": 429
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_type_hint",
+                    "field": "role_type",
+                    "range": {
+                      "start": {
+                        "row": 8,
+                        "column": 16
+                      },
+                      "end": {
+                        "row": 8,
+                        "column": 27
+                      },
+                      "start_byte": 429,
+                      "end_byte": 440
+                    },
+                    "children": [
+                      {
+                        "kind": "[",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 8,
+                            "column": 16
+                          },
+                          "end": {
+                            "row": 8,
+                            "column": 18
+                          },
+                          "start_byte": 429,
+                          "end_byte": 431
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "]",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 8,
+                            "column": 26
+                          },
+                          "end": {
+                            "row": 8,
+                            "column": 27
+                          },
+                          "start_byte": 439,
+                          "end_byte": 440
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 8,
+                        "column": 27
+                      },
+                      "end": {
+                        "row": 8,
+                        "column": 28
+                      },
+                      "start_byte": 440,
+                      "end_byte": 441
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 8,
+                        "column": 29
+                      },
+                      "end": {
+                        "row": 8,
+                        "column": 71
+                      },
+                      "start_byte": 442,
+                      "end_byte": 484
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 8,
+                    "column": 71
+                  },
+                  "end": {
+                    "row": 9,
+                    "column": 0
+                  },
+                  "start_byte": 484,
+                  "end_byte": 485
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 9,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 9,
+                    "column": 71
+                  },
+                  "start_byte": 485,
+                  "end_byte": 556
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 9,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 9,
+                        "column": 19
+                      },
+                      "start_byte": 493,
+                      "end_byte": 504
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_type_hint",
+                    "field": "role_type",
+                    "range": {
+                      "start": {
+                        "row": 9,
+                        "column": 19
+                      },
+                      "end": {
+                        "row": 9,
+                        "column": 30
+                      },
+                      "start_byte": 504,
+                      "end_byte": 515
+                    },
+                    "children": [
+                      {
+                        "kind": "[",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 9,
+                            "column": 19
+                          },
+                          "end": {
+                            "row": 9,
+                            "column": 21
+                          },
+                          "start_byte": 504,
+                          "end_byte": 506
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "]",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 9,
+                            "column": 29
+                          },
+                          "end": {
+                            "row": 9,
+                            "column": 30
+                          },
+                          "start_byte": 514,
+                          "end_byte": 515
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 9,
+                        "column": 30
+                      },
+                      "end": {
+                        "row": 9,
+                        "column": 31
+                      },
+                      "start_byte": 515,
+                      "end_byte": 516
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 9,
+                        "column": 32
+                      },
+                      "end": {
+                        "row": 9,
+                        "column": 71
+                      },
+                      "start_byte": 517,
+                      "end_byte": 556
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 9,
+                    "column": 71
+                  },
+                  "end": {
+                    "row": 10,
+                    "column": 0
+                  },
+                  "start_byte": 556,
+                  "end_byte": 557
+                },
+                "children": []
+              },
+              {
+                "kind": "}",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 10,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 10,
+                    "column": 1
+                  },
+                  "start_byte": 557,
+                  "end_byte": 558
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 10,
+            "column": 1
+          },
+          "end": {
+            "row": 11,
+            "column": 0
+          },
+          "start_byte": 558,
+          "end_byte": 559
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 11,
+            "column": 0
+          },
+          "end": {
+            "row": 12,
+            "column": 0
+          },
+          "start_byte": 559,
+          "end_byte": 560
+        },
+        "children": []
+      },
+      {
+        "kind": "line_comment",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 12,
+            "column": 0
+          },
+          "end": {
+            "row": 12,
+            "column": 49
+          },
+          "start_byte": 560,
+          "end_byte": 609
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 12,
+            "column": 49
+          },
+          "end": {
+            "row": 13,
+            "column": 0
+          },
+          "start_byte": 609,
+          "end_byte": 610
+        },
+        "children": []
+      },
+      {
+        "kind": "line",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 13,
+            "column": 0
+          },
+          "end": {
+            "row": 16,
+            "column": 1
+          },
+          "start_byte": 610,
+          "end_byte": 781
+        },
+        "children": [
+          {
+            "kind": "template_block",
+            "field": null,
+            "range": {
+              "start": {
+                "row": 13,
+                "column": 0
+              },
+              "end": {
+                "row": 16,
+                "column": 1
+              },
+              "start_byte": 610,
+              "end_byte": 781
+            },
+            "children": [
+              {
+                "kind": "@",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 13,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 13,
+                    "column": 1
+                  },
+                  "start_byte": 610,
+                  "end_byte": 611
+                },
+                "children": []
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 13,
+                    "column": 11
+                  },
+                  "end": {
+                    "row": 14,
+                    "column": 0
+                  },
+                  "start_byte": 621,
+                  "end_byte": 622
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 14,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 14,
+                    "column": 79
+                  },
+                  "start_byte": 622,
+                  "end_byte": 701
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 14,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 14,
+                        "column": 16
+                      },
+                      "start_byte": 630,
+                      "end_byte": 638
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 14,
+                        "column": 16
+                      },
+                      "end": {
+                        "row": 14,
+                        "column": 17
+                      },
+                      "start_byte": 638,
+                      "end_byte": 639
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 14,
+                        "column": 18
+                      },
+                      "end": {
+                        "row": 14,
+                        "column": 79
+                      },
+                      "start_byte": 640,
+                      "end_byte": 701
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 14,
+                    "column": 79
+                  },
+                  "end": {
+                    "row": 15,
+                    "column": 0
+                  },
+                  "start_byte": 701,
+                  "end_byte": 702
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 15,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 15,
+                    "column": 77
+                  },
+                  "start_byte": 702,
+                  "end_byte": 779
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 15,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 15,
+                        "column": 17
+                      },
+                      "start_byte": 710,
+                      "end_byte": 719
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 15,
+                        "column": 17
+                      },
+                      "end": {
+                        "row": 15,
+                        "column": 18
+                      },
+                      "start_byte": 719,
+                      "end_byte": 720
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 15,
+                        "column": 19
+                      },
+                      "end": {
+                        "row": 15,
+                        "column": 77
+                      },
+                      "start_byte": 721,
+                      "end_byte": 779
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 15,
+                    "column": 77
+                  },
+                  "end": {
+                    "row": 16,
+                    "column": 0
+                  },
+                  "start_byte": 779,
+                  "end_byte": 780
+                },
+                "children": []
+              },
+              {
+                "kind": "}",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 16,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 16,
+                    "column": 1
+                  },
+                  "start_byte": 780,
+                  "end_byte": 781
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 16,
+            "column": 1
+          },
+          "end": {
+            "row": 17,
+            "column": 0
+          },
+          "start_byte": 781,
+          "end_byte": 782
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 17,
+            "column": 0
+          },
+          "end": {
+            "row": 18,
+            "column": 0
+          },
+          "start_byte": 782,
+          "end_byte": 783
+        },
+        "children": []
+      },
+      {
+        "kind": "line_comment",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 18,
+            "column": 0
+          },
+          "end": {
+            "row": 18,
+            "column": 34
+          },
+          "start_byte": 783,
+          "end_byte": 817
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 18,
+            "column": 34
+          },
+          "end": {
+            "row": 19,
+            "column": 0
+          },
+          "start_byte": 817,
+          "end_byte": 818
+        },
+        "children": []
+      },
+      {
+        "kind": "line",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 19,
+            "column": 0
+          },
+          "end": {
+            "row": 21,
+            "column": 1
+          },
+          "start_byte": 818,
+          "end_byte": 903
+        },
+        "children": [
+          {
+            "kind": "template_block",
+            "field": null,
+            "range": {
+              "start": {
+                "row": 19,
+                "column": 0
+              },
+              "end": {
+                "row": 21,
+                "column": 1
+              },
+              "start_byte": 818,
+              "end_byte": 903
+            },
+            "children": [
+              {
+                "kind": "@",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 19,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 19,
+                    "column": 1
+                  },
+                  "start_byte": 818,
+                  "end_byte": 819
+                },
+                "children": []
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 19,
+                    "column": 11
+                  },
+                  "end": {
+                    "row": 20,
+                    "column": 0
+                  },
+                  "start_byte": 829,
+                  "end_byte": 830
+                },
+                "children": []
+              },
+              {
+                "kind": "role_line",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 20,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 20,
+                    "column": 71
+                  },
+                  "start_byte": 830,
+                  "end_byte": 901
+                },
+                "children": [
+                  {
+                    "kind": "role_name",
+                    "field": "role_name",
+                    "range": {
+                      "start": {
+                        "row": 20,
+                        "column": 8
+                      },
+                      "end": {
+                        "row": 20,
+                        "column": 16
+                      },
+                      "start_byte": 838,
+                      "end_byte": 846
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_type_hint",
+                    "field": "role_type",
+                    "range": {
+                      "start": {
+                        "row": 20,
+                        "column": 16
+                      },
+                      "end": {
+                        "row": 20,
+                        "column": 28
+                      },
+                      "start_byte": 846,
+                      "end_byte": 858
+                    },
+                    "children": [
+                      {
+                        "kind": "[",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 20,
+                            "column": 16
+                          },
+                          "end": {
+                            "row": 20,
+                            "column": 18
+                          },
+                          "start_byte": 846,
+                          "end_byte": 848
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "]",
+                        "field": null,
+                        "range": {
+                          "start": {
+                            "row": 20,
+                            "column": 27
+                          },
+                          "end": {
+                            "row": 20,
+                            "column": 28
+                          },
+                          "start_byte": 857,
+                          "end_byte": 858
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ":",
+                    "field": null,
+                    "range": {
+                      "start": {
+                        "row": 20,
+                        "column": 28
+                      },
+                      "end": {
+                        "row": 20,
+                        "column": 29
+                      },
+                      "start_byte": 858,
+                      "end_byte": 859
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "role_desc",
+                    "field": "role_desc",
+                    "range": {
+                      "start": {
+                        "row": 20,
+                        "column": 30
+                      },
+                      "end": {
+                        "row": 20,
+                        "column": 71
+                      },
+                      "start_byte": 860,
+                      "end_byte": 901
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 20,
+                    "column": 71
+                  },
+                  "end": {
+                    "row": 21,
+                    "column": 0
+                  },
+                  "start_byte": 901,
+                  "end_byte": 902
+                },
+                "children": []
+              },
+              {
+                "kind": "}",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 21,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 21,
+                    "column": 1
+                  },
+                  "start_byte": 902,
+                  "end_byte": 903
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 21,
+            "column": 1
+          },
+          "end": {
+            "row": 22,
+            "column": 0
+          },
+          "start_byte": 903,
+          "end_byte": 904
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 22,
+            "column": 0
+          },
+          "end": {
+            "row": 23,
+            "column": 0
+          },
+          "start_byte": 904,
+          "end_byte": 905
+        },
+        "children": []
+      },
+      {
+        "kind": "line_comment",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 23,
+            "column": 0
+          },
+          "end": {
+            "row": 23,
+            "column": 23
+          },
+          "start_byte": 905,
+          "end_byte": 928
+        },
+        "children": []
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 23,
+            "column": 23
+          },
+          "end": {
+            "row": 24,
+            "column": 0
+          },
+          "start_byte": 928,
+          "end_byte": 929
+        },
+        "children": []
+      },
+      {
+        "kind": "line",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 24,
+            "column": 0
+          },
+          "end": {
+            "row": 25,
+            "column": 1
+          },
+          "start_byte": 929,
+          "end_byte": 942
+        },
+        "children": [
+          {
+            "kind": "template_block",
+            "field": null,
+            "range": {
+              "start": {
+                "row": 24,
+                "column": 0
+              },
+              "end": {
+                "row": 25,
+                "column": 1
+              },
+              "start_byte": 929,
+              "end_byte": 942
+            },
+            "children": [
+              {
+                "kind": "@",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 24,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 24,
+                    "column": 1
+                  },
+                  "start_byte": 929,
+                  "end_byte": 930
+                },
+                "children": []
+              },
+              {
+                "kind": "newline",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 24,
+                    "column": 11
+                  },
+                  "end": {
+                    "row": 25,
+                    "column": 0
+                  },
+                  "start_byte": 940,
+                  "end_byte": 941
+                },
+                "children": []
+              },
+              {
+                "kind": "}",
+                "field": null,
+                "range": {
+                  "start": {
+                    "row": 25,
+                    "column": 0
+                  },
+                  "end": {
+                    "row": 25,
+                    "column": 1
+                  },
+                  "start_byte": 941,
+                  "end_byte": 942
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "newline",
+        "field": null,
+        "range": {
+          "start": {
+            "row": 25,
+            "column": 1
+          },
+          "end": {
+            "row": 26,
+            "column": 0
+          },
+          "start_byte": 942,
+          "end_byte": 943
+        },
+        "children": []
+      }
+    ]
+  }
+}

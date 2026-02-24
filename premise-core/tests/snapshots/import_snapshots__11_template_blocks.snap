@@ -1,0 +1,10 @@
+---
+source: premise-core/tests/import_snapshots.rs
+expression: analysis
+---
+{
+  "imports": {
+    "imports": []
+  },
+  "diagnostics": []
+}

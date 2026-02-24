@@ -128,8 +128,6 @@
 (image_line (image_path) @string.path.image)
 (image_line (image_caption) @comment.caption)
 (image_construct (image_tags) @string.special.tags)
-(image_construct (image_path) @string.path.image)
-(image_construct (image_caption) @comment.caption)
 
 ; General punctuation
 ":" @punctuation.delimiter
