@@ -4,6 +4,7 @@ SHELL := /bin/bash
 .PHONY: validate-queries sync-extensions install-extensions dev
 .PHONY: parse test-rust test-grammar test-all
 .PHONY: vscode-build vscode-install zed-install
+.PHONY: build-spellcheck test-spellcheck
 
 .DEFAULT_GOAL := help
 
@@ -100,6 +101,15 @@ cli-install: cli-build ## Install premise CLI to ~/.cargo/bin
 lsp-build: ## Build the LSP server
 	@cargo build --release -p premise-lsp
 	@echo "✓ LSP built: ./target/release/premise-lsp"
+
+##@ Spellcheck WASM
+
+build-spellcheck: ## Build spellcheck WASM module (outputs to frontend/src/wasm/)
+	@cd premise-spellcheck && wasm-pack build --target web --out-dir ../../frontend/src/wasm/premise-spellcheck
+	@echo "✓ Spellcheck WASM built → frontend/src/wasm/premise-spellcheck/"
+
+test-spellcheck: ## Run spellcheck unit tests
+	@cargo test -p premise-spellcheck
 
 ##@ Utilities
 

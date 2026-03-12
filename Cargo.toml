@@ -31,4 +31,5 @@ members = [
   "premise-lsp",
   "premise-notes",
   "premise-cli",
+  "premise-spellcheck",
 ]
