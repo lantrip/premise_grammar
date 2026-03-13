@@ -4,7 +4,7 @@ SHELL := /bin/bash
 .PHONY: validate-queries sync-extensions install-extensions dev
 .PHONY: parse test-rust test-grammar test-all
 .PHONY: vscode-build vscode-install zed-install
-.PHONY: build-spellcheck test-spellcheck
+.PHONY: build-spellcheck build-spellcheck-slim test-spellcheck
 
 .DEFAULT_GOAL := help
 
@@ -104,9 +104,13 @@ lsp-build: ## Build the LSP server
 
 ##@ Spellcheck WASM
 
-build-spellcheck: ## Build spellcheck WASM module (outputs to frontend/src/wasm/)
+build-spellcheck: ## Build spellcheck WASM module with thesaurus (default)
 	@cd premise-spellcheck && wasm-pack build --target web --out-dir ../../frontend/src/wasm/premise-spellcheck
-	@echo "✓ Spellcheck WASM built → frontend/src/wasm/premise-spellcheck/"
+	@echo "✓ Spellcheck WASM built (with thesaurus) → frontend/src/wasm/premise-spellcheck/"
+
+build-spellcheck-slim: ## Build spellcheck WASM without thesaurus (smaller binary)
+	@cd premise-spellcheck && wasm-pack build --target web --out-dir ../../frontend/src/wasm/premise-spellcheck -- --no-default-features
+	@echo "✓ Spellcheck WASM built (slim, no thesaurus) → frontend/src/wasm/premise-spellcheck/"
 
 test-spellcheck: ## Run spellcheck unit tests
 	@cargo test -p premise-spellcheck

@@ -2,10 +2,12 @@ pub mod dictionary;
 pub mod fuzzy;
 pub mod spellcheck;
 mod symspell;
+pub mod thesaurus;
 
 use dictionary::Dictionary;
 use fuzzy::FuzzyMatcher;
 use spellcheck::CheckableSpan;
+use thesaurus::Thesaurus;
 use wasm_bindgen::prelude::*;
 
 /// Embedded English word frequency list.
@@ -19,6 +21,7 @@ const DICTIONARY_DATA: &str = include_str!("../data/en_frequency.txt");
 pub struct SpellEngine {
     dictionary: Dictionary,
     fuzzy: FuzzyMatcher,
+    thesaurus: Thesaurus,
 }
 
 #[wasm_bindgen]
@@ -32,6 +35,7 @@ impl SpellEngine {
         Self {
             dictionary,
             fuzzy: FuzzyMatcher::new(),
+            thesaurus: Thesaurus::new(),
         }
     }
 
@@ -100,6 +104,20 @@ impl SpellEngine {
     pub fn fuzzy_match(&self, query: &str, max: u32) -> Result<JsValue, JsValue> {
         let completions = self.fuzzy.fuzzy_match(query, max as usize);
         serde_wasm_bindgen::to_value(&completions)
+            .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
+    }
+
+    /// Check if the thesaurus is available (compiled with `thesaurus` feature).
+    #[wasm_bindgen(js_name = "thesaurusAvailable")]
+    pub fn thesaurus_available(&self) -> bool {
+        self.thesaurus.is_available()
+    }
+
+    /// Look up synonyms for a word. Returns a string array.
+    #[wasm_bindgen(js_name = "synonyms")]
+    pub fn synonyms(&self, word: &str, max: u32) -> Result<JsValue, JsValue> {
+        let results = self.thesaurus.lookup(word, max as usize);
+        serde_wasm_bindgen::to_value(&results)
             .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
     }
 }
