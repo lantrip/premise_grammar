@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 
 #[cfg(feature = "thesaurus")]
+use crate::stemming::stem_simple;
+
+#[cfg(feature = "thesaurus")]
 const THESAURUS_DATA: &str = include_str!("../data/moby_thesaurus.txt");
 
 /// Embedded thesaurus for synonym lookup.
@@ -115,79 +118,6 @@ impl Thesaurus {
         }
         None
     }
-}
-
-/// Simple suffix stripping for common English inflections.
-/// Returns candidate stems in priority order (most specific suffix first).
-#[cfg(feature = "thesaurus")]
-fn stem_simple(word: &str) -> Vec<String> {
-    let mut stems = Vec::new();
-    let len = word.len();
-
-    // Minimum word length for stripping
-    if len < 4 {
-        return stems;
-    }
-
-    // Order: longer suffixes first for specificity
-    let suffixes: &[(&str, Option<&str>)] = &[
-        ("ation", Some("ate")),  // creation -> create
-        ("tion", None),          // attraction -> attract (approx)
-        ("ness", None),          // happiness -> happi (won't match, but happy will via -iness)
-        ("ment", None),          // movement -> move (approx)
-        ("able", None),          // readable -> read
-        ("ible", None),          // visible -> vis (approx)
-        ("ious", Some("y")),     // envious -> envy
-        ("eous", None),          // gorgeous -> gorgeous (no strip needed usually)
-        ("ous", None),           // famous -> fam (approx)
-        ("ive", None),           // creative -> creat (approx)
-        ("ful", None),           // beautiful -> beauti (approx)
-        ("less", None),          // careless -> care
-        ("ally", Some("al")),    // finally -> final
-        ("ily", Some("y")),      // happily -> happy
-        ("ing", None),           // running -> runn -> run (handled below)
-        ("ing", Some("e")),      // making -> make
-        ("ied", Some("y")),      // carried -> carry
-        ("ed", None),            // walked -> walk
-        ("ed", Some("e")),       // loved -> love
-        ("er", None),            // faster -> fast
-        ("est", None),           // fastest -> fast
-        ("ly", None),            // quickly -> quick
-        ("es", None),            // watches -> watch
-        ("s", None),             // dogs -> dog
-    ];
-
-    for (suffix, replacement) in suffixes {
-        if word.ends_with(suffix) && len > suffix.len() + 2 {
-            let base = &word[..len - suffix.len()];
-            // Add base form
-            stems.push(base.to_string());
-            // Add with replacement suffix
-            if let Some(repl) = replacement {
-                stems.push(format!("{}{}", base, repl));
-            }
-            // Special case for -ing: handle doubled consonant (running -> run)
-            if *suffix == "ing" && base.len() >= 2 {
-                let bytes = base.as_bytes();
-                let last = bytes[bytes.len() - 1];
-                let second_last = bytes[bytes.len() - 2];
-                if last == second_last && last.is_ascii_alphabetic() {
-                    stems.push(base[..base.len() - 1].to_string());
-                }
-            }
-            // Special case for -ed: handle doubled consonant (stopped -> stop)
-            if *suffix == "ed" && base.len() >= 2 {
-                let bytes = base.as_bytes();
-                let last = bytes[bytes.len() - 1];
-                let second_last = bytes[bytes.len() - 2];
-                if last == second_last && last.is_ascii_alphabetic() {
-                    stems.push(base[..base.len() - 1].to_string());
-                }
-            }
-        }
-    }
-
-    stems
 }
 
 // --- Stub implementation when thesaurus feature is disabled ---

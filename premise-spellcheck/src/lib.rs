@@ -1,29 +1,43 @@
+pub mod definitions;
 pub mod dictionary;
 pub mod fuzzy;
 pub mod spellcheck;
+pub mod stemming;
 mod symspell;
 pub mod thesaurus;
 
+#[cfg(feature = "wasm")]
+use definitions::DefinitionDictionary;
+#[cfg(feature = "wasm")]
 use dictionary::Dictionary;
+#[cfg(feature = "wasm")]
 use fuzzy::FuzzyMatcher;
+#[cfg(feature = "wasm")]
 use spellcheck::CheckableSpan;
+#[cfg(feature = "wasm")]
 use thesaurus::Thesaurus;
+#[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
 /// Embedded English word frequency list.
 /// Format: "word frequency\n" — loaded at init time.
+#[cfg(feature = "wasm")]
 const DICTIONARY_DATA: &str = include_str!("../data/en_frequency.txt");
 
 /// The main spellcheck engine exposed to JavaScript via WASM.
 ///
-/// Combines dictionary-based spellchecking with fuzzy entity completion.
+/// Combines dictionary-based spellchecking with fuzzy entity completion,
+/// thesaurus synonym lookup, and definition dictionary lookup.
+#[cfg(feature = "wasm")]
 #[wasm_bindgen]
 pub struct SpellEngine {
     dictionary: Dictionary,
     fuzzy: FuzzyMatcher,
     thesaurus: Thesaurus,
+    definitions: DefinitionDictionary,
 }
 
+#[cfg(feature = "wasm")]
 #[wasm_bindgen]
 impl SpellEngine {
     /// Create a new SpellEngine with the embedded English dictionary.
@@ -36,6 +50,7 @@ impl SpellEngine {
             dictionary,
             fuzzy: FuzzyMatcher::new(),
             thesaurus: Thesaurus::new(),
+            definitions: DefinitionDictionary::new(),
         }
     }
 
@@ -114,8 +129,6 @@ impl SpellEngine {
     }
 
     /// Look up synonyms for a word, ranked by word frequency.
-    /// Common, recognizable words appear first; multi-word phrases and
-    /// archaic terms are kept but ranked lower.
     #[wasm_bindgen(js_name = "synonyms")]
     pub fn synonyms(&self, word: &str, max: u32) -> Result<JsValue, JsValue> {
         let results = self.thesaurus.lookup_ranked(word, max as usize, |w| {
@@ -124,8 +137,70 @@ impl SpellEngine {
         serde_wasm_bindgen::to_value(&results)
             .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
     }
+
+    /// Check if the definition dictionary has any sources loaded.
+    #[wasm_bindgen(js_name = "dictionaryAvailable")]
+    pub fn dictionary_available(&self) -> bool {
+        self.definitions.is_loaded()
+    }
+
+    /// Load a dictionary source binary (postcard-serialized).
+    /// Returns { source, entryCount, totalEntries }.
+    #[wasm_bindgen(js_name = "loadDictionarySource")]
+    pub fn load_dictionary_source(
+        &mut self,
+        data: &[u8],
+        source_id: &str,
+    ) -> Result<JsValue, JsValue> {
+        #[cfg(feature = "definitions")]
+        {
+            let source = match source_id {
+                "webster1913" => definitions::DictionarySource::Webster1913,
+                "wordnet" => definitions::DictionarySource::WordNet,
+                _ => {
+                    return Err(JsValue::from_str(&format!(
+                        "Unknown source: {}",
+                        source_id
+                    )))
+                }
+            };
+            let count = self
+                .definitions
+                .load_source(data, source)
+                .map_err(|e| JsValue::from_str(&e))?;
+            serde_wasm_bindgen::to_value(&serde_json::json!({
+                "source": source_id,
+                "entryCount": count,
+                "totalEntries": self.definitions.entry_count(),
+            }))
+            .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
+        }
+        #[cfg(not(feature = "definitions"))]
+        {
+            let _ = (data, source_id);
+            Err(JsValue::from_str("Definitions feature not compiled"))
+        }
+    }
+
+    /// Look up a word definition across all loaded dictionary sources.
+    /// Returns DictionaryEntry or null.
+    #[wasm_bindgen(js_name = "define")]
+    pub fn define(&self, word: &str) -> Result<JsValue, JsValue> {
+        #[cfg(feature = "definitions")]
+        {
+            let entry = self.definitions.lookup(word);
+            serde_wasm_bindgen::to_value(&entry)
+                .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
+        }
+        #[cfg(not(feature = "definitions"))]
+        {
+            let _ = word;
+            Ok(JsValue::NULL)
+        }
+    }
 }
 
+#[cfg(feature = "wasm")]
 impl Default for SpellEngine {
     fn default() -> Self {
         Self::new()

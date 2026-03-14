@@ -9,14 +9,23 @@ license = "MIT"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-wasm-bindgen = "0.2"
+wasm-bindgen = { version = "0.2", optional = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-serde-wasm-bindgen = "0.6"
+serde-wasm-bindgen = { version = "0.6", optional = true }
+postcard = { version = "1.0", features = ["alloc"], optional = true }
+quick-xml = { version = "0.37", optional = true }
 
 [features]
-default = ["thesaurus"]
+default = ["wasm", "thesaurus", "definitions"]
+wasm = ["dep:wasm-bindgen", "dep:serde-wasm-bindgen"]
 thesaurus = []
+definitions = ["dep:postcard", "dep:quick-xml"]
+
+[[bin]]
+name = "process-dictionary"
+path = "tools/process_dictionary.rs"
+required-features = ["definitions"]
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"

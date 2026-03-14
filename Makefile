@@ -5,6 +5,7 @@ SHELL := /bin/bash
 .PHONY: parse test-rust test-grammar test-all
 .PHONY: vscode-build vscode-install zed-install
 .PHONY: build-spellcheck build-spellcheck-slim test-spellcheck
+.PHONY: build-dict-webster1913 build-dict-wordnet
 
 .DEFAULT_GOAL := help
 
@@ -114,6 +115,14 @@ build-spellcheck-slim: ## Build spellcheck WASM without thesaurus (smaller binar
 
 test-spellcheck: ## Run spellcheck unit tests
 	@cargo test -p premise-spellcheck
+
+##@ Dictionary Data
+
+build-dict-webster1913: ## Build Webster's 1913 dictionary binary
+	@cargo run --release -p premise-spellcheck --bin process-dictionary -- --source webster1913 --input $(INPUT) --output ../../frontend/public/assets/dict-webster1913.bin
+
+build-dict-wordnet: ## Build English WordNet dictionary binary
+	@cargo run --release -p premise-spellcheck --bin process-dictionary -- --source wordnet --input $(INPUT) --output ../../frontend/public/assets/dict-wordnet.bin
 
 ##@ Utilities
 
