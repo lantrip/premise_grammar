@@ -70,6 +70,12 @@ impl Dictionary {
         self.symspell.is_known(&lower)
     }
 
+    /// Get the frequency of a word from the underlying dictionary.
+    /// Returns 0 for unknown words.
+    pub fn word_frequency(&self, word: &str) -> u64 {
+        self.symspell.get_frequency(word)
+    }
+
     /// Get spelling suggestions for a misspelled word.
     pub fn suggest(&self, word: &str, max: usize) -> Vec<String> {
         self.symspell

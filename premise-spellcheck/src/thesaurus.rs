@@ -47,6 +47,7 @@ impl Thesaurus {
     ///
     /// Tries direct lookup first, then attempts simple suffix stripping
     /// to find the root form (e.g., "running" -> "run").
+    /// Returns synonyms in their original (alphabetical) order.
     pub fn lookup(&self, word: &str, max: usize) -> Vec<String> {
         let lower = word.to_lowercase();
 
@@ -63,6 +64,56 @@ impl Thesaurus {
         }
 
         Vec::new()
+    }
+
+    /// Look up synonyms ranked by word frequency so common, recognizable
+    /// words appear first. Uses `freq_fn` to score each synonym.
+    ///
+    /// Synonyms with frequency 0 (not in the frequency dictionary) are
+    /// kept at the end in their original order, so multi-word phrases
+    /// and archaic terms still appear when `max` is generous enough.
+    pub fn lookup_ranked(
+        &self,
+        word: &str,
+        max: usize,
+        freq_fn: impl Fn(&str) -> u64,
+    ) -> Vec<String> {
+        let lower = word.to_lowercase();
+
+        let syns = self.find_synonyms(&lower);
+        let syns = match syns {
+            Some(s) => s,
+            None => return Vec::new(),
+        };
+
+        // Score each synonym, preserving original index as tiebreaker
+        let mut scored: Vec<(usize, &String, u64)> = syns
+            .iter()
+            .enumerate()
+            .map(|(i, s)| (i, s, freq_fn(s)))
+            .collect();
+
+        // Highest frequency first; ties preserve original order
+        scored.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| a.0.cmp(&b.0)));
+
+        scored
+            .into_iter()
+            .take(max)
+            .map(|(_, s, _)| s.clone())
+            .collect()
+    }
+
+    /// Find the synonym list for a word (direct or via stemming).
+    fn find_synonyms(&self, lower: &str) -> Option<&Vec<String>> {
+        if let Some(syns) = self.entries.get(lower) {
+            return Some(syns);
+        }
+        for stem in stem_simple(lower) {
+            if let Some(syns) = self.entries.get(&stem) {
+                return Some(syns);
+            }
+        }
+        None
     }
 }
 
@@ -157,6 +208,15 @@ impl Thesaurus {
     pub fn lookup(&self, _word: &str, _max: usize) -> Vec<String> {
         Vec::new()
     }
+
+    pub fn lookup_ranked(
+        &self,
+        _word: &str,
+        _max: usize,
+        _freq_fn: impl Fn(&str) -> u64,
+    ) -> Vec<String> {
+        Vec::new()
+    }
 }
 
 #[cfg(test)]
@@ -212,5 +272,63 @@ mod tests {
         assert!(t.is_available());
         #[cfg(not(feature = "thesaurus"))]
         assert!(!t.is_available());
+    }
+
+    #[test]
+    #[cfg(feature = "thesaurus")]
+    fn test_ranked_prefers_common_words() {
+        let t = Thesaurus::new();
+        // Simulate a frequency function where common English words score high
+        let common_words: std::collections::HashMap<&str, u64> = [
+            ("content", 5000),
+            ("glad", 4000),
+            ("cheerful", 3000),
+            ("bright", 6000),
+            ("well", 9000),
+            ("good", 8000),
+            ("right", 7000),
+            ("fair", 5500),
+            ("nice", 4500),
+            ("pleasant", 3500),
+        ]
+        .into_iter()
+        .collect();
+
+        let results = t.lookup_ranked("happy", 10, |w| {
+            common_words.get(w).copied().unwrap_or(0)
+        });
+        assert!(!results.is_empty(), "expected ranked synonyms for 'happy'");
+        // The first result should be one of the high-frequency words
+        let top3: Vec<&str> = results.iter().take(3).map(|s| s.as_str()).collect();
+        assert!(
+            top3.contains(&"well") || top3.contains(&"good") || top3.contains(&"right"),
+            "expected common words in top 3, got: {:?}",
+            top3
+        );
+    }
+
+    #[test]
+    #[cfg(feature = "thesaurus")]
+    fn test_ranked_max_limit() {
+        let t = Thesaurus::new();
+        let results = t.lookup_ranked("happy", 5, |_| 1);
+        assert!(
+            results.len() <= 5,
+            "expected at most 5 results, got {}",
+            results.len()
+        );
+    }
+
+    #[test]
+    #[cfg(feature = "thesaurus")]
+    fn test_ranked_zero_freq_preserves_order() {
+        let t = Thesaurus::new();
+        // When all frequencies are 0, original order is preserved
+        let results = t.lookup_ranked("happy", 200, |_| 0);
+        let unranked = t.lookup("happy", 200);
+        assert_eq!(
+            results, unranked,
+            "with all-zero frequencies, ranked should match original order"
+        );
     }
 }

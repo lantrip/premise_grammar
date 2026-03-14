@@ -113,10 +113,14 @@ impl SpellEngine {
         self.thesaurus.is_available()
     }
 
-    /// Look up synonyms for a word. Returns a string array.
+    /// Look up synonyms for a word, ranked by word frequency.
+    /// Common, recognizable words appear first; multi-word phrases and
+    /// archaic terms are kept but ranked lower.
     #[wasm_bindgen(js_name = "synonyms")]
     pub fn synonyms(&self, word: &str, max: u32) -> Result<JsValue, JsValue> {
-        let results = self.thesaurus.lookup(word, max as usize);
+        let results = self.thesaurus.lookup_ranked(word, max as usize, |w| {
+            self.dictionary.word_frequency(w)
+        });
         serde_wasm_bindgen::to_value(&results)
             .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
     }

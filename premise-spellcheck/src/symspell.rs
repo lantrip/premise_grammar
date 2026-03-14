@@ -80,6 +80,11 @@ impl SymSpell {
         self.words.contains_key(&word.to_lowercase())
     }
 
+    /// Get the frequency of a word (case-insensitive). Returns 0 if unknown.
+    pub fn get_frequency(&self, word: &str) -> u64 {
+        self.words.get(&word.to_lowercase()).copied().unwrap_or(0)
+    }
+
     /// Get spelling suggestions for a word, ranked by edit distance then frequency.
     pub fn lookup(&self, input: &str, max_results: usize) -> Vec<Suggestion> {
         let input_lower = input.to_lowercase();
