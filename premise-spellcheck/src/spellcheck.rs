@@ -64,8 +64,18 @@ fn check_word(
     let raw = &text[start..end];
 
     // Strip trailing apostrophes for possessives (squirrels' → squirrels)
-    // Keep leading apostrophes for elisions ('twas, 'bout, 'cause)
     let word = raw.trim_end_matches('\'');
+
+    // Strip leading apostrophes unless it's a known elision ('twas, 'bout, etc.)
+    let (word, leading_stripped) = if word.starts_with('\'') && !is_elision(word) {
+        let trimmed = word.trim_start_matches('\'');
+        (trimmed, word.len() - trimmed.len())
+    } else {
+        (word, 0)
+    };
+
+    // Adjust start offset to exclude stripped leading apostrophes from decoration
+    let start = start + leading_stripped;
 
     // Skip very short words (1-2 chars), numbers, and all-caps abbreviations
     if word.len() <= 2 {
@@ -93,6 +103,16 @@ fn check_word(
 /// Includes letters and apostrophes (for contractions like "don't").
 fn is_word_char(ch: char) -> bool {
     ch.is_alphabetic() || ch == '\''
+}
+
+/// Check if a word starting with apostrophe is a known elision form.
+fn is_elision(word: &str) -> bool {
+    let lower = word.to_lowercase();
+    matches!(
+        lower.as_str(),
+        "'twas" | "'tis" | "'til" | "'bout" | "'cause" | "'em"
+            | "'neath" | "'gainst" | "'round" | "'mongst" | "'fore"
+    )
 }
 
 #[cfg(test)]
@@ -192,6 +212,51 @@ mod tests {
 
         let results = check_spans(&dict, &spans);
         assert!(results.iter().all(|m| m.word != "squirrels"), "squirrels should not be flagged");
+    }
+
+    #[test]
+    fn test_leading_apostrophe_stripped_for_quotes() {
+        let mut dict = Dictionary::new();
+        dict.load_wordlist("hello 1000\nunprotectable 1\n");
+
+        let spans = vec![CheckableSpan {
+            text: "'hello' world 'unprotectable'".to_string(),
+            from: 0,
+            to: 29,
+        }];
+
+        let results = check_spans(&dict, &spans);
+        // Words in single quotes should not be flagged
+        assert!(
+            results.iter().all(|m| m.word != "hello" && m.word != "'hello"),
+            "hello in quotes should not be flagged, got: {:?}",
+            results.iter().map(|m| &m.word).collect::<Vec<_>>()
+        );
+        assert!(
+            results.iter().all(|m| m.word != "unprotectable" && m.word != "'unprotectable"),
+            "unprotectable in quotes should not be flagged, got: {:?}",
+            results.iter().map(|m| &m.word).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn test_leading_apostrophe_offset_correct() {
+        let mut dict = Dictionary::new();
+        dict.load_wordlist("hello 1000\n");
+
+        // "xyz 'badword' end" — 'badword' should be flagged as "badword" with correct offset
+        let spans = vec![CheckableSpan {
+            text: "xyz 'badword' end".to_string(),
+            from: 10,
+            to: 27,
+        }];
+
+        let results = check_spans(&dict, &spans);
+        let m = results.iter().find(|m| m.word == "badword");
+        assert!(m.is_some(), "badword should be flagged");
+        let m = m.unwrap();
+        // "xyz 'badword'" — badword starts at byte 5 (after "xyz '"), span_offset is 10
+        assert_eq!(m.from, 15, "from should skip the leading apostrophe");
     }
 
     #[test]
