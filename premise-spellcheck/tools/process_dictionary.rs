@@ -70,8 +70,8 @@ fn process_webster(input_path: &str, output_path: &str) {
     let content = fs::read_to_string(input_path)
         .unwrap_or_else(|e| panic!("Failed to read {}: {}", input_path, e));
 
-    let raw_entries: Vec<serde_json::Value> = serde_json::from_str(&content)
-        .unwrap_or_else(|e| panic!("Failed to parse JSON: {}", e));
+    let raw_entries: Vec<serde_json::Value> =
+        serde_json::from_str(&content).unwrap_or_else(|e| panic!("Failed to parse JSON: {}", e));
 
     eprintln!("Parsed {} raw entries", raw_entries.len());
 
@@ -193,32 +193,31 @@ fn process_wordnet(input_path: &str, output_path: &str) {
 
         loop {
             match reader.read_event_into(&mut buf) {
-                Ok(Event::Start(e)) | Ok(Event::Empty(e)) => {
-                    match e.name().as_ref() {
-                        b"Synset" => {
-                            current_synset_id.clear();
-                            current_synset_pos.clear();
-                            for attr in e.attributes().flatten() {
-                                match attr.key.as_ref() {
-                                    b"id" => {
-                                        current_synset_id =
-                                            String::from_utf8_lossy(&attr.value).to_string();
-                                    }
-                                    b"partOfSpeech" => {
-                                        current_synset_pos =
-                                            normalize_wordnet_pos(&String::from_utf8_lossy(&attr.value));
-                                    }
-                                    _ => {}
+                Ok(Event::Start(e)) | Ok(Event::Empty(e)) => match e.name().as_ref() {
+                    b"Synset" => {
+                        current_synset_id.clear();
+                        current_synset_pos.clear();
+                        for attr in e.attributes().flatten() {
+                            match attr.key.as_ref() {
+                                b"id" => {
+                                    current_synset_id =
+                                        String::from_utf8_lossy(&attr.value).to_string();
                                 }
+                                b"partOfSpeech" => {
+                                    current_synset_pos = normalize_wordnet_pos(
+                                        &String::from_utf8_lossy(&attr.value),
+                                    );
+                                }
+                                _ => {}
                             }
                         }
-                        b"Definition" => {
-                            in_definition = true;
-                            definition_text.clear();
-                        }
-                        _ => {}
                     }
-                }
+                    b"Definition" => {
+                        in_definition = true;
+                        definition_text.clear();
+                    }
+                    _ => {}
+                },
                 Ok(Event::Text(e)) => {
                     if in_definition {
                         definition_text.push_str(&e.unescape().unwrap_or_default());
@@ -262,71 +261,68 @@ fn process_wordnet(input_path: &str, output_path: &str) {
 
         loop {
             match reader.read_event_into(&mut buf) {
-                Ok(Event::Start(e)) | Ok(Event::Empty(e)) => {
-                    match e.name().as_ref() {
-                        b"LexicalEntry" => {
-                            current_lemma.clear();
-                            current_pos.clear();
+                Ok(Event::Start(e)) | Ok(Event::Empty(e)) => match e.name().as_ref() {
+                    b"LexicalEntry" => {
+                        current_lemma.clear();
+                        current_pos.clear();
+                    }
+                    b"Lemma" => {
+                        for attr in e.attributes().flatten() {
+                            match attr.key.as_ref() {
+                                b"writtenForm" => {
+                                    current_lemma =
+                                        String::from_utf8_lossy(&attr.value).to_string();
+                                }
+                                b"partOfSpeech" => {
+                                    current_pos = normalize_wordnet_pos(&String::from_utf8_lossy(
+                                        &attr.value,
+                                    ));
+                                }
+                                _ => {}
+                            }
                         }
-                        b"Lemma" => {
+                    }
+                    b"Sense" => {
+                        if !current_lemma.is_empty() {
+                            let mut synset_id = String::new();
                             for attr in e.attributes().flatten() {
-                                match attr.key.as_ref() {
-                                    b"writtenForm" => {
-                                        current_lemma =
-                                            String::from_utf8_lossy(&attr.value).to_string();
+                                if attr.key.as_ref() == b"synset" {
+                                    synset_id = String::from_utf8_lossy(&attr.value).to_string();
+                                }
+                            }
+                            if let Some((def_text, _)) = synset_defs.get(&synset_id) {
+                                let key = current_lemma.to_lowercase();
+                                let def = SourcedDefinition {
+                                    text: def_text.clone(),
+                                    source: DictionarySource::WordNet,
+                                    pos: if current_pos.is_empty() {
+                                        None
+                                    } else {
+                                        Some(current_pos.clone())
+                                    },
+                                };
+
+                                match entries.get_mut(&key) {
+                                    Some(existing) => {
+                                        existing.definitions.push(def);
                                     }
-                                    b"partOfSpeech" => {
-                                        current_pos = normalize_wordnet_pos(
-                                            &String::from_utf8_lossy(&attr.value),
+                                    None => {
+                                        entries.insert(
+                                            key,
+                                            DictionaryEntry {
+                                                word: current_lemma.clone(),
+                                                definitions: vec![def],
+                                                etymology: None,
+                                                pronunciation: None,
+                                            },
                                         );
                                     }
-                                    _ => {}
                                 }
                             }
                         }
-                        b"Sense" => {
-                            if !current_lemma.is_empty() {
-                                let mut synset_id = String::new();
-                                for attr in e.attributes().flatten() {
-                                    if attr.key.as_ref() == b"synset" {
-                                        synset_id =
-                                            String::from_utf8_lossy(&attr.value).to_string();
-                                    }
-                                }
-                                if let Some((def_text, _)) = synset_defs.get(&synset_id) {
-                                    let key = current_lemma.to_lowercase();
-                                    let def = SourcedDefinition {
-                                        text: def_text.clone(),
-                                        source: DictionarySource::WordNet,
-                                        pos: if current_pos.is_empty() {
-                                            None
-                                        } else {
-                                            Some(current_pos.clone())
-                                        },
-                                    };
-
-                                    match entries.get_mut(&key) {
-                                        Some(existing) => {
-                                            existing.definitions.push(def);
-                                        }
-                                        None => {
-                                            entries.insert(
-                                                key,
-                                                DictionaryEntry {
-                                                    word: current_lemma.clone(),
-                                                    definitions: vec![def],
-                                                    etymology: None,
-                                                    pronunciation: None,
-                                                },
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        _ => {}
                     }
-                }
+                    _ => {}
+                },
                 Ok(Event::Eof) => break,
                 Err(e) => {
                     eprintln!("XML parse error: {}", e);

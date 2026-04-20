@@ -132,11 +132,7 @@ impl DefinitionDictionary {
         0
     }
 
-    pub fn load_source(
-        &mut self,
-        _data: &[u8],
-        _source_id: &str,
-    ) -> Result<usize, String> {
+    pub fn load_source(&mut self, _data: &[u8], _source_id: &str) -> Result<usize, String> {
         Err("Definitions feature not compiled".to_string())
     }
 
@@ -183,11 +179,16 @@ mod tests {
             "ephemeral",
             make_entry(
                 "Ephemeral",
-                vec![("Short-lived; existing for a short time only.", DictionarySource::Webster1913)],
+                vec![(
+                    "Short-lived; existing for a short time only.",
+                    DictionarySource::Webster1913,
+                )],
             ),
         )];
         let data = make_binary(entries);
-        let count = dict.load_source(&data, DictionarySource::Webster1913).unwrap();
+        let count = dict
+            .load_source(&data, DictionarySource::Webster1913)
+            .unwrap();
 
         assert_eq!(count, 1);
         assert!(dict.is_loaded());
@@ -204,10 +205,14 @@ mod tests {
         let mut dict = DefinitionDictionary::new();
         let entries = vec![(
             "hello",
-            make_entry("Hello", vec![("A greeting.", DictionarySource::Webster1913)]),
+            make_entry(
+                "Hello",
+                vec![("A greeting.", DictionarySource::Webster1913)],
+            ),
         )];
         let data = make_binary(entries);
-        dict.load_source(&data, DictionarySource::Webster1913).unwrap();
+        dict.load_source(&data, DictionarySource::Webster1913)
+            .unwrap();
 
         assert!(dict.lookup("Hello").is_some());
         assert!(dict.lookup("HELLO").is_some());
@@ -219,10 +224,14 @@ mod tests {
         let mut dict = DefinitionDictionary::new();
         let entries = vec![(
             "run",
-            make_entry("Run", vec![("To move swiftly on foot.", DictionarySource::Webster1913)]),
+            make_entry(
+                "Run",
+                vec![("To move swiftly on foot.", DictionarySource::Webster1913)],
+            ),
         )];
         let data = make_binary(entries);
-        dict.load_source(&data, DictionarySource::Webster1913).unwrap();
+        dict.load_source(&data, DictionarySource::Webster1913)
+            .unwrap();
 
         // "running" should fall back to "run" via stem_simple
         let entry = dict.lookup("running").unwrap();
@@ -248,7 +257,8 @@ mod tests {
             },
         )];
         let data = make_binary(webster);
-        dict.load_source(&data, DictionarySource::Webster1913).unwrap();
+        dict.load_source(&data, DictionarySource::Webster1913)
+            .unwrap();
 
         // Load WordNet second
         let wordnet = vec![(
@@ -283,10 +293,14 @@ mod tests {
         let mut dict = DefinitionDictionary::new();
         let entries = vec![(
             "hello",
-            make_entry("Hello", vec![("A greeting.", DictionarySource::Webster1913)]),
+            make_entry(
+                "Hello",
+                vec![("A greeting.", DictionarySource::Webster1913)],
+            ),
         )];
         let data = make_binary(entries);
-        dict.load_source(&data, DictionarySource::Webster1913).unwrap();
+        dict.load_source(&data, DictionarySource::Webster1913)
+            .unwrap();
 
         assert!(dict.lookup("xyzzyplugh").is_none());
     }

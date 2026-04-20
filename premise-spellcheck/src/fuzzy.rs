@@ -76,7 +76,11 @@ impl FuzzyMatcher {
             }
         }
 
-        results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+        results.sort_by(|a, b| {
+            b.score
+                .partial_cmp(&a.score)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
         results.truncate(max);
         results
     }
@@ -118,7 +122,11 @@ impl FuzzyMatcher {
             }
         }
 
-        results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+        results.sort_by(|a, b| {
+            b.score
+                .partial_cmp(&a.score)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
         results.truncate(max);
         results
     }
@@ -193,9 +201,7 @@ fn edit_distance_bounded(a: &str, b: &str, max: usize) -> usize {
                 1
             };
 
-            curr[j] = (prev[j] + 1)
-                .min(curr[j - 1] + 1)
-                .min(prev[j - 1] + cost);
+            curr[j] = (prev[j] + 1).min(curr[j - 1] + 1).min(prev[j - 1] + cost);
 
             min_in_row = min_in_row.min(curr[j]);
         }
@@ -234,10 +240,7 @@ mod tests {
     #[test]
     fn test_fuzzy_match() {
         let mut fm = FuzzyMatcher::new();
-        fm.set_entities(&[
-            "Adaptipatable".to_string(),
-            "Adventure".to_string(),
-        ]);
+        fm.set_entities(&["Adaptipatable".to_string(), "Adventure".to_string()]);
 
         let results = fm.fuzzy_match("Ada", 5);
         assert!(!results.is_empty());

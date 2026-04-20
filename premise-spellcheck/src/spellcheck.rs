@@ -110,8 +110,17 @@ fn is_elision(word: &str) -> bool {
     let lower = word.to_lowercase();
     matches!(
         lower.as_str(),
-        "'twas" | "'tis" | "'til" | "'bout" | "'cause" | "'em"
-            | "'neath" | "'gainst" | "'round" | "'mongst" | "'fore"
+        "'twas"
+            | "'tis"
+            | "'til"
+            | "'bout"
+            | "'cause"
+            | "'em"
+            | "'neath"
+            | "'gainst"
+            | "'round"
+            | "'mongst"
+            | "'fore"
     )
 }
 
@@ -170,7 +179,9 @@ mod tests {
     #[test]
     fn test_contractions_in_dictionary() {
         let mut dict = Dictionary::new();
-        dict.load_wordlist("you're 4000\ndon't 5000\nwon't 3500\nit's 5000\nthey'll 2500\nwe've 2500\n");
+        dict.load_wordlist(
+            "you're 4000\ndon't 5000\nwon't 3500\nit's 5000\nthey'll 2500\nwe've 2500\n",
+        );
 
         let spans = vec![CheckableSpan {
             text: "you're don't won't it's they'll we've".to_string(),
@@ -179,7 +190,11 @@ mod tests {
         }];
 
         let results = check_spans(&dict, &spans);
-        assert!(results.is_empty(), "Unexpected misspellings: {:?}", results.iter().map(|m| &m.word).collect::<Vec<_>>());
+        assert!(
+            results.is_empty(),
+            "Unexpected misspellings: {:?}",
+            results.iter().map(|m| &m.word).collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -195,8 +210,14 @@ mod tests {
 
         let results = check_spans(&dict, &spans);
         // Both misspelled contractions should be flagged
-        assert!(results.iter().any(|m| m.word == "cna't"), "cna't should be flagged");
-        assert!(results.iter().any(|m| m.word == "dontt"), "dontt should be flagged");
+        assert!(
+            results.iter().any(|m| m.word == "cna't"),
+            "cna't should be flagged"
+        );
+        assert!(
+            results.iter().any(|m| m.word == "dontt"),
+            "dontt should be flagged"
+        );
     }
 
     #[test]
@@ -211,7 +232,10 @@ mod tests {
         }];
 
         let results = check_spans(&dict, &spans);
-        assert!(results.iter().all(|m| m.word != "squirrels"), "squirrels should not be flagged");
+        assert!(
+            results.iter().all(|m| m.word != "squirrels"),
+            "squirrels should not be flagged"
+        );
     }
 
     #[test]
@@ -228,12 +252,16 @@ mod tests {
         let results = check_spans(&dict, &spans);
         // Words in single quotes should not be flagged
         assert!(
-            results.iter().all(|m| m.word != "hello" && m.word != "'hello"),
+            results
+                .iter()
+                .all(|m| m.word != "hello" && m.word != "'hello"),
             "hello in quotes should not be flagged, got: {:?}",
             results.iter().map(|m| &m.word).collect::<Vec<_>>()
         );
         assert!(
-            results.iter().all(|m| m.word != "unprotectable" && m.word != "'unprotectable"),
+            results
+                .iter()
+                .all(|m| m.word != "unprotectable" && m.word != "'unprotectable"),
             "unprotectable in quotes should not be flagged, got: {:?}",
             results.iter().map(|m| &m.word).collect::<Vec<_>>()
         );
@@ -271,7 +299,15 @@ mod tests {
         }];
 
         let results = check_spans(&dict, &spans);
-        assert!(results.iter().all(|m| m.word != "o'clock"), "o'clock should not be flagged");
-        assert!(results.iter().all(|m| m.word != "'twas" && m.word != "twas"), "'twas should not be flagged");
+        assert!(
+            results.iter().all(|m| m.word != "o'clock"),
+            "o'clock should not be flagged"
+        );
+        assert!(
+            results
+                .iter()
+                .all(|m| m.word != "'twas" && m.word != "twas"),
+            "'twas should not be flagged"
+        );
     }
 }

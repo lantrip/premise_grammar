@@ -14,30 +14,30 @@ pub fn stem_simple(word: &str) -> Vec<String> {
 
     // Order: longer suffixes first for specificity
     let suffixes: &[(&str, Option<&str>)] = &[
-        ("ation", Some("ate")),  // creation -> create
-        ("tion", None),          // attraction -> attract (approx)
-        ("ness", None),          // happiness -> happi (won't match, but happy will via -iness)
-        ("ment", None),          // movement -> move (approx)
-        ("able", None),          // readable -> read
-        ("ible", None),          // visible -> vis (approx)
-        ("ious", Some("y")),     // envious -> envy
-        ("eous", None),          // gorgeous -> gorgeous (no strip needed usually)
-        ("ous", None),           // famous -> fam (approx)
-        ("ive", None),           // creative -> creat (approx)
-        ("ful", None),           // beautiful -> beauti (approx)
-        ("less", None),          // careless -> care
-        ("ally", Some("al")),    // finally -> final
-        ("ily", Some("y")),      // happily -> happy
-        ("ing", None),           // running -> runn -> run (handled below)
-        ("ing", Some("e")),      // making -> make
-        ("ied", Some("y")),      // carried -> carry
-        ("ed", None),            // walked -> walk
-        ("ed", Some("e")),       // loved -> love
-        ("er", None),            // faster -> fast
-        ("est", None),           // fastest -> fast
-        ("ly", None),            // quickly -> quick
-        ("es", None),            // watches -> watch
-        ("s", None),             // dogs -> dog
+        ("ation", Some("ate")), // creation -> create
+        ("tion", None),         // attraction -> attract (approx)
+        ("ness", None),         // happiness -> happi (won't match, but happy will via -iness)
+        ("ment", None),         // movement -> move (approx)
+        ("able", None),         // readable -> read
+        ("ible", None),         // visible -> vis (approx)
+        ("ious", Some("y")),    // envious -> envy
+        ("eous", None),         // gorgeous -> gorgeous (no strip needed usually)
+        ("ous", None),          // famous -> fam (approx)
+        ("ive", None),          // creative -> creat (approx)
+        ("ful", None),          // beautiful -> beauti (approx)
+        ("less", None),         // careless -> care
+        ("ally", Some("al")),   // finally -> final
+        ("ily", Some("y")),     // happily -> happy
+        ("ing", None),          // running -> runn -> run (handled below)
+        ("ing", Some("e")),     // making -> make
+        ("ied", Some("y")),     // carried -> carry
+        ("ed", None),           // walked -> walk
+        ("ed", Some("e")),      // loved -> love
+        ("er", None),           // faster -> fast
+        ("est", None),          // fastest -> fast
+        ("ly", None),           // quickly -> quick
+        ("es", None),           // watches -> watch
+        ("s", None),            // dogs -> dog
     ];
 
     for (suffix, replacement) in suffixes {
@@ -80,19 +80,31 @@ mod tests {
     #[test]
     fn test_stem_running() {
         let stems = stem_simple("running");
-        assert!(stems.contains(&"run".to_string()), "expected 'run' in stems: {:?}", stems);
+        assert!(
+            stems.contains(&"run".to_string()),
+            "expected 'run' in stems: {:?}",
+            stems
+        );
     }
 
     #[test]
     fn test_stem_creation() {
         let stems = stem_simple("creation");
-        assert!(stems.contains(&"create".to_string()), "expected 'create' in stems: {:?}", stems);
+        assert!(
+            stems.contains(&"create".to_string()),
+            "expected 'create' in stems: {:?}",
+            stems
+        );
     }
 
     #[test]
     fn test_stem_happily() {
         let stems = stem_simple("happily");
-        assert!(stems.contains(&"happy".to_string()), "expected 'happy' in stems: {:?}", stems);
+        assert!(
+            stems.contains(&"happy".to_string()),
+            "expected 'happy' in stems: {:?}",
+            stems
+        );
     }
 
     #[test]
@@ -104,12 +116,20 @@ mod tests {
     #[test]
     fn test_stem_carried() {
         let stems = stem_simple("carried");
-        assert!(stems.contains(&"carry".to_string()), "expected 'carry' in stems: {:?}", stems);
+        assert!(
+            stems.contains(&"carry".to_string()),
+            "expected 'carry' in stems: {:?}",
+            stems
+        );
     }
 
     #[test]
     fn test_stem_stopped() {
         let stems = stem_simple("stopped");
-        assert!(stems.contains(&"stop".to_string()), "expected 'stop' in stems: {:?}", stems);
+        assert!(
+            stems.contains(&"stop".to_string()),
+            "expected 'stop' in stems: {:?}",
+            stems
+        );
     }
 }

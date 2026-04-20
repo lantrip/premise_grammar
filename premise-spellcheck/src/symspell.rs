@@ -34,10 +34,7 @@ impl SymSpell {
                 Some(w) => w.to_lowercase(),
                 None => continue,
             };
-            let freq: u64 = parts
-                .next()
-                .and_then(|f| f.parse().ok())
-                .unwrap_or(1);
+            let freq: u64 = parts.next().and_then(|f| f.parse().ok()).unwrap_or(1);
             self.add_word_with_freq(&word, freq);
         }
     }

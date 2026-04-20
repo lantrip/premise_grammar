@@ -175,7 +175,10 @@ mod tests {
         // "running" should find synonyms via stem "run"
         let results = t.lookup("running", 10);
         // Even if "running" itself is a root word, we should get results
-        assert!(!results.is_empty(), "expected synonyms for 'running' (via stemming or direct)");
+        assert!(
+            !results.is_empty(),
+            "expected synonyms for 'running' (via stemming or direct)"
+        );
     }
 
     #[test]
@@ -183,7 +186,11 @@ mod tests {
     fn test_max_limit() {
         let t = Thesaurus::new();
         let results = t.lookup("happy", 3);
-        assert!(results.len() <= 3, "expected at most 3 results, got {}", results.len());
+        assert!(
+            results.len() <= 3,
+            "expected at most 3 results, got {}",
+            results.len()
+        );
     }
 
     #[test]
@@ -224,9 +231,7 @@ mod tests {
         .into_iter()
         .collect();
 
-        let results = t.lookup_ranked("happy", 10, |w| {
-            common_words.get(w).copied().unwrap_or(0)
-        });
+        let results = t.lookup_ranked("happy", 10, |w| common_words.get(w).copied().unwrap_or(0));
         assert!(!results.is_empty(), "expected ranked synonyms for 'happy'");
         // The first result should be one of the high-frequency words
         let top3: Vec<&str> = results.iter().take(3).map(|s| s.as_str()).collect();

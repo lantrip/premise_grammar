@@ -131,9 +131,9 @@ impl SpellEngine {
     /// Look up synonyms for a word, ranked by word frequency.
     #[wasm_bindgen(js_name = "synonyms")]
     pub fn synonyms(&self, word: &str, max: u32) -> Result<JsValue, JsValue> {
-        let results = self.thesaurus.lookup_ranked(word, max as usize, |w| {
-            self.dictionary.word_frequency(w)
-        });
+        let results = self
+            .thesaurus
+            .lookup_ranked(word, max as usize, |w| self.dictionary.word_frequency(w));
         serde_wasm_bindgen::to_value(&results)
             .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
     }
@@ -157,12 +157,7 @@ impl SpellEngine {
             let source = match source_id {
                 "webster1913" => definitions::DictionarySource::Webster1913,
                 "wordnet" => definitions::DictionarySource::WordNet,
-                _ => {
-                    return Err(JsValue::from_str(&format!(
-                        "Unknown source: {}",
-                        source_id
-                    )))
-                }
+                _ => return Err(JsValue::from_str(&format!("Unknown source: {}", source_id))),
             };
             let count = self
                 .definitions
