@@ -229,9 +229,9 @@ The semantic scopes are designed specifically for story authors and enable rich 
 
 **Content Type Layers:**
 
-- `keyword.control.content.beat` - Structural story beats (`###`)
+- `keyword.control.content.beat` - Structural story beats (`#`)
 - `keyword.control.content.treatment` - Scene direction (`##`)
-- `keyword.control.content.narrative` - Final story text (`#`)
+- `keyword.control.content.narrative` - Final story text (`###`)
 
 **Dialogue & Screenplay Elements:**
 
