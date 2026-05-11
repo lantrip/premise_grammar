@@ -1,0 +1,132 @@
+---
+source: premise-core/tests/ir_snapshots.rs
+expression: analysis
+---
+{
+  "ir": {
+    "story": {
+      "acts": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 2,
+              "column": 0
+            },
+            "end": {
+              "row": 2,
+              "column": 10
+            },
+            "start_byte": 27,
+            "end_byte": 37
+          }
+        },
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 27,
+              "column": 0
+            },
+            "end": {
+              "row": 27,
+              "column": 10
+            },
+            "start_byte": 377,
+            "end_byte": 387
+          },
+          "graveyard": true
+        },
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 32,
+              "column": 0
+            },
+            "end": {
+              "row": 32,
+              "column": 16
+            },
+            "start_byte": 423,
+            "end_byte": 439
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 4,
+              "column": 0
+            },
+            "end": {
+              "row": 4,
+              "column": 13
+            },
+            "start_byte": 39,
+            "end_byte": 52
+          }
+        },
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 18,
+              "column": 0
+            },
+            "end": {
+              "row": 18,
+              "column": 13
+            },
+            "start_byte": 245,
+            "end_byte": 258
+          },
+          "graveyard": true
+        },
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 21,
+              "column": 0
+            },
+            "end": {
+              "row": 21,
+              "column": 18
+            },
+            "start_byte": 285,
+            "end_byte": 303
+          }
+        },
+        {
+          "title": "",
+          "proportion": null,
+          "range": {
+            "start": {
+              "row": 29,
+              "column": 0
+            },
+            "end": {
+              "row": 29,
+              "column": 22
+            },
+            "start_byte": 389,
+            "end_byte": 411
+          },
+          "graveyard": true
+        }
+      ],
+      "cels": []
+    },
+    "adapters": []
+  },
+  "diagnostics": []
+}

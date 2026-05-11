@@ -1,0 +1,34 @@
+TITLE: Graveyard Coverage
+
+= Live Act
+
+== Live Scene
+
+# live beat
+The protagonist enters.
+
+~# old beat — replaced after rewrite
+The old version of the beat lives here.
+
+## old treatment
+Cut treatment text.
+
+# next live beat
+{Hero} continues.
+
+~== Old Scene
+The whole scene is dead.
+
+== Next Live Scene
+Live again.
+
+~ a single stray prose line, killed
+This line stays alive.
+
+~= Old Act
+
+== old contained scene
+old prose
+
+= Final Live Act
+final live prose

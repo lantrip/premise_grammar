@@ -31,6 +31,11 @@
 "##" @punctuation.definition.content.treatment
 "###" @punctuation.definition.content.narrative
 
+; Graveyard markers - `~` prefix on headers and standalone `~ prose` lines.
+; Marks regions visible in source but excluded from lens / KB extraction.
+(graveyard_marker) @keyword.directive.graveyard
+(graveyard_prose) @comment.graveyard
+
 ; Entity definitions
 (entity_construct) @variable.special
 "@" @punctuation.special

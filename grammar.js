@@ -284,6 +284,7 @@ module.exports = grammar({
         $.content_type_beat,
         $.content_type_treatment,
         $.content_type_narrative,
+        $.graveyard_prose, // Single-line graveyard: ^~ <prose>
         $.metadata_line,
         $.image_construct, // Inline image associations (before entity_construct)
         $.entity_construct, // Entity definitions
@@ -318,10 +319,17 @@ module.exports = grammar({
     file_header_key: ($) => /[A-Z][A-Z_]*/,
     file_header_value: ($) => /[^\r\n]+/,
 
+    // `~` prefix on a header marks it (and its subtree, by the existing
+    // nesting rules) as a graveyard region — visible in the source but
+    // excluded from lens / KB extraction. High token precedence so the
+    // lexer prefers it over `prose_text` when a line starts with `~`.
+    graveyard_marker: ($) => token(prec(20, "~")),
+
     act_header: ($) =>
       prec(
         10,
         seq(
+          optional(field("graveyard", $.graveyard_marker)),
           "=",
           /\s+/,
           field("title", /[^\r\n(]+/),
@@ -333,6 +341,7 @@ module.exports = grammar({
       prec(
         10,
         seq(
+          optional(field("graveyard", $.graveyard_marker)),
           "==",
           /\s+/,
           field("title", /[^\r\n(]+/),
@@ -344,6 +353,7 @@ module.exports = grammar({
       prec(
         10,
         seq(
+          optional(field("graveyard", $.graveyard_marker)),
           "===",
           /\s+/,
           field("title", /[^\r\n-]+/),
@@ -361,13 +371,44 @@ module.exports = grammar({
     // Enhanced content types with multi-line support and labels
     // Ordinality matches structure: # (beat/abstract) → ## (treatment) → ### (narrative/detailed)
     content_type_beat: ($) =>
-      prec.right(9, seq("#", optional(field("content", /.*/)))),
+      prec.right(
+        9,
+        seq(
+          optional(field("graveyard", $.graveyard_marker)),
+          "#",
+          optional(field("content", /.*/))
+        )
+      ),
 
     content_type_treatment: ($) =>
-      prec.right(9, seq("##", optional(field("content", /.*/)))),
+      prec.right(
+        9,
+        seq(
+          optional(field("graveyard", $.graveyard_marker)),
+          "##",
+          optional(field("content", /.*/))
+        )
+      ),
 
     content_type_narrative: ($) =>
-      prec.right(9, seq("###", optional(field("content", /.*/)))),
+      prec.right(
+        9,
+        seq(
+          optional(field("graveyard", $.graveyard_marker)),
+          "###",
+          optional(field("content", /.*/))
+        )
+      ),
+
+    // Single-line graveyard prose: `^~ <prose>`. The whole line is dead but
+    // does not open or close any structural region. Matched as a single
+    // high-precedence token so:
+    //   - `~ killed` matches the entire line as one graveyard_prose node
+    //   - `~just` (no space) does NOT match — the lexer falls back to the
+    //     `~` marker token, which the surrounding context tries to attach
+    //     to a header. If neither path applies (mid-prose `~`), the existing
+    //     prose_text rule still consumes the `~` because it's not excluded.
+    graveyard_prose: ($) => token(prec(20, /~ [^\r\n]*/)),
 
     // Multi-line C-style block comments
     block_comment: ($) =>

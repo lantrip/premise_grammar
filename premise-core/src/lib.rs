@@ -3,12 +3,15 @@ pub mod api;
 pub mod ast;
 pub mod cst;
 pub mod diagnostics;
+pub mod graveyard;
 pub mod imports;
 pub mod ir;
 pub mod notes;
 pub mod planning;
 pub mod symbols;
 pub mod validation;
+
+pub use graveyard::{graveyard_line_ranges, strip_graveyard};
 
 use std::fs;
 use std::path::Path;

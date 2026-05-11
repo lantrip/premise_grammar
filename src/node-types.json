@@ -2,7 +2,18 @@
   {
     "type": "act_header",
     "named": true,
-    "fields": {}
+    "fields": {
+      "graveyard": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "graveyard_marker",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "adapter_list_property",
@@ -141,22 +152,66 @@
   {
     "type": "cel_header",
     "named": true,
-    "fields": {}
+    "fields": {
+      "graveyard": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "graveyard_marker",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "content_type_beat",
     "named": true,
-    "fields": {}
+    "fields": {
+      "graveyard": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "graveyard_marker",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "content_type_narrative",
     "named": true,
-    "fields": {}
+    "fields": {
+      "graveyard": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "graveyard_marker",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "content_type_treatment",
     "named": true,
-    "fields": {}
+    "fields": {
+      "graveyard": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "graveyard_marker",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "dialogue_speaker",
@@ -554,6 +609,10 @@
           "named": true
         },
         {
+          "type": "graveyard_prose",
+          "named": true
+        },
+        {
           "type": "image_block",
           "named": true
         },
@@ -826,7 +885,18 @@
   {
     "type": "scene_header",
     "named": true,
-    "fields": {}
+    "fields": {
+      "graveyard": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "graveyard_marker",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "simple_value",
@@ -971,6 +1041,14 @@
   },
   {
     "type": "file_header_value",
+    "named": true
+  },
+  {
+    "type": "graveyard_marker",
+    "named": true
+  },
+  {
+    "type": "graveyard_prose",
     "named": true
   },
   {
