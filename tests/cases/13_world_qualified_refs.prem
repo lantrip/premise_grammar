@@ -1,0 +1,22 @@
+// Test: multi-world slash-qualified entity references {world-slug/Entity}.
+// The grammar captures the {...} body opaquely (/[^}]+/), so the slug is part
+// of the `entity` field — decomposition happens in the host (FE/BE regex layer),
+// not in tree-sitter. This case guards against the entity_reference rule ever
+// being tightened to a stricter token that would reject the slash form.
+TITLE: Multi-World Story
+WORLD: home
+
+= Act One
+
+== Morning
+
+=== A day across worlds - INT. Den - MORNING
+
+# Beat
+{home/Bobby} plays before {school/desk} time.
+
+## Treatment
+{home/Bobby:child} waves to the {guard} on the way out.
+
+### Narrative
+At school, {school/desk} waits while {magic-realm/Grandpa Squeak:elder} watches.
