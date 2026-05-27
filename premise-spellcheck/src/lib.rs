@@ -82,7 +82,7 @@ impl SpellEngine {
     pub fn set_entities(&mut self, entities: JsValue) -> Result<(), JsValue> {
         let entities: Vec<String> = serde_wasm_bindgen::from_value(entities)
             .map_err(|e| JsValue::from_str(&format!("Invalid entities array: {}", e)))?;
-        self.dictionary.add_entity_names(&entities);
+        self.dictionary.set_entity_names(&entities);
         self.fuzzy.set_entities(&entities);
         Ok(())
     }

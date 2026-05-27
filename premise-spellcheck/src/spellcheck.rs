@@ -89,12 +89,16 @@ fn check_word(
     }
 
     if !dict.is_correct(word) {
-        let suggestions = dict.suggest(word, 5);
+        // Suggestions are intentionally NOT computed here. The bulk check runs over the
+        // whole document, and generating edit-distance suggestions for every flagged word
+        // (a narrative `.prem` flags many proper/fantasy nouns) created a large transient
+        // allocation that set a permanent WASM-memory high-water mark. The popover fetches
+        // suggestions lazily for the single clicked word via the `suggest` message.
         results.push(Misspelling {
             word: word.to_string(),
             from: span_offset + start as u32,
             to: span_offset + end as u32,
-            suggestions,
+            suggestions: Vec::new(),
         });
     }
 }

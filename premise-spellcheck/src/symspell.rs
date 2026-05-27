@@ -58,20 +58,6 @@ impl SymSpell {
             .push((lower, freq));
     }
 
-    /// Add a word with default frequency (high, so it's always considered correct).
-    pub fn add_word(&mut self, word: &str) {
-        self.add_word_with_freq(word, 100_000);
-    }
-
-    /// Remove a word from the dictionary.
-    pub fn remove_word(&mut self, word: &str) {
-        let lower = word.to_lowercase();
-        self.words.remove(&lower);
-        // Note: we don't clean up deletes map for simplicity.
-        // The word will still appear as a candidate but won't be in self.words,
-        // so it won't be returned as a suggestion.
-    }
-
     /// Check if a word is in the dictionary (case-insensitive).
     pub fn is_known(&self, word: &str) -> bool {
         self.words.contains_key(&word.to_lowercase())
@@ -80,6 +66,19 @@ impl SymSpell {
     /// Get the frequency of a word (case-insensitive). Returns 0 if unknown.
     pub fn get_frequency(&self, word: &str) -> u64 {
         self.words.get(&word.to_lowercase()).copied().unwrap_or(0)
+    }
+
+    /// Number of distinct words in the index. Exposed for memory-regression tests.
+    #[cfg(test)]
+    pub fn word_count(&self) -> usize {
+        self.words.len()
+    }
+
+    /// Number of distinct delete-variant keys in the index. Exposed for
+    /// memory-regression tests — this is the structure that bloated WASM memory.
+    #[cfg(test)]
+    pub fn delete_key_count(&self) -> usize {
+        self.deletes.len()
     }
 
     /// Get spelling suggestions for a word, ranked by edit distance then frequency.
