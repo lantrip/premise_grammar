@@ -24,3 +24,23 @@
 // Empty template block
 @template {
 }
+
+// Guided template: premise sentence + flagged slot roles
+@template {
+  @premise: {Person} finds a {LostToy} after searching all of {Location1} and {Location2}.
+  @role Person [character, required]: the protagonist who lost something
+  @role LostToy [item, required]: the treasured thing that's missing
+  @role Location1 [location]: first place searched
+  @role Location2 [location, optional]: second place searched
+  @role Mood [text]: tone word the child supplies
+}
+
+// Multi-sentence premise
+@template {
+  @premise: {Hero} sets out from {Home}.
+  @premise: Along the way {Hero} meets {Friend} and learns about {Lesson}.
+  @role Hero [character, required]: protagonist
+  @role Home [location]: starting place
+  @role Friend [character, optional]: companion met on the journey
+  @role Lesson [concept]: what the hero learns
+}

@@ -16,6 +16,11 @@
     }
   },
   {
+    "type": "adapter_arg",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "adapter_list_property",
     "named": true,
     "fields": {
@@ -50,6 +55,16 @@
     "type": "adapter_statement",
     "named": true,
     "fields": {
+      "adapter_arg": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "adapter_arg",
+            "named": true
+          }
+        ]
+      },
       "adapter_name": {
         "multiple": false,
         "required": false,
@@ -80,16 +95,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "object_value",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -147,6 +152,51 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "cast_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cast_line",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cast_line",
+    "named": true,
+    "fields": {
+      "cast_ref": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "entity_reference",
+            "named": true
+          }
+        ]
+      },
+      "cast_role": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "prop_key",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -581,6 +631,10 @@
           "named": true
         },
         {
+          "type": "cast_block",
+          "named": true
+        },
+        {
           "type": "cel_header",
           "named": true
         },
@@ -777,6 +831,46 @@
     }
   },
   {
+    "type": "premise_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "entity_reference",
+          "named": true
+        },
+        {
+          "type": "premise_text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "premise_line",
+    "named": true,
+    "fields": {
+      "premise_body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "premise_body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "premise_text",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "prop_value",
     "named": true,
     "fields": {},
@@ -944,6 +1038,10 @@
           "named": true
         },
         {
+          "type": "premise_line",
+          "named": true
+        },
+        {
           "type": "role_line",
           "named": true
         }
@@ -980,6 +1078,10 @@
   },
   {
     "type": "+",
+    "named": false
+  },
+  {
+    "type": ",",
     "named": false
   },
   {

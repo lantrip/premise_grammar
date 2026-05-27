@@ -124,6 +124,17 @@
 (role_line (role_desc) @string.description.entity)
 (role_line ":" @punctuation.separator.entity)
 
+; Guided premise line: @premise: {Slot} text {Slot} …
+(premise_line) @variable.definition.entity
+(premise_line ":" @punctuation.separator.entity)
+(premise_line (premise_body (premise_text) @text.narrative))
+(premise_line (premise_body (entity_reference) @entity.name.reference))
+
+; Cast block: @cast { role: {Entity} }
+(cast_block) @type
+(cast_line (prop_key) @entity.name.definition)
+(cast_line (entity_reference) @entity.name.reference)
+
 ; Image blocks and directives
 (image_block) @meta.image.block
 (image_construct) @meta.image.directive

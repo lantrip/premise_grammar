@@ -75,6 +75,35 @@ module.exports = grammar({
         "}"
       ),
 
+    // Cast block — maps premise/template roles to concrete entity references.
+    // e.g. @cast { protagonist: {world.entities.characters[0]} }. Distinct from
+    // entity_block because its body is `role: {reference}` lines (no dash, the
+    // value is a reference rather than a description/object).
+    cast_block: ($) =>
+      seq(
+        "@",
+        field("block_type", /cast\s*\{/),
+        repeat(
+          choice(
+            $.cast_line,
+            $.newline
+          )
+        ),
+        "}"
+      ),
+
+    // One role→reference mapping line inside @cast { }. The reference may carry
+    // a dotted/indexed path (e.g. {world.entities.characters[0]}); entity_reference
+    // captures everything up to the closing brace. Leading/inner spaces are
+    // handled by `extras` — an explicit `/[ \t]*/` here would match a zero-width
+    // token and trap the parser in cast_line on blank/closing lines.
+    cast_line: ($) =>
+      seq(
+        field("cast_role", $.prop_key),
+        ":",
+        field("cast_ref", $.entity_reference)
+      ),
+
     // Lore entry: "- Free text content" (any text, colons allowed)
     lore_entry: ($) =>
       seq(
@@ -86,19 +115,36 @@ module.exports = grammar({
     lore_text: ($) => /[^\r\n{}]+/,
 
     // Template block for abstract story templates with role definitions
-    // @template { @role Name [type]: description }
+    // @template { @premise: {Slot} sentence  @role Name [type, flags]: description }
     template_block: ($) =>
       seq(
         "@",
         field("block_type", /template\s*\{/),
         repeat(
           choice(
-            prec(3, $.role_line), // Role definitions
+            prec(4, $.premise_line), // Guided premise sentence(s)
+            prec(3, $.role_line), // Role / slot definitions
             $.newline
           )
         ),
         "}"
       ),
+
+    // Premise line within template block: @premise: {Slot} text {Slot} …
+    // The guided premise sentence; {Slot} tokens reference @role names.
+    premise_line: ($) =>
+      seq(
+        /[ \t]*@premise\s*/,
+        ":",
+        /[ \t]*/,
+        field("premise_body", $.premise_body)
+      ),
+
+    // Premise body: interleaved slot references and free text
+    premise_body: ($) => repeat1(choice($.entity_reference, $.premise_text)),
+
+    // Free text between premise slot references (no braces, single line)
+    premise_text: ($) => /[^\r\n{}]+/,
 
     // Image block for grouping image associations with rich metadata
     // @images { - Target [tags]: path | caption }
@@ -157,12 +203,16 @@ module.exports = grammar({
     // Role name (similar to entity name)
     role_name: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
 
-    // Optional type hint in brackets: [character], [location], etc.
+    // Optional type hint in brackets with optional flags:
+    //   [character]  [character, required]  [item, optional]  [text]
+    // First token is the entity type; subsequent comma-separated tokens are
+    // slot flags (required | optional | text | …).
     // Note: no leading /\s*/ — extras handle inter-token whitespace
     role_type_hint: ($) =>
       seq(
         "[",
         field("type", /[a-z]+/),
+        repeat(seq(",", field("flag", /[a-z]+/))),
         "]"
       ),
 
@@ -289,6 +339,7 @@ module.exports = grammar({
         $.image_construct, // Inline image associations (before entity_construct)
         $.entity_construct, // Entity definitions
         $.entity_block, // Entity blocks with braces
+        $.cast_block, // @cast { role: {Entity} } mapping blocks
         $.lore_block, // Lore/facts blocks with free-text entries
         $.template_block, // Template blocks with role definitions
         $.image_block, // Image association blocks
@@ -431,37 +482,38 @@ module.exports = grammar({
         )
       ),
 
+    // One unified @adapter statement. The target is a quoted external path OR
+    // an unquoted name; the suffix is either `: <spec>` (the spec, via
+    // `prop_value`, may be a simple value, an inline/multiline object, or a
+    // block scalar) or one-or-more `key=value` args. Folding both targets and
+    // both suffixes into a single rule (choices after a shared prefix) lets GLR
+    // disambiguate on lookahead — separate prec-ranked rules pruned branches and
+    // the named form's `object_value` was unreachable. Spaces around `:` and
+    // between args are handled by `extras`.
     adapter_statement: ($) =>
-      choice(
-        // External adapter reference: @adapter "path": value
-        prec(
-          12,
-          seq(
-            token.immediate(seq("@", "adapter")),
-            /\s+/,
-            choice(
-              seq('"', field("adapter_path", $.adapter_path), '"'),
-              seq("'", field("adapter_path", $.adapter_path), "'")
-            ),
-            /\s*/,
-            ":",
-            /\s*/,
-            field("adapter_spec", $.prop_value)
-          )
+      seq(
+        // Require a trailing space/tab so this token can't swallow the
+        // `@adapter` prefix of the `@adapters {` entity block (plural).
+        token.immediate(seq("@", "adapter", /[ \t]/)),
+        /\s*/,
+        choice(
+          seq('"', field("adapter_path", $.adapter_path), '"'),
+          seq("'", field("adapter_path", $.adapter_path), "'"),
+          field("adapter_name", $.adapter_name)
         ),
-        // Named inline adapter: @adapter name: { ... }
-        prec(
-          11,
-          seq(
-            token.immediate(seq("@", "adapter")),
-            /\s+/,
-            field("adapter_name", $.adapter_name),
-            /\s*/,
-            ":",
-            /\s*/,
-            $.object_value
-          )
+        choice(
+          seq(":", field("adapter_spec", $.prop_value)),
+          repeat1(field("adapter_arg", $.adapter_arg))
         )
+      ),
+
+    // key=value argument on the space-separated @adapter form. Inter-arg spaces
+    // are handled by `extras`, so there is no explicit separator here.
+    adapter_arg: ($) =>
+      seq(
+        field("arg_key", /[A-Za-z_][A-Za-z0-9_]*/),
+        token.immediate("="),
+        field("arg_value", token.immediate(/[^\s\r\n]+/))
       ),
 
 
