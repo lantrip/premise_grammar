@@ -146,8 +146,7 @@ mod tests {
 
         // Entity injection must never grow the SymSpell index, no matter how many times
         // it runs — this is the property that keeps WASM memory bounded.
-        let entities: Vec<String> =
-            (0..500).map(|i| format!("Entity{i} Surname{i}")).collect();
+        let entities: Vec<String> = (0..500).map(|i| format!("Entity{i} Surname{i}")).collect();
         for _ in 0..10 {
             dict.set_entity_names(&entities);
         }
