@@ -44,3 +44,13 @@
   @role Friend [character, optional]: companion met on the journey
   @role Lesson [concept]: what the hero learns
 }
+
+// Cardinality flags: count=N..M (with explicit upper, open upper, exact)
+@template {
+  @premise: {Hero} faces {Trials} across {Stops} and brings home {Lessons}.
+  @role Hero    [character, count=1..1]:  protagonist
+  @role Trials  [character, count=2..4]:  companions on the road
+  @role Stops   [location, count=1..]:    every stop along the way
+  @role Lessons [text, count=0..3]:       optional takeaways
+  @role Cohort  [character, count=4]:     fixed-size crew (sugar for count=4..4)
+}

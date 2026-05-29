@@ -205,14 +205,16 @@ module.exports = grammar({
 
     // Optional type hint in brackets with optional flags:
     //   [character]  [character, required]  [item, optional]  [text]
+    //   [character, count=2..4]  [location, count=1..]  [text, count=0..3]
+    //   [character, count=4]   (fixed: sugar for count=4..4)
     // First token is the entity type; subsequent comma-separated tokens are
-    // slot flags (required | optional | text | …).
+    // slot flags (required | optional | text | multi | count=N | count=N..M).
     // Note: no leading /\s*/ — extras handle inter-token whitespace
     role_type_hint: ($) =>
       seq(
         "[",
         field("type", /[a-z]+/),
-        repeat(seq(",", field("flag", /[a-z]+/))),
+        repeat(seq(",", field("flag", /[a-z]+(?:=\d+(?:\.\.\d*)?)?/))),
         "]"
       ),
 

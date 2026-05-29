@@ -1,0 +1,87 @@
+============================================
+Slot cardinality: bounded range count=N..M
+============================================
+
+@template {
+  @role T [character, count=1..4]: x
+}
+
+---
+
+(source_file
+  (newline)
+  (line
+    (template_block
+      (newline)
+      (role_line
+        role_name: (role_name)
+        role_type: (role_type_hint)
+        role_desc: (role_desc))
+      (newline)))
+  (newline))
+
+============================================
+Slot cardinality: optional with upper bound count=0..3
+============================================
+
+@template {
+  @role T [character, count=0..3]: x
+}
+
+---
+
+(source_file
+  (newline)
+  (line
+    (template_block
+      (newline)
+      (role_line
+        role_name: (role_name)
+        role_type: (role_type_hint)
+        role_desc: (role_desc))
+      (newline)))
+  (newline))
+
+============================================
+Slot cardinality: unbounded count=2..
+============================================
+
+@template {
+  @role T [character, count=2..]: x
+}
+
+---
+
+(source_file
+  (newline)
+  (line
+    (template_block
+      (newline)
+      (role_line
+        role_name: (role_name)
+        role_type: (role_type_hint)
+        role_desc: (role_desc))
+      (newline)))
+  (newline))
+
+============================================
+Slot cardinality: fixed count count=N
+============================================
+
+@template {
+  @role T [character, count=4]: x
+}
+
+---
+
+(source_file
+  (newline)
+  (line
+    (template_block
+      (newline)
+      (role_line
+        role_name: (role_name)
+        role_type: (role_type_hint)
+        role_desc: (role_desc))
+      (newline)))
+  (newline))
