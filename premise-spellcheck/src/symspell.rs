@@ -337,7 +337,11 @@ mod tests {
         let keys = ss.delete_key_count();
         ss.add_word_with_freq("hello", 5);
         assert_eq!(ss.word_count(), words, "repeat must not add a term");
-        assert_eq!(ss.delete_key_count(), keys, "repeat must not add delete keys");
+        assert_eq!(
+            ss.delete_key_count(),
+            keys,
+            "repeat must not add delete keys"
+        );
         assert_eq!(ss.get_frequency("hello"), 15, "frequency must accumulate");
     }
 }
