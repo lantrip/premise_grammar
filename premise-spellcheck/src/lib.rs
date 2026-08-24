@@ -1,6 +1,7 @@
 pub mod definitions;
 pub mod dictionary;
 pub mod fuzzy;
+pub mod normalize;
 pub mod spellcheck;
 pub mod stemming;
 mod symspell;
@@ -99,9 +100,31 @@ impl SpellEngine {
     }
 
     /// Get spelling suggestions for a single word.
+    ///
+    /// Normalizes here rather than at the call sites: the bulk checker already
+    /// reports a trimmed base, but the right-click path hands over whatever the
+    /// caret scan scraped — a curly apostrophe, an edge quote, or a whole
+    /// hyphenated compound.
     #[wasm_bindgen(js_name = "suggest")]
     pub fn suggest(&self, word: &str, max: u32) -> Result<JsValue, JsValue> {
-        let suggestions = self.dictionary.suggest(word, max as usize);
+        let key = spellcheck::suggestion_key(word);
+
+        // A custom or entity word is deliberately kept out of the SymSpell index,
+        // so asking it for suggestions would return edit-distance noise for a name
+        // the author has already added.
+        let suggestions = if self.dictionary.is_known_allowing_possessive(&key) {
+            Vec::new()
+        } else if key.contains('-') {
+            // Suggest for the part that actually misses, not the whole compound.
+            let target = key
+                .split('-')
+                .find(|p| !p.is_empty() && !self.dictionary.is_known_allowing_possessive(p))
+                .unwrap_or(&key);
+            self.dictionary.suggest(target, max as usize)
+        } else {
+            self.dictionary.suggest(&key, max as usize)
+        };
+
         serde_wasm_bindgen::to_value(&suggestions)
             .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
     }
