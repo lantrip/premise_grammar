@@ -186,8 +186,8 @@ fn edit_distance_bounded(a: &str, b: &str, max: usize) -> usize {
     let mut prev = vec![0usize; n + 1];
     let mut curr = vec![0usize; n + 1];
 
-    for j in 0..=n {
-        prev[j] = j;
+    for (j, slot) in prev.iter_mut().enumerate() {
+        *slot = j;
     }
 
     for i in 1..=m {

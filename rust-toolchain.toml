@@ -1,0 +1,31 @@
+# Pin one toolchain so this repo, every developer and CI build identically.
+# Bump deliberately.
+#
+# premise_grammar is a git SUBMODULE of premise-studio, so a bump here does not
+# reach it until premise-studio runs `git submodule update --remote
+# premise_grammar` and commits the new pointer. Until then premise-studio keeps
+# building this crate on whatever its pointer references.
+#
+# WHY THIS FILE EXISTS: this repo had no pin and CI ran
+# `dtolnay/rust-toolchain@stable`, so it floated on whatever stable each machine
+# and each runner happened to resolve. That is the setup that turned gofar's CI
+# red for six days in August 2026, when stable moved 1.95 -> 1.97 and 1.97 added
+# `clippy::manual_pop_if` with nothing in that repo having changed.
+#
+# CI reads this file via actions-rust-lang/setup-rust-toolchain@v1. The
+# components list is load-bearing: an action that installs rustfmt+clippy for
+# the compiler *it* downloads does not help, because cargo then honours this
+# file and auto-installs the pinned toolchain, which arrives with only the
+# components named HERE.
+#
+# Note that CI only runs `cargo build --workspace --locked` — there is no clippy
+# or fmt step, which is why five clippy findings in premise-spellcheck survived
+# unnoticed until this pin was added (fixed alongside it).
+#
+# Pinned at 1.98.0 on 2026-08-30, aligning every Rust repo on one version.
+#
+# Sync set — all nine move together: bridle, gistalt, gofar, imagekit, ollie,
+# pokeberry, premise-studio, premise_grammar, proof.
+[toolchain]
+channel = "1.98.0"
+components = ["rustfmt", "clippy"]
