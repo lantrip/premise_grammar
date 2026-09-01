@@ -223,11 +223,11 @@ fn edit_distance(a: &str, b: &str) -> usize {
 
     let mut matrix = vec![vec![0usize; n + 1]; m + 1];
 
-    for i in 0..=m {
-        matrix[i][0] = i;
+    for (i, row) in matrix.iter_mut().enumerate() {
+        row[0] = i;
     }
-    for j in 0..=n {
-        matrix[0][j] = j;
+    for (j, slot) in matrix[0].iter_mut().enumerate() {
+        *slot = j;
     }
 
     for i in 1..=m {

@@ -14,7 +14,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde-wasm-bindgen = { version = "0.6", optional = true }
 postcard = { version = "1.0", features = ["alloc"], optional = true }
-quick-xml = { version = "0.37", optional = true }
+quick-xml = { version = "0.41", optional = true }
 
 [features]
 default = ["wasm", "thesaurus", "definitions"]

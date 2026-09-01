@@ -16,6 +16,16 @@ pub struct Thesaurus {
     entries: HashMap<String, Vec<String>>,
 }
 
+// Delegates to `new`, which parses the embedded thesaurus — not a cheap
+// default, but callers reaching for `Thesaurus::default()` want the loaded
+// dictionary, not an empty one.
+#[cfg(feature = "thesaurus")]
+impl Default for Thesaurus {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(feature = "thesaurus")]
 impl Thesaurus {
     pub fn new() -> Self {

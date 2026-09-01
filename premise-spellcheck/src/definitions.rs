@@ -48,6 +48,13 @@ pub struct DefinitionDictionary {
 }
 
 #[cfg(feature = "definitions")]
+impl Default for DefinitionDictionary {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(feature = "definitions")]
 impl DefinitionDictionary {
     pub fn new() -> Self {
         Self {

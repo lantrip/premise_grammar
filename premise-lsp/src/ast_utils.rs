@@ -97,11 +97,8 @@ pub fn definition_name_at(ast: &AstNode, line: u32, character: u32, text: &str) 
         // ok
     } else {
         let kinds = ["entity_construct", "entity_line"];
-        if let Some(node) = find_ancestor_kind(ast, line, character, &kinds) {
-            return extract_definition_name(node, text);
-        } else {
-            return None;
-        }
+        let node = find_ancestor_kind(ast, line, character, &kinds)?;
+        return extract_definition_name(node, text);
     }
     extract_definition_name(target, text)
 }

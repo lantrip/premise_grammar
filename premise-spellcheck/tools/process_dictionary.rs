@@ -88,7 +88,7 @@ fn process_webster(input_path: &str, output_path: &str) {
             .get("pos")
             .and_then(|v| v.as_str())
             .filter(|s| !s.is_empty())
-            .map(|s| normalize_webster_pos(s));
+            .map(normalize_webster_pos);
 
         let definitions: Vec<SourcedDefinition> = raw
             .get("definitions")
@@ -220,7 +220,10 @@ fn process_wordnet(input_path: &str, output_path: &str) {
                 },
                 Ok(Event::Text(e)) => {
                     if in_definition {
-                        definition_text.push_str(&e.unescape().unwrap_or_default());
+                        // quick-xml 0.41 replaced `unescape()` with accessors that
+                        // name the spec version, because XML 1.0 and 1.1 normalize
+                        // end-of-line differently. WordNet LMF is XML 1.0.
+                        definition_text.push_str(&e.xml10_content().unwrap_or_default());
                     }
                 }
                 Ok(Event::End(e)) => {
@@ -282,41 +285,39 @@ fn process_wordnet(input_path: &str, output_path: &str) {
                             }
                         }
                     }
-                    b"Sense" => {
-                        if !current_lemma.is_empty() {
-                            let mut synset_id = String::new();
-                            for attr in e.attributes().flatten() {
-                                if attr.key.as_ref() == b"synset" {
-                                    synset_id = String::from_utf8_lossy(&attr.value).to_string();
-                                }
+                    b"Sense" if !current_lemma.is_empty() => {
+                        let mut synset_id = String::new();
+                        for attr in e.attributes().flatten() {
+                            if attr.key.as_ref() == b"synset" {
+                                synset_id = String::from_utf8_lossy(&attr.value).to_string();
                             }
-                            if let Some((def_text, _)) = synset_defs.get(&synset_id) {
-                                let key = current_lemma.to_lowercase();
-                                let def = SourcedDefinition {
-                                    text: def_text.clone(),
-                                    source: DictionarySource::WordNet,
-                                    pos: if current_pos.is_empty() {
-                                        None
-                                    } else {
-                                        Some(current_pos.clone())
-                                    },
-                                };
+                        }
+                        if let Some((def_text, _)) = synset_defs.get(&synset_id) {
+                            let key = current_lemma.to_lowercase();
+                            let def = SourcedDefinition {
+                                text: def_text.clone(),
+                                source: DictionarySource::WordNet,
+                                pos: if current_pos.is_empty() {
+                                    None
+                                } else {
+                                    Some(current_pos.clone())
+                                },
+                            };
 
-                                match entries.get_mut(&key) {
-                                    Some(existing) => {
-                                        existing.definitions.push(def);
-                                    }
-                                    None => {
-                                        entries.insert(
-                                            key,
-                                            DictionaryEntry {
-                                                word: current_lemma.clone(),
-                                                definitions: vec![def],
-                                                etymology: None,
-                                                pronunciation: None,
-                                            },
-                                        );
-                                    }
+                            match entries.get_mut(&key) {
+                                Some(existing) => {
+                                    existing.definitions.push(def);
+                                }
+                                None => {
+                                    entries.insert(
+                                        key,
+                                        DictionaryEntry {
+                                            word: current_lemma.clone(),
+                                            definitions: vec![def],
+                                            etymology: None,
+                                            pronunciation: None,
+                                        },
+                                    );
                                 }
                             }
                         }
