@@ -220,7 +220,10 @@ fn process_wordnet(input_path: &str, output_path: &str) {
                 },
                 Ok(Event::Text(e)) => {
                     if in_definition {
-                        definition_text.push_str(&e.unescape().unwrap_or_default());
+                        // quick-xml 0.41 replaced `unescape()` with accessors that
+                        // name the spec version, because XML 1.0 and 1.1 normalize
+                        // end-of-line differently. WordNet LMF is XML 1.0.
+                        definition_text.push_str(&e.xml10_content().unwrap_or_default());
                     }
                 }
                 Ok(Event::End(e)) => {
