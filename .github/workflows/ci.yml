@@ -7,6 +7,18 @@ on:
     branches: [main]
 
 jobs:
+  # Supply-chain gate: advisories, version bans, source allowlist (deny.toml).
+  # Its own job because it reads Cargo.lock and needs no toolchain or cache, so
+  # it reports in seconds regardless of what the build job is doing.
+  deny:
+    name: Supply chain (cargo-deny)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories bans sources
+
   build-and-test:
     runs-on: ubuntu-latest
     steps:

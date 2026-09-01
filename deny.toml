@@ -1,0 +1,38 @@
+# cargo-deny policy for the premise_grammar workspace.
+#
+# CI runs `check advisories bans sources` in the `deny` job
+# (.github/workflows/ci.yml). This is the supply-chain gate: a NEW advisory
+# fails the build. It matters more here than the standalone repo suggests —
+# premise-studio consumes this tree as a submodule, so an advisory introduced
+# here surfaces in that service's gate too.
+#
+# Docs: https://embarkstudios.github.io/cargo-deny/
+
+# ---- Security advisories (RustSec) — the primary gate ------------------------
+[advisories]
+version = 2
+# Yanked crates warn rather than fail: a lockfile refresh clears them, and a
+# yank is not by itself a security problem.
+yanked = "warn"
+# Empty, and worth keeping that way (checked 2026-09-01). Anything fixable
+# should be fixed by a bump; an entry here needs a written reason saying why it
+# cannot be. cargo-deny reports an entry that no longer matches as
+# `advisory-not-detected`, so a stale line announces itself.
+ignore = []
+
+# ---- Dependency bans ---------------------------------------------------------
+[bans]
+# The tree legitimately carries several crates at multiple minor versions; warn
+# rather than fail so the advisories gate stays the meaningful signal.
+multiple-versions = "warn"
+# Every intra-workspace dep is `{ path = "../x" }`, which cargo-deny counts as a
+# wildcard. `allow-wildcard-paths` does not help: it exempts only crates marked
+# `publish = false`, and these are not. They resolve to this repo's own source,
+# so the supply-chain risk a wildcard normally represents does not apply.
+wildcards = "allow"
+
+# ---- Source registries -------------------------------------------------------
+# Only crates.io is allowed; an unknown registry or git source fails the check.
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
