@@ -71,6 +71,15 @@ impl SpellEngine {
         Ok(())
     }
 
+    /// Replace the current client's words; the expensive English index is shared.
+    #[wasm_bindgen(js_name = "replaceCustomWords")]
+    pub fn replace_custom_words(&mut self, words: JsValue) -> Result<(), JsValue> {
+        let words: Vec<String> = serde_wasm_bindgen::from_value(words)
+            .map_err(|e| JsValue::from_str(&format!("Invalid words array: {}", e)))?;
+        self.dictionary.replace_words(&words);
+        Ok(())
+    }
+
     /// Remove a custom word.
     #[wasm_bindgen(js_name = "removeCustomWord")]
     pub fn remove_custom_word(&mut self, word: &str) {

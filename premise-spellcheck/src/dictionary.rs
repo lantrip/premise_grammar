@@ -15,7 +15,7 @@ use crate::symspell::SymSpell;
 /// base dictionary only.
 pub struct Dictionary {
     symspell: SymSpell,
-    /// User dictionary + project dictionary words (additive across the session).
+    /// The active client's personal + project words; replaced on context switches.
     custom_words: HashSet<String>,
     /// Entity names (and their split parts). Replaced wholesale by `set_entities`.
     entity_words: HashSet<String>,
@@ -52,6 +52,12 @@ impl Dictionary {
         for word in words {
             self.add_word(word);
         }
+    }
+
+    /// Replace a client's custom vocabulary without rebuilding the base index.
+    pub fn replace_words(&mut self, words: &[String]) {
+        self.custom_words.clear();
+        self.add_words(words);
     }
 
     /// Replace the entity-name set, splitting multi-word names into individual words.
@@ -156,6 +162,23 @@ impl Default for Dictionary {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn replacing_custom_words_preserves_base_and_entities() {
+        let mut dict = Dictionary::new();
+        dict.load_wordlist("hello 100\n");
+        dict.set_entity_names(&["Cedar Chen-Ortiz".into()]);
+        dict.replace_words(&["Zorblax’s".into()]);
+        assert!(dict.is_correct("zorblax's"));
+        dict.replace_words(&["Quuxling".into()]);
+        assert!(!dict.is_correct("zorblax's"));
+        assert!(dict.is_known_allowing_possessive("Quuxling’s"));
+        dict.replace_words(&[]);
+        assert!(!dict.is_correct("Quuxling"));
+        assert!(dict.is_correct("hello"));
+        assert!(dict.is_correct("Ortiz"));
+        assert!(dict.suggest("helo", 5).contains(&"hello".into()));
+    }
 
     #[test]
     fn test_custom_words() {
